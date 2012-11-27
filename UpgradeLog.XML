@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="Mork 0.2">
+</Property><Property Name="Файл решения" Value="D:\Google Drive\VS2010\Mork\Mork 0.2.sln">
+</Property><Property Name="Date" Value="27 июня 2012 г.">
+</Property><Property Name="Time" Value="17:09">
+</Property></Properties><Event ErrorLevel="0" Project="Mork 0.2" Source="Evo 0.1\Evo 0.1\Mork 0.2.csproj" Description="Файл проекта не нуждается в преобразовании.">
+</Event><Event ErrorLevel="3" Project="Mork 0.2" Source="Evo 0.1\Evo 0.1\Mork 0.2.csproj" Description="Преобразование не требуется">
+</Event><Event ErrorLevel="0" Project="Mork 0.2Content" Source="Evo 0.1\Evo 0.1Content\Mork 0.2Content.contentproj" Description="Файл проекта не нуждается в преобразовании.">
+</Event><Event ErrorLevel="3" Project="Mork 0.2Content" Source="Evo 0.1\Evo 0.1Content\Mork 0.2Content.contentproj" Description="Преобразование не требуется">
+</Event><Event ErrorLevel="2" Project="Mork 0.2" Source="Evo 0.1\Evo 0.1\Mork 0.2.csproj" Description="Не удается открыть файл проекта &quot;D:\Google Drive\VS2010\Mork\Evo 0.1\Evo 0.1\Mork 0.2.csproj&quot;.&#xA;&#xA;Тип проекта не поддерживается в этой копии программы.">
+</Event><Event ErrorLevel="2" Project="Mork 0.2Content" Source="Evo 0.1\Evo 0.1Content\Mork 0.2Content.contentproj" Description="Не удается открыть файл проекта &quot;D:\Google Drive\VS2010\Mork\Evo 0.1\Evo 0.1Content\Mork 0.2Content.contentproj&quot;.&#xA;&#xA;Тип проекта не поддерживается в этой копии программы.">
+</Event><Event ErrorLevel="0" Project="" Source="Mork 0.2.sln" Description="Преобразование решения успешно завершено">
+</Event><Event ErrorLevel="3" Project="" Source="Mork 0.2.sln" Description="Converted">
+</Event></UpgradeLog>
