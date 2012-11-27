@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
 using Mork.Local_Map;
@@ -205,15 +206,24 @@ namespace Mork
                                                  int j,
                                                  bool no_condition)
         {
+            bool inramka = false;
+
             if (x_temp2 < resx + 40 - 300 && x_temp2 > -40 && y_temp2 < resy + 40 && y_temp2 > -40 + 40)
             {
-                int aa = (drawed[i, j] - (int) Selector.Z + 1)*5;
-                if (drawed[i, j] - Selector.Z + 1 > 1) aa += 50;
-                if (mmap.n[i, j, drawed[i, j]].subterrain) aa += 60;
+            
+                int aa; 
 
                 if (!mmap.n[i, j, drawed[i, j]].explored) aa = 255;
+                else
+                {
+                    aa = (drawed[i, j] - (int)Selector.Z + 1) * 5;
+                    if (drawed[i, j] - Selector.Z + 1 > 1) aa += 50;
+                    if (mmap.n[i, j, drawed[i, j]].subterrain) aa += 60;
+                }
 
-                Color tcol = dbmaterial.Data[(MaterialID) mmap.GetNodeTagData(i, j, drawed[i, j], "material")].color;
+
+
+            Color tcol = dbmaterial.Data[(MaterialID) mmap.GetNodeTagData(i, j, drawed[i, j], "material")].color;
 
                 int gg;
                 int bb;
@@ -235,6 +245,7 @@ namespace Mork
                         gg = 100;
                         bb = 0;
                     }
+                    inramka = true;
                 }
 
 
@@ -245,30 +256,12 @@ namespace Mork
                     //                     new Vector2(x_temp2, y_temp2 + 40), GetTexRectFromN(dbobject.Data[mmap.n[i, j, drawed[i, j] + 1].blockID].metatex_n), new Color(rr, gg, bb));
                     spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2),
                                      GetTexRectFromN(dbobject.Data[mmap.n[i, j, drawed[i, j]].blockID].metatex_n),
-                                     new Color(rr, gg, bb));
-
-
-                    if (mmap.n[i, j, drawed[i, j]].Storing != OnStoreID.Nothing &&
-                        mmap.n[i, j, drawed[i, j]].Storing_num > 0)
-                    {
-                        tcol = dbmaterial.Data[mmap.n[i, j, drawed[i, j]].storing_material].color;
-
-                        gg = tcol.G - aa;
-                        bb = tcol.B - aa;
-                        rr = tcol.R - aa;
-
-                        int aaa = 0;
-                        if (mmap.n[i, j, drawed[i, j]].blockID == 1000) aaa = 13;
-                        spriteBatch.Draw(
-                            dbonstore.data[mmap.n[i, j, drawed[i, j]].Storing].tex[
-                                mmap.n[i, j, drawed[i, j]].Storing_num - 1], new Vector2(x_temp2, y_temp2 - 20 + aaa),
-                            new Color(rr, gg, bb));
-                    }
+                                     new Color(rr, gg, bb), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (float)(i+j)/(MMap.mx+MMap.my));
                 }
-                else
+                else if(inramka)
                     spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2),
                                      GetTexRectFromN(dbobject.Data[12345].metatex_n),
-                                     new Color(rr, gg, bb));
+                                     new Color(rr, gg, bb), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (float)(i + j) / (MMap.mx + MMap.my));
             }
         }
 

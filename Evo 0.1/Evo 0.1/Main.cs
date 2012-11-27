@@ -1091,7 +1091,7 @@ namespace Mork
             Manager.Draw(gameTime);
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             DrawProc();
 
