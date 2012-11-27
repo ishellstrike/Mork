@@ -27,6 +27,13 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                 if (h.current_order is DestroyOrder && IsNear(h.position, h.current_order.destination))
                 {
                     Main.mmap.n[(int) h.current_order.destination.X, (int) h.current_order.destination.Y, (int) h.current_order.destination.Z].health -= (float)(10*gt.TotalGameTime.TotalSeconds);
+                    if (Main.mmap.n[(int)h.current_order.destination.X, (int)h.current_order.destination.Y, (int)h.current_order.destination.Z].health <= 0)
+                    {
+                        Main.mmap.n[
+                            (int) h.current_order.destination.X, (int) h.current_order.destination.Y,
+                            (int) h.current_order.destination.Z].blockID = 0;
+                        WorldLife.SubterrainPersonaly(h.current_order.destination, ref Main.mmap);
+                    }
                 }
             }
         }
@@ -70,9 +77,12 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                             order.unit_owner = h;
                             h.patch = Main.mmap.FindPatch(h.position, GetNear(order.destination));
                             order.taken = true;
+                            goto ordertaken;
                         }
                     }
                 }
+            ordertaken:
+                ;
             }
         }
 

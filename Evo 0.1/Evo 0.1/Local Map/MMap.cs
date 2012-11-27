@@ -935,7 +935,7 @@ namespace Mork.Local_Map
                         temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z));
                     }
 
-                    if (temp.X != 0 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z))
+                    if (temp.X >=1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z))
                     {
                         patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] = counter;
                         temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z));
@@ -947,7 +947,7 @@ namespace Mork.Local_Map
                         temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z));
                     }
 
-                    if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z))
+                    if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z))
                     {
                         patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] = counter;
                         temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z));
@@ -963,7 +963,7 @@ namespace Mork.Local_Map
                             temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z + 1));
                         }
 
-                        if (temp.X != 0 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1))
+                        if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1))
                         {
                             patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] = counter;
                             temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z + 1));
@@ -975,13 +975,13 @@ namespace Mork.Local_Map
                             temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z + 1));
                         }
 
-                        if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1))
+                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1))
                         {
                             patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] = counter;
                             temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z + 1));
                         }
 
-                        if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z + 1))
+                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z + 1))
                         {
                             patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] = counter;
                             temp_q.Enqueue(new Vector3(temp.X, temp.Y, temp.Z + 1));
@@ -997,7 +997,7 @@ namespace Mork.Local_Map
                             temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z - 1));
                         }
 
-                        if (temp.X != 0 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1))
+                        if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1))
                         {
                             patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] = counter;
                             temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z - 1));
@@ -1009,13 +1009,13 @@ namespace Mork.Local_Map
                             temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z - 1));
                         }
 
-                        if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1))
+                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1))
                         {
                             patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] = counter;
                             temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z - 1));
                         }
 
-                        if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z - 1))
+                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z - 1))
                         {
                             patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] = counter;
                             temp_q.Enqueue(new Vector3(temp.X, temp.Y, temp.Z - 1));
@@ -1041,7 +1041,7 @@ namespace Mork.Local_Map
                         temp = new Vector3(temp.X + 1, temp.Y, temp.Z);
                     }
                     else
-                        if (temp.X != 0 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] != 0)
+                        if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] != 0)
                         {
                             revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z));
                             temp = new Vector3(temp.X - 1, temp.Y, temp.Z);
@@ -1053,7 +1053,7 @@ namespace Mork.Local_Map
                                 temp = new Vector3(temp.X, temp.Y + 1, temp.Z);
                             }
                             else
-                                if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] != 0)
+                                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] != 0)
                                 {
                                     revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z));
                                     temp = new Vector3(temp.X, temp.Y - 1, temp.Z);
@@ -1068,7 +1068,7 @@ namespace Mork.Local_Map
                             temp = new Vector3(temp.X + 1, temp.Y, temp.Z + 1);
                         }
                         else
-                            if (temp.X != 0 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] != 0)
+                            if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] != 0)
                             {
                                 revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z + 1));
                                 temp = new Vector3(temp.X - 1, temp.Y, temp.Z + 1);
@@ -1080,13 +1080,13 @@ namespace Mork.Local_Map
                                     temp = new Vector3(temp.X, temp.Y + 1, temp.Z + 1);
                                 }
                                 else
-                                    if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] != 0)
+                                    if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] != 0)
                                     {
                                         revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z + 1));
                                         temp = new Vector3(temp.X, temp.Y - 1, temp.Z + 1);
                                     }
                                     else
-                                        if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] != 0)
+                                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] != 0)
                                         {
                                             revers_q.Push(new Vector3(temp.X, temp.Y, temp.Z + 1));
                                             temp = new Vector3(temp.X, temp.Y, temp.Z + 1);
@@ -1102,7 +1102,7 @@ namespace Mork.Local_Map
                             temp = new Vector3(temp.X + 1, temp.Y, temp.Z - 1);
                         }
                         else
-                            if (temp.X != 0 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] != 0)
+                            if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] != 0)
                             {
                                 revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z - 1));
                                 temp = new Vector3(temp.X - 1, temp.Y, temp.Z - 1);
@@ -1114,13 +1114,13 @@ namespace Mork.Local_Map
                                     temp = new Vector3(temp.X, temp.Y + 1, temp.Z - 1);
                                 }
                                 else
-                                    if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] != 0)
+                                    if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] != 0)
                                     {
                                         revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z - 1));
                                         temp = new Vector3(temp.X, temp.Y - 1, temp.Z - 1);
                                     }
                                     else
-                                        if (temp.Y != 0 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] != 0)
+                                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] != 0)
                                         {
                                             revers_q.Push(new Vector3(temp.X, temp.Y, temp.Z - 1));
                                             temp = new Vector3(temp.X, temp.Y, temp.Z - 1);

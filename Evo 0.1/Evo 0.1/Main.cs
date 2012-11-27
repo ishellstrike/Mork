@@ -1272,14 +1272,20 @@ namespace Mork
                 ingameUIpartLeftlistbox.Items.Clear();
                 ingameUIpartLeftlistbox.Items.AddRange(mmap.GetMapTagsInText());
 
+
+                ingameUIpartLeftlistbox2.Items.Clear();
+
                 if (MMap.GoodVector3(Selector))
                 {
                     ingameUIpartLeftlistbox2.Items.Add("hp = " +
                                                        mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].
                                                            health);
+                    ingameUIpartLeftlistbox2.Items.Add("explored = " +
+                                                       mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].
+                                                           explored);
+                    ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
+                                                       mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].subterrain);
                 }
-
-                ingameUIpartLeftlistbox2.Items.Clear();
                 if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(mmap.GetNodeTagsInText(Selector));
 
                 ingameUIpartLeftlistbox2.Refresh();
