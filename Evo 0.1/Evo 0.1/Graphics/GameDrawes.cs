@@ -126,7 +126,9 @@ namespace Mork
                         }
                     }
 
-            DrawLocalUnits();
+            DrawLocalUnits(drawed);
+
+            DrawSelector(drawed);
 
             string ssss = String.Format("{0} {1}, год {2} эпохи {3}", WorldLife.Day,
                                         NamesGenerator.MonthNameR(WorldLife.Month), WorldLife.Year, WorldLife.Age);
@@ -180,6 +182,23 @@ namespace Mork
             }
         }
 
+        private static void DrawSelector(int[,] drawed)
+        {
+            if (MMap.GoodVector3(Selector))
+            {
+                float x_temp2 = ToIsometricX((int) Selector.X, (int) Selector.Y);
+                float y_temp2 = ToIsometricY((int) Selector.X, (int) Selector.Y) - 20;
+
+                spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2), null,
+                                 MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
+                                     1 - (float)(Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
+                for (int sel = 1; sel < drawed[(int) Selector.X, (int) Selector.Y] - Selector.Z; sel++)
+                    spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2 + sel*20), null,
+                                     MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
+                                     1 - (float)(Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
+            }
+        }
+
         private static Rectangle GetTexRectFromN(int n)
         {
             return new Rectangle((n%10)*40, (n/10)*40, 40, 40);
@@ -193,28 +212,24 @@ namespace Mork
 
             if (x_temp2 < resx + 40 - 300 && x_temp2 > -40 && y_temp2 < resy + 40 && y_temp2 > -40 + 40)
             {
-            
-                int aa; 
+
+                int aa;
 
                 if (!mmap.n[i, j, drawed[i, j]].explored) aa = 255;
                 else
                 {
-                    aa = (drawed[i, j] - (int)Selector.Z + 1) * 5;
+                    aa = (drawed[i, j] - (int) Selector.Z + 1)*5;
                     if (drawed[i, j] - Selector.Z + 1 > 1) aa += 50;
                     if (mmap.n[i, j, drawed[i, j]].subterrain) aa += 60;
                 }
 
 
 
-            Color tcol = dbmaterial.Data[(MaterialID) mmap.GetNodeTagData(i, j, drawed[i, j], "material")].color;
+                Color tcol = dbmaterial.Data[(MaterialID) mmap.GetNodeTagData(i, j, drawed[i, j], "material")].color;
 
-                int gg;
-                int bb;
-                int rr;
-
-                gg = tcol.G - aa;
-                bb = tcol.B - aa;
-                rr = tcol.R - aa;
+                var gg = tcol.G - aa;
+                var bb = tcol.B - aa;
+                var rr = tcol.R - aa;
 
                 if (buttonhelper_R && i >= ramka_3.X && j >= ramka_3.Y && drawed[i, j] >= ramka_3.Z && i <= ramka_2.X &&
                     j <= ramka_2.Y && drawed[i, j] <= ramka_2.Z)
@@ -239,12 +254,14 @@ namespace Mork
                     //                     new Vector2(x_temp2, y_temp2 + 40), GetTexRectFromN(dbobject.Data[mmap.n[i, j, drawed[i, j] + 1].blockID].metatex_n), new Color(rr, gg, bb));
                     spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2),
                                      GetTexRectFromN(dbobject.Data[mmap.n[i, j, drawed[i, j]].blockID].metatex_n),
-                                     new Color(rr, gg, bb), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (float)(i+j)/(MMap.mx+MMap.my));
+                                     new Color(rr, gg, bb), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
+                                     1 - (float) (i + j)/(MMap.mx + MMap.my));
                 }
-                else if(inramka)
+                else if (inramka)
                     spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2),
                                      GetTexRectFromN(dbobject.Data[12345].metatex_n),
-                                     new Color(rr, gg, bb), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (float)(i + j) / (MMap.mx + MMap.my));
+                                     new Color(rr, gg, bb), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
+                                     1 - (float) (i + j)/(MMap.mx + MMap.my));
             }
         }
 
@@ -267,23 +284,27 @@ namespace Mork
             return drawed;
         }
 
-        private static void DrawLocalUnits()
+        private static void DrawLocalUnits(int[,] drawed)
         {
             foreach (var h in lheroes.n)
             {
-                DrawLocalSmth(h);
+                if (MMap.GoodVector3(h.position) && h.position.Z >= drawed[(int) h.position.X, (int) h.position.Y] - 1)
+                    DrawLocalSmth(h);
             }
 
             foreach (var u in lunits.n)
             {
-                DrawLocalSmth(u);
+                if (MMap.GoodVector3(u.position) && u.position.Z >= drawed[(int)u.position.X, (int)u.position.Y] - 1)
+                    DrawLocalSmth(u);
             }
         }
+
         private static void DrawLocalSmth(LocalUnit lu)
         {
             Vector2 ix = ToIsometricFloat(lu.position.X, lu.position.Y);
-            ix.Y = ix.Y + (lu.position.Z - Selector.Z - 1) * 20 + 1;
-            spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1-(float)(lu.position.X+lu.position.Y)/(MMap.mx+MMap.my));
+            ix.Y = ix.Y + (lu.position.Z - Selector.Z - 1)*20 + 1;
+            spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None,
+                             1 - (float) (lu.position.X + lu.position.Y)/(MMap.mx + MMap.my));
         }
     }
 }

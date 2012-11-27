@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Mork.Local_Map.Dynamic.Actions;
+using Mork.Local_Map.Dynamic.Units.Actions;
 
 namespace Mork.Local_Map.Dynamic
 {
@@ -11,8 +12,8 @@ namespace Mork.Local_Map.Dynamic
     {
         public Vector3 position;
         public int unit_id;
-        public Order current_order;
-        public Order previous_order;
+        public Order current_order = new NothingOrder();
+        public Order previous_order = new NothingOrder();
 
         public Stack<Vector3> patch = new Stack<Vector3>();
 

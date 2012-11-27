@@ -13,6 +13,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
 using Mork.Local_Map;
+using Mork.Local_Map.Dynamic.Actions;
+using Mork.Local_Map.Dynamic.PlayerOrders;
 using Mork.Local_Map.Dynamic.Units;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
@@ -118,6 +120,7 @@ namespace Mork
         public static DBOnStore dbonstore;
         //public static Stores buildings;
         public static GMap gmap;
+        public static PlayerOrders playerorders = new PlayerOrders();
 
         public static Gmapreshim gmapreshim = Gmapreshim.Normal;
 
@@ -929,7 +932,7 @@ namespace Mork
 
             for (var i = 0; i <= 9; i++)
             {
-                Main.lheroes.n.Add(new LocalHero());
+                Main.lheroes.n.Add(new LocalHero(){position = new Vector3(20,20,0)});
                 var temp = Main.lheroes.n[Main.lheroes.n.Count - 1];
                 var k = 0;
                 temp.position = new Vector3(temp.position.X + rnd.Next(0, 6) - 3, temp.position.Y + rnd.Next(0, 6) - 3, k);
@@ -1248,22 +1251,29 @@ namespace Mork
                 if (Keyboard.GetState().IsKeyDown(Keys.Down) || Keyboard.GetState().IsKeyDown(Keys.S))
                 {
                     if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y -= 4;
-                    else camera.Y -= 10;
+                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y -= (float)(400*gt.ElapsedGameTime.TotalSeconds);
+                    else camera.Y -= (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
                 }
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Up) || Keyboard.GetState().IsKeyDown(Keys.W))
                 {
                     if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y += 4;
-                    else camera.Y += 10;
+                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y += (float)(400 * gt.ElapsedGameTime.TotalSeconds);
+                    else camera.Y += (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
                 }
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Left) || Keyboard.GetState().IsKeyDown(Keys.A))
                 {
                     if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X += 4;
-                    else camera.X += 10;
+                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X += (float)(400 * gt.ElapsedGameTime.TotalSeconds);
+                    else camera.X += (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D))
+                {
+                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
+                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X -= (float)(400 * gt.ElapsedGameTime.TotalSeconds);
+                    else camera.X -= (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
                 }
 
                 if (Keyboard.GetState().IsKeyDown(Keys.N))
@@ -1274,13 +1284,6 @@ namespace Mork
                             {
                                 Main.mmap.n[i, j, k].explored = true;
                             }
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D))
-                {
-                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X -= 4;
-                    else camera.X -= 10;
                 }
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Space))
@@ -1306,6 +1309,29 @@ namespace Mork
                     ramka_3 = new Vector3(Math.Min(Selector.X, ramka_1.X), Math.Min(Selector.Y, ramka_1.Y),
                                       Math.Min(Selector.Z, ramka_1.Z));
 
+                    switch (lclickaction)
+                    {
+                        case LClickAction.Crop:
+                            for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                                for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                                    for (int m = (int)ramka_3.Z; m <= ramka_2.Z; m++)
+                                    {
+                                        if (MMap.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
+                                            playerorders.n.Add(new DestroyOrder{destination = new Vector3(i, j, m)});
+                                    }
+                            break;
+                        case LClickAction.Dig:
+                            for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                                for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                                //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                                {
+                                    if (MMap.GoodVector3(i, j, (int)ramka_2.Z) &&
+                                        dbobject.Data[mmap.n[i, j, (int)ramka_2.Z].blockID].is_rock)
+                                        playerorders.n.Add(new DestroyOrder { destination = new Vector3(i, j, ramka_2.Z) });
+                                }
+                            break;
+                    }
+
                     ramka_1.X = -1;
                 }
 
@@ -1315,6 +1341,8 @@ namespace Mork
 
                     asynccorear = asynccore.BeginInvoke(gt, null, null);
                 }
+
+                playerorders.OrdersUpdate(lheroes);
 
                 ingameUIpartLeftlistbox.Items.Clear();
                 ingameUIpartLeftlistbox.Items.AddRange(mmap.GetMapTagsInText());
