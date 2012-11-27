@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Mork.Local_Map;
 
 namespace Mork
 {
@@ -29,8 +30,8 @@ namespace Mork
             int ykaz = 0;
             var poslist = new Vector3[posmax];
 
-            for (int i = 0; i <= MMap1.mx - 1; i++)
-                for (int j = 0; j <= MMap1.my - 1; j++)
+            for (int i = 0; i <= MMap.mx - 1; i++)
+                for (int j = 0; j <= MMap.my - 1; j++)
                 {
                     if (Main.mmap.n[i, j, WorldLife.ZProvider].Storing != OnStoreID.Nothing && Main.mmap.n[i, j, WorldLife.ZProvider].blockID != 1000)
                     {

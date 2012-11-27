@@ -10,19 +10,4 @@ namespace Mork.Local_Map.Dynamic.Actions
     {
         public Vector3 destination;
     }
-
-    public class MoveOrder : Order
-    {
-        
-    }
-
-    public class BuildOrder : Order
-    {
-        public int blockID;
-    }
-
-    public class DestroyOrder : Order
-    {
-        
-    }
 }

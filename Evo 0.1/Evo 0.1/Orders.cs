@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Mork.Local_Map;
 
 namespace Mork
 {
@@ -56,7 +57,7 @@ namespace Mork
 
         public void NewOrder(Vector3 dest, OrderID _id)
         {
-            if(!MMap1.GoodVector3(dest)) return;
+            if(!MMap.GoodVector3(dest)) return;
             if (list.Any(t => t.dest == dest))
             {
                 return;
@@ -67,7 +68,7 @@ namespace Mork
 
         public void NewOrder(Vector3 dest, Vector3 destadd, OrderID id)
         {
-            if (!MMap1.GoodVector3(dest)) return;
+            if (!MMap.GoodVector3(dest)) return;
             if (list.Any(t => t.dest == dest))
             {
                 return;
@@ -78,16 +79,16 @@ namespace Mork
 
         private static bool IsReachable(Vector3 loc)
         {
-            if (!MMap1.GoodVector3(loc)) return false;
-            return (MMap1.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z) ||
-                    MMap1.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z) ||
-                    MMap1.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z) ||
-                    MMap1.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z) ||
-                    MMap1.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z - 1) ||
-                    MMap1.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z - 1) ||
-                    MMap1.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z - 1) ||
-                    MMap1.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1) ||
-                    MMap1.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z - 1));
+            if (!MMap.GoodVector3(loc)) return false;
+            return (MMap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z) ||
+                    MMap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z) ||
+                    MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z) ||
+                    MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z) ||
+                    MMap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z - 1) ||
+                    MMap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z - 1) ||
+                    MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z - 1) ||
+                    MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1) ||
+                    MMap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z - 1));
         }
 
         private static bool IsNear(Vector3 loc, Vector3 loc2)
@@ -97,17 +98,17 @@ namespace Mork
 
         private static Vector3 GetNear(Vector3 loc)
         {
-            if (MMap1.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z)) return new Vector3(loc.X + 1, loc.Y, loc.Z);
-            if (MMap1.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z)) return new Vector3(loc.X - 1, loc.Y, loc.Z);
-            if (MMap1.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y + 1, loc.Z);
-            if (MMap1.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y - 1, loc.Z);
+            if (MMap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z)) return new Vector3(loc.X + 1, loc.Y, loc.Z);
+            if (MMap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z)) return new Vector3(loc.X - 1, loc.Y, loc.Z);
+            if (MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y + 1, loc.Z);
+            if (MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y - 1, loc.Z);
 
-            if (MMap1.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X + 1, loc.Y, loc.Z - 1);
-            if (MMap1.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X - 1, loc.Y, loc.Z - 1);
-            if (MMap1.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y + 1, loc.Z - 1);
-            if (MMap1.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y - 1, loc.Z - 1);
+            if (MMap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X + 1, loc.Y, loc.Z - 1);
+            if (MMap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X - 1, loc.Y, loc.Z - 1);
+            if (MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y + 1, loc.Z - 1);
+            if (MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y - 1, loc.Z - 1);
 
-            return MMap1.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1) ? new Vector3(loc.X, loc.Y, loc.Z - 1) : new Vector3();
+            return MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1) ? new Vector3(loc.X, loc.Y, loc.Z - 1) : new Vector3();
         }
 
         public void GivemOrders(ref Heroes heroes)
@@ -160,10 +161,10 @@ namespace Mork
                         for (var i = -1; i <= 1; i++)
                             for (var j = -1; j <= 1; j++)
                             {
-                                if (MMap1.GoodVector3((int)hero.order.X + i, (int)hero.order.Y + j, (int)hero.order.Z))
+                                if (MMap.GoodVector3((int)hero.order.X + i, (int)hero.order.Y + j, (int)hero.order.Z))
                                     Main.mmap.n[(int)hero.order.X + i, (int)hero.order.Y + j, (int)hero.order.Z].explored = true;
                             }
-                        if (MMap1.GoodVector3((int)hero.order.X, (int)hero.order.Y, (int)hero.order.Z + 1))
+                        if (MMap.GoodVector3((int)hero.order.X, (int)hero.order.Y, (int)hero.order.Z + 1))
                             Main.mmap.n[(int)hero.order.X, (int)hero.order.Y, (int)hero.order.Z + 1].explored = true;
 
                         WorldLife.SubterrainPersonaly(hero.order, ref Main.mmap);

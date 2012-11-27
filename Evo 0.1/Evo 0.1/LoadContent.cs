@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
+using Mork.Local_Map;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Formu = System.Windows.Forms;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
@@ -47,7 +48,7 @@ namespace Mork
             onstore_tex.Add(OnStoreTexes.Wood_log, temp);
 
             temp = new Texture2D[5];
-            for (int i = 0; i <= 4; i++) temp[i] = ContentLoad(@"Textures\Objects\OnStore\stone" + (i + 1).ToString());
+            for (int i = 0; i <= 4; i++) temp[i] = ContentLoad(@"Textures\Objects\OnStore\stone" + (i + 1));
             onstore_tex.Add(OnStoreTexes.Stone, temp);
 
             LoadTexture2D(unit_tex, @"Textures\transparent_pixel"); //0
@@ -84,9 +85,9 @@ namespace Mork
             buildings = new Stores(); //!!!!
             gmap = new GMap(); //!!!!
 
-            for (int i = 0; i <= MMap1.mx - 1; i++)
-                for (int j = 0; j <= MMap1.my - 1; j++)
-                    for (int k = 0; k <= MMap1.mz - 1; k += 16)
+            for (int i = 0; i <= MMap.mx - 1; i++)
+                for (int j = 0; j <= MMap.my - 1; j++)
+                    for (int k = 0; k <= MMap.mz - 1; k += 16)
                     {
                         mmap.n[i, j, k] = new MNode {blockID = 0};
 

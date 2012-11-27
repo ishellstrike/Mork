@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mork
+namespace Mork.Local_Map
 {
     [Serializable]////////////////////////////////////////////////////////////////////////
     public class MNode

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Mork.Local_Map;
 
 namespace Mork
 {
@@ -20,16 +21,16 @@ namespace Mork
         public static int Year;
         public static string Age = "";
 
-        public static void SubterrainPersonaly(Vector3 where, ref MMap1 mmap)
+        public static void SubterrainPersonaly(Vector3 where, ref MMap mmap)
         {
             var i = where.X;
             var j = where.Y;
-            for (var m = 0; m <= MMap1.mz - 1; m++)
+            for (var m = 0; m <= MMap.mz - 1; m++)
             {
                 mmap.n[(int)i, (int)j, (int)m].subterrain = true;
             }
 
-            for (var m = 0; m <= MMap1.mz - 1; m++)
+            for (var m = 0; m <= MMap.mz - 1; m++)
             {
                 if (mmap.n[(int)i, (int)j, (int)m].blockID == 0)
                 {
@@ -44,14 +45,14 @@ namespace Mork
             here: ;
         }
 
-        public static void WorldTick(ref MMap1 mmap)
+        public static void WorldTick(ref MMap mmap)
         {
             var rnd = new Random();
             byte t = 0;
 
             ZProvider++;
             _subtCalc++;
-            if (ZProvider > MMap1.mz - 1) ZProvider = 0;
+            if (ZProvider > MMap.mz - 1) ZProvider = 0;
             if (_subtCalc > 100) _subtCalc = 0;
 
             int k = ZProvider;

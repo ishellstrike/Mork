@@ -156,10 +156,15 @@
     <Compile Include="Global Map\GMap.cs" />
     <Compile Include="Graphics\LineBatch.cs" />
     <Compile Include="LoadContent.cs" />
-    <Compile Include="Local Map\Dynamic\Actions\Order.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Actions\BuildOrder.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Actions\DestroyOrder.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Actions\MoveOrder.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Actions\Order.cs" />
     <Compile Include="Local Map\Dynamic\Units\LocalHero.cs" />
     <Compile Include="Local Map\Dynamic\Units\LocalUnit.cs" />
     <Compile Include="Local Map\Dynamic\Units\Monster.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Skills\DBSkills.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Skills\Skill.cs" />
     <Compile Include="Local Map\MMap.cs" />
     <Compile Include="Generators\NamesGenerator.cs" />
     <Compile Include="Local Map\MNode.cs" />

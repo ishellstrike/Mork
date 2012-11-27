@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
+using Mork.Local_Map;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 using WButton = System.Windows.Forms.Button;
@@ -137,7 +138,7 @@ namespace Mork
 
         //public static Hero mh = new Hero(); //главный герой
         //public static MFloat mfloat = new MFloat(); //плавающий текст
-        public static MMap1 mmap = new MMap1();
+        public static MMap mmap = new MMap();
         public static MCre mcea = new MCre();
         public static Heroes heroes = new Heroes();
         //public static MBut mbut = new MBut();
@@ -990,9 +991,9 @@ namespace Mork
                 var temp = Main.heroes.n[Main.heroes.n.Count - 1];
                 var k = 0;
                 temp.pos = new Vector3(temp.pos.X + rnd.Next(0, 6) - 3, temp.pos.Y + rnd.Next(0, 6) - 3, k);
-                for (k = 0; k <= MMap1.mz - 1; k++)
+                for (k = 0; k <= MMap.mz - 1; k++)
                 {
-                    if (MMap1.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.mmap.n[(int)temp.pos.X, (int)temp.pos.Y, k].blockID == 0) continue;
+                    if (MMap.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.mmap.n[(int)temp.pos.X, (int)temp.pos.Y, k].blockID == 0) continue;
                     k--;
                     goto here;
                 }
@@ -1337,9 +1338,9 @@ namespace Mork
             int b = (int)midscreen.Y - 33;
             if (b < 0) b = 0;
             int aa = (int)midscreen.X + 33;
-            if (aa > MMap1.mx - 1) aa = MMap1.mx - 1;
+            if (aa > MMap.mx - 1) aa = MMap.mx - 1;
             int bb = (int)midscreen.Y + 33;
-            if (bb > MMap1.my - 1) bb = MMap1.my - 1;
+            if (bb > MMap.my - 1) bb = MMap.my - 1;
 
             var  ramka_3 = new Vector3();
             if (Mouse.GetState().RightButton == ButtonState.Pressed)
@@ -1415,7 +1416,7 @@ namespace Mork
             //spriteBatch.Draw(interface_tex[8], new Vector2(10,5), null, Color.Black, 0f, Vector2.Zero, new Vector2(Font2.MeasureString(ssss).X/100,1), SpriteEffects.None,0);
             spriteBatch.DrawString(Font2, ssss, new Vector2(10, 5), Color.White);
             spriteBatch.DrawString(Font2, sss1, new Vector2(10, 17), Color.White);
-            if (MMap1.GoodVector3(Selector) && mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].explored)
+            if (MMap.GoodVector3(Selector) && mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].explored)
             {
                 if (mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].Storing != OnStoreID.Nothing &&
                     mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].Storing_num > 0)
@@ -1578,12 +1579,12 @@ namespace Mork
 
         private static int[,] WhoDrawedCalculate(int a, int b, int aa, int bb)
         {
-            var drawed = new int[MMap1.mx,MMap1.my];
+            var drawed = new int[MMap.mx,MMap.my];
             for (int i = a; i <= aa; i++)
                 for (int j = b; j <= bb; j++)
                 {
                     drawed[i, j] = (int)Selector.Z;
-                    for (int k = (int)Selector.Z; k <= MMap1.mz - 1; k++)
+                    for (int k = (int)Selector.Z; k <= MMap.mz - 1; k++)
                         if (mmap.n[i, j, k].blockID != 0) // && dbobject.data[mmap.n[i, j, k].Obj].createfloor 
                         {
                             drawed[i, j] = k;
@@ -1626,7 +1627,7 @@ namespace Mork
 
         #endregion
 
-        public static void PrepairMapDeleteWrongIDs(ref MMap1 map)
+        public static void PrepairMapDeleteWrongIDs(ref MMap map)
         {
             for (int i0 = 0; i0 < map.n.GetUpperBound(0); i0++)
                 for (int i1 = 0; i1 < map.n.GetUpperBound(1); i1++)
@@ -1801,7 +1802,7 @@ namespace Mork
 
                 if (Mouse.GetState().ScrollWheelValue < _wheellast)
                 {
-                    if (Selector.Z < MMap1.mz - 2) Selector.Z++;
+                    if (Selector.Z < MMap.mz - 2) Selector.Z++;
                 }
 
                 Selector.X = Convert.ToInt16(((MousePos.X - camera.X)/2 + (MousePos.Y - camera.Y)/1)/20) - 1;
@@ -1833,9 +1834,9 @@ namespace Mork
 
                 if (Keyboard.GetState().IsKeyDown(Keys.N))
                 {
-                    for (var i = 0; i <= MMap1.mx - 1; i++)
-                        for (var j = 0; j <= MMap1.my - 1; j++)
-                            for (var k = 0; k <= MMap1.mz - 1; k++)
+                    for (var i = 0; i <= MMap.mx - 1; i++)
+                        for (var j = 0; j <= MMap.my - 1; j++)
+                            for (var k = 0; k <= MMap.mz - 1; k++)
                             {
                                 Main.mmap.n[i, j, k].explored = true;
                             }
@@ -1883,7 +1884,7 @@ namespace Mork
                                 for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
                                     for (int m = (int)ramka_3.Z; m <= ramka_2.Z; m++)
                                     {
-                                        if (MMap1.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
+                                        if (MMap.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
                                             orders.NewOrder(new Vector3(i, j, m), OrderID.crop_order);
                                     }
                             break;
@@ -1892,7 +1893,7 @@ namespace Mork
                                 for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
                                     //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
                                 {
-                                    if (MMap1.GoodVector3(i, j, (int)ramka_2.Z) &&
+                                    if (MMap.GoodVector3(i, j, (int)ramka_2.Z) &&
                                         dbobject.Data[mmap.n[i, j, (int)ramka_2.Z].blockID].is_rock)
                                         orders.NewOrder(new Vector3(i, j, ramka_2.Z), OrderID.dig_order);
                                 }
@@ -1902,7 +1903,7 @@ namespace Mork
                                 for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
                                     //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
                                 {
-                                    if (MMap1.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].blockID == 0 &&
+                                    if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].blockID == 0 &&
                                         dbobject.Data[mmap.n[i, j, (int)ramka_2.Z + 1].blockID].createfloor)
                                     {
                                         mmap.n[i, j, (int)ramka_2.Z].blockID = 1000;
@@ -1931,7 +1932,7 @@ namespace Mork
                 ingameUIpartLeftlistbox.Items.AddRange(mmap.GetMapTagsInText());
 
                 ingameUIpartLeftlistbox2.Items.Clear();
-                if (MMap1.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(mmap.GetNodeTagsInText(Selector));
+                if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(mmap.GetNodeTagsInText(Selector));
 
                 foreach (var h in heroes.n)
                 {

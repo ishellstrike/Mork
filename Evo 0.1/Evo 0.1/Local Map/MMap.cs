@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Mork
+namespace Mork.Local_Map
 {
     [Serializable]////////////////////////////////////////////////////////////////////////
-    public class MMap1
+    public class MMap
     {
         enum Room_ids : byte { Null = 0, Coridor = 60, CoridorWall = 70, RoomDoor = 80, RoomWall = 90, SolidRock = 99 }
         public enum WAtt : byte { NoWalk_NoSee, NoWalk_See, Walk_NoSee, Walk_See };
@@ -360,10 +360,10 @@ namespace Mork
 
         public void Generation_PlaceOnSurface()
         {
-            for (int i = 0; i <= MMap1.mx - 1; i++)
-                for (int j = 0; j <= MMap1.my - 1; j++)
+            for (int i = 0; i <= MMap.mx - 1; i++)
+                for (int j = 0; j <= MMap.my - 1; j++)
                 {
-                    for (int m = 0; m <= MMap1.mz - 1; m++)
+                    for (int m = 0; m <= MMap.mz - 1; m++)
                     {
                         if (Main.mmap.n[i, j, m].blockID != 0)
                         {
@@ -465,10 +465,10 @@ namespace Mork
                         n[i, j, m].explored = false;
                     }
 
-            for (int i = 0; i <= MMap1.mx - 1; i++)
-                for (int j = 0; j <= MMap1.my - 1; j++)
+            for (int i = 0; i <= MMap.mx - 1; i++)
+                for (int j = 0; j <= MMap.my - 1; j++)
                 {
-                    for (int m = 0; m <= MMap1.mz - 1; m++)
+                    for (int m = 0; m <= MMap.mz - 1; m++)
                     {
                         if (n[i, j, m].blockID == 0)
                         {
@@ -488,9 +488,9 @@ namespace Mork
 
         public void SimpleGeneration_bygmap()
         {
-            for (int i = 0; i <= MMap1.mx - 1; i++)
-                for (int j = 0; j <= MMap1.my - 1; j++)
-                    for (int k = 0; k <= MMap1.mz - 1; k += 8)
+            for (int i = 0; i <= MMap.mx - 1; i++)
+                for (int j = 0; j <= MMap.my - 1; j++)
+                    for (int k = 0; k <= MMap.mz - 1; k += 8)
                     {
                         Main.mmap.n[i, j, k].blockID = 0;
                         Main.mmap.n[i, j, k + 1].blockID = 0;
@@ -503,12 +503,12 @@ namespace Mork
                     }
 
 
-            for (int i = 0; i <= MMap1.mx - 1; i++)
-                for (int j = 0; j <= MMap1.my - 1; j++)
+            for (int i = 0; i <= MMap.mx - 1; i++)
+                for (int j = 0; j <= MMap.my - 1; j++)
                 {
-                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (MMap1.mz - 1) * 0.3 + (MMap1.mz - 1) * 0.7 - 5; k++)
+                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (MMap.mz - 1) * 0.3 + (MMap.mz - 1) * 0.7 - 5; k++)
                     {
-                        if (MMap1.GoodVector3(i, j, MMap1.mz - 1 - k)) Main.mmap.n[i, j, MMap1.mz - 1 - k].blockID = 12345;
+                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k)) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = 12345;
                     }
                 }
 
@@ -554,13 +554,13 @@ namespace Mork
             Main.mmap.Generation_FullLayerGrass(1);
 
 
-            for (int i = 0; i <= MMap1.mx - 1; i++)
-                for (int j = 0; j <= MMap1.my - 1; j++)
+            for (int i = 0; i <= MMap.mx - 1; i++)
+                for (int j = 0; j <= MMap.my - 1; j++)
                 {
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
-                    for (int k = 0; k <= ((0.4)) * (MMap1.mz - 1) * 0.3 + (MMap1.mz - 1) * 0.7 + 1; k++)
+                    for (int k = 0; k <= ((0.4)) * (MMap.mz - 1) * 0.3 + (MMap.mz - 1) * 0.7 + 1; k++)
                     {
-                        if (MMap1.GoodVector3(i, j, MMap1.mz - 1 - k) && Main.mmap.n[i, j, MMap1.mz - 1 - k].blockID == 0) Main.mmap.n[i, j, MMap1.mz - 1 - k].blockID = 888;//вода
+                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k) && Main.mmap.n[i, j, MMap.mz - 1 - k].blockID == 0) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = 888;//вода
                     }
                 }
 
