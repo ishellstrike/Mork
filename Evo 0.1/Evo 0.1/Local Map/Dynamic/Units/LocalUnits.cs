@@ -8,6 +8,6 @@ namespace Mork.Local_Map.Dynamic.Units
 {
     public class LocalUnits
     {
-        List<LocalUnit> n = new List<LocalUnit>(); 
+        public List<LocalUnit> n = new List<LocalUnit>(); 
     }
 }

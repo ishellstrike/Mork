@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
 using Mork.Local_Map;
+using Mork.Local_Map.Dynamic;
 
 namespace Mork
 {
@@ -121,10 +122,11 @@ namespace Mork
                             y_temp2 = ToIsometricY(i, j) - 40 + 20 +
                                       (drawed[i, j] - Selector.Z)*20;
 
-
                             DrawAllFloarCreators(ramka_3, x_temp2, y_temp2, drawed, i, j, false);
                         }
                     }
+
+            DrawLocalUnits();
 
             string ssss = String.Format("{0} {1}, год {2} эпохи {3}", WorldLife.Day,
                                         NamesGenerator.MonthNameR(WorldLife.Month), WorldLife.Year, WorldLife.Age);
@@ -175,25 +177,6 @@ namespace Mork
                                            mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].blockID].I_name +
                                        ":" + mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].blockID,
                                        new Vector2(1052, 60), Color.White);
-            }
-        }
-
-        private static void DrawTreesHigher(Vector3 ramka_3, ref float x_temp2, ref float y_temp2, int[,] drawed, int i,
-                                            int j)
-        {
-            if (Selector.Z != 0 && mmap.n[i, j, (int) Selector.Z - 1].blockID != 0 &&
-                !dbobject.Data[mmap.n[i, j, (int) Selector.Z - 1].blockID].createfloor)
-            {
-                x_temp2 = ToIsometricX(i, j);
-                y_temp2 = ToIsometricY(i, j) - 40;
-
-                if (x_temp2 < resx + 40 && x_temp2 > -40 && y_temp2 < resy + 40 && y_temp2 > -40)
-                {
-                    DrawAllFloarCreators(ramka_3, x_temp2, y_temp2 + 40, drawed, i, j + 1, true);
-                    spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2),
-                                     GetTexRectFromN(dbobject.Data[mmap.n[i, j, (int) Selector.Z - 1].blockID].metatex_n),
-                                     Color.White);
-                }
             }
         }
 
@@ -284,18 +267,23 @@ namespace Mork
             return drawed;
         }
 
-        private static void DrawCNodes(ref float x_temp2, ref float y_temp2, int[,] drawed, int i, int j)
+        private static void DrawLocalUnits()
         {
-            //foreach (CNode temp in mcea.n)
-            //{
-            //    if (temp.pos.X == i && temp.pos.Y == j && mmap.n[temp.pos.X, temp.pos.Y, drawed[i, j]].vision == 0)
-            //    {
-            //        x_temp2 = ToIsometricPos(temp.pos.X, temp.pos.Y).X + ToIsometricFloat(temp.off.X, temp.off.Y).X + 11;
-            //        y_temp2 = ToIsometricPos(temp.pos.X, temp.pos.Y).Y + ToIsometricFloat(temp.off.X, temp.off.Y).Y - 7;
+            foreach (var h in lheroes.n)
+            {
+                DrawLocalSmth(h);
+            }
 
-            //        spriteBatch.Draw(unit_tex[temp.tex], new Vector2(x_temp2, y_temp2), Color.White);
-            //    }
-            //}
+            foreach (var u in lunits.n)
+            {
+                DrawLocalSmth(u);
+            }
+        }
+        private static void DrawLocalSmth(LocalUnit lu)
+        {
+            Vector2 ix = ToIsometricFloat(lu.position.X, lu.position.Y);
+            ix.Y = ix.Y + (lu.position.Z - Selector.Z - 1) * 20 + 1;
+            spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1-(float)(lu.position.X+lu.position.Y)/(MMap.mx+MMap.my));
         }
     }
 }
