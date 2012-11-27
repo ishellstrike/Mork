@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 
 namespace Mork
 {
-    public delegate void SimpleProc();
     //public static class YearSeason
     //{
     //    public const int Summer = 0;

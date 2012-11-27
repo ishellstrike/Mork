@@ -167,7 +167,7 @@ namespace Mork
         public static List<Texture2D> interface_tex = new List<Texture2D>(); // текстуры интрефейса
 
         public static DBMaterial dbmaterial;
-        public static DBObject dbobject;
+        public static DB_LMO dbobject;
         public static DBOnStore dbonstore;
         public static Stores buildings;
         public static GMap gmap;
@@ -191,8 +191,8 @@ namespace Mork
         private readonly GraphicsDeviceManager graphics;
         public static LineBatch lineBatch;
 
-        public static SimpleProc DrawProc;
-        public static SimpleProc CalcProc;
+        public static Action DrawProc;
+        public static Action CalcProc;
 
         public static Vector2 mousepos;
         public static SpriteFont Font1, Font2;   
@@ -732,7 +732,7 @@ namespace Mork
             orderssubmenu.Show();
         }
 
-        StringProc sp = LoadGMapFromDisc;
+        Action<string> sp = LoadGMapFromDisc;
         void maploadmenulistbox_DoubleClick(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
             
@@ -747,8 +747,6 @@ namespace Mork
             generationMenu.Show();
             maploadmenu.Close();
         }
-
-        public delegate void StringProc(string s);
 
         void maploadmenuLoad_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
@@ -800,7 +798,7 @@ namespace Mork
             {
                 if (generationgenerateB.Visible)
                 {
-                    SimpleProc ss = SaveGMapToDisc;
+                    Action ss = SaveGMapToDisc;
                     Main.Savear = ss.BeginInvoke(null, null);
                 }
                 SetPhase(Gstate.NewGame);
@@ -941,7 +939,7 @@ namespace Mork
         private void ToGame()
         {
             SetPhase(Main.Gstate.NewGame);
-            SimpleProc ingamegen = InGameGeneration;
+            Action ingamegen = InGameGeneration;
             Generatear = ingamegen.BeginInvoke(null, null);
 
             WorldLife.Age = NamesGenerator.GetAgeName();
