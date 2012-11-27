@@ -5,7 +5,10 @@ using System.Text;
 
 namespace Mork.Local_Map.Dynamic.Units
 {
-    public class LocalHero : LocalUnit
+    public class UnitInfo
     {
+        public int meta_tex;
+
+        public int basic_mass;
     }
 }

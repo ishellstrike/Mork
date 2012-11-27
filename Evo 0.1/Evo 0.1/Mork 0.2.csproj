@@ -145,8 +145,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Buildings.cs" />
-    <Compile Include="Buttons.cs" />
     <Compile Include="Bad Database\Material\DBMaterial.cs" />
     <Compile Include="Bad Database\Local Map Blocks\DB_LMO.cs" />
     <Compile Include="Bad Database\On Store\DBOnStore.cs" />
@@ -154,15 +152,19 @@
     <Compile Include="Generators\Civilizations.cs" />
     <Compile Include="Global Map\GObj.cs" />
     <Compile Include="Global Map\GMap.cs" />
+    <Compile Include="Graphics\GameDrawes.cs" />
     <Compile Include="Graphics\LineBatch.cs" />
     <Compile Include="LoadContent.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\BuildOrder.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\DestroyOrder.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\MoveOrder.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\Order.cs" />
+    <Compile Include="Local Map\Dynamic\Units\LocalHeroes.cs" />
+    <Compile Include="Local Map\Dynamic\Units\LocalUnits.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Monsters\DBUnitInfo.cs" />
     <Compile Include="Local Map\Dynamic\Units\LocalHero.cs" />
     <Compile Include="Local Map\Dynamic\Units\LocalUnit.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Monster.cs" />
+    <Compile Include="Local Map\Dynamic\Units\Monsters\UnitInfo.cs" />
     <Compile Include="Local Map\Dynamic\Units\Skills\DBSkills.cs" />
     <Compile Include="Local Map\Dynamic\Units\Skills\Skill.cs" />
     <Compile Include="Local Map\MMap.cs" />
@@ -174,11 +176,9 @@
     <Compile Include="Bad Database\Material\MaterialTypeID.cs" />
     <Compile Include="Bad Database\Material\MaterialID.cs" />
     <Compile Include="Bad Database\Local Map Blocks\LMO.cs" />
-    <Compile Include="Orders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Units.cs" />
     <Compile Include="WorldLife.cs" />
   </ItemGroup>
   <ItemGroup>

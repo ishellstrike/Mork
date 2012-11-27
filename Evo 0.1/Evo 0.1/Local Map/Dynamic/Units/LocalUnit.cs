@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Mork.Local_Map.Dynamic.Actions;
 
 namespace Mork.Local_Map.Dynamic
 {
-    abstract class LocalUnit
+    public abstract class LocalUnit
     {
-        private Vector3 position;
-        private int metatex_n;
-        private Order current_order;
-        private Order previous_order;
+        public Vector3 position;
+        public int unit_id;
+        public Order current_order;
+        public Order previous_order;
 
         public Stack<Vector3> patch = new Stack<Vector3>();
 
-        public void MoveHuman(GameTime gt)
+        public void MoveUnit(GameTime gt)
         {
             Vector3 temp = new Vector3();
             if (patch.Count > 0)

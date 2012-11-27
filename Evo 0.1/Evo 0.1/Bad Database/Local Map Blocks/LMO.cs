@@ -21,8 +21,6 @@ namespace Mork
         public string T_name = "";
         public string P_name = "";
 
-        //public Color col = new Color(255, 255, 255);
-
         public int basic_hp = 10;
 
 

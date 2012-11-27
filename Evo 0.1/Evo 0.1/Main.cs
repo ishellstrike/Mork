@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
 using Mork.Local_Map;
+using Mork.Local_Map.Dynamic.Units;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 using WButton = System.Windows.Forms.Button;
@@ -37,51 +38,6 @@ namespace Mork
             Height,
             Tempirature
         }
-
-        //public enum GroundTexes
-        //{
-        //    None,
-        //    IsoDirt1,
-        //    IsoSand1,
-        //    IsoSandwall,
-        //    IsoGround1,
-        //    IsoGround2,
-        //    IsoGround3,
-        //    IsoGround4,
-        //    IsoGround5,
-        //    IsoGround6,
-        //    IsoGround7,
-        //    IsoGround8,
-        //    IsoGround9,
-        //    IsoGround10,
-        //    IsoGrass1,
-        //    IsoGrass2,
-        //    IsoGrass3,
-        //    IsoGrass4,
-        //    IsoGrass5,
-        //    iso_grass_6,
-        //    iso_grass_7,
-        //    iso_grass_8,
-        //    iso_grass_9,
-        //    iso_grass_10,
-        //    iso_water_base,
-        //    iso_water_new1,
-        //    iso_water_new2,
-        //    iso_water_new3,
-        //    iso_water_base1,
-        //    iso_water_base2,
-        //    iso_water_base3,
-        //    iso_water_base4,
-        //    iso_water_base5,
-        //    iso_water_base6,
-        //    iso_water_base7,
-        //    iso_water_base8,
-        //    iso_water_base9,
-        //    iso_water_base10,
-        //    iso_water_base11,
-        //    iso_water_base12,
-        //    iso_water_base13
-        //}
 
         public enum Gstate
         {
@@ -136,30 +92,20 @@ namespace Mork
 
         public static Vector3 gmap_region = new Vector3();
 
-        //public static Hero mh = new Hero(); //главный герой
-        //public static MFloat mfloat = new MFloat(); //плавающий текст
         public static MMap mmap = new MMap();
-        public static MCre mcea = new MCre();
-        public static Heroes heroes = new Heroes();
-        //public static MBut mbut = new MBut();
+        public static LocalUnits lunits = new LocalUnits();
+        public static LocalHeroes lheroes = new LocalHeroes();
 
         private delegate void GTDelegate(GameTime gt);
         private static GTDelegate asynccore;
         private static IAsyncResult asynccorear;
 
-        public static Orders orders = new Orders();
-
         public static LClickAction lclickaction = LClickAction.Nothing;
 
         public static MouseState mousestate = new MouseState();
 
-        //public static Dictionary<GroundTexes, Texture2D> ground_tex = new Dictionary<GroundTexes, Texture2D>();
-                                                         // текстуры земли
         public static Texture2D object_tex;
 
-
-        //public static Dictionary<ObjectTexes, Texture2D> object_tex = new Dictionary<ObjectTexes, Texture2D>();
-                                                         // текстуры объектов
 
         public static Dictionary<OnStoreTexes, Texture2D[]> onstore_tex = new Dictionary<OnStoreTexes, Texture2D[]>();
                                                             //текстуры предметов на складе
@@ -170,7 +116,7 @@ namespace Mork
         public static DBMaterial dbmaterial;
         public static DB_LMO dbobject;
         public static DBOnStore dbonstore;
-        public static Stores buildings;
+        //public static Stores buildings;
         public static GMap gmap;
 
         public static Gmapreshim gmapreshim = Gmapreshim.Normal;
@@ -257,11 +203,7 @@ namespace Mork
 
             Window.Title = OurName + " " + OurVer;
 
-            //if (gstate == Gstate.MainMenu) mbut.MainMenuCreate();
-
             asynccore = AsyncCore;
-
-            //mmap.RandomRoom(0);
 
             DrawProc = MainMenuDraw;
             CalcProc = () => {};
@@ -987,18 +929,18 @@ namespace Mork
 
             for (var i = 0; i <= 9; i++)
             {
-                Main.heroes.n.Add(new Hero());
-                var temp = Main.heroes.n[Main.heroes.n.Count - 1];
+                Main.lheroes.n.Add(new LocalHero());
+                var temp = Main.lheroes.n[Main.lheroes.n.Count - 1];
                 var k = 0;
-                temp.pos = new Vector3(temp.pos.X + rnd.Next(0, 6) - 3, temp.pos.Y + rnd.Next(0, 6) - 3, k);
+                temp.position = new Vector3(temp.position.X + rnd.Next(0, 6) - 3, temp.position.Y + rnd.Next(0, 6) - 3, k);
                 for (k = 0; k <= MMap.mz - 1; k++)
                 {
-                    if (MMap.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.mmap.n[(int)temp.pos.X, (int)temp.pos.Y, k].blockID == 0) continue;
+                    if (MMap.GoodVector3(temp.position.X, temp.position.Y, k) && Main.mmap.n[(int)temp.position.X, (int)temp.position.Y, k].blockID == 0) continue;
                     k--;
                     goto here;
                 }
             here: ;
-                temp.pos = new Vector3(temp.pos.X, temp.pos.Y, k);
+            temp.position = new Vector3(temp.position.X, temp.position.Y, k);
             }
         }
         
@@ -1078,9 +1020,6 @@ namespace Mork
                 case Gstate.InGameMessage:
                     break;
                 case Gstate.NewGame:
-                    MapEditorUpdate(gameTime);
-                    break;
-                case Gstate.OldGame:
                     GameUpdate(gameTime);
                     break;
                 case Gstate.GenerationScreen:
@@ -1258,358 +1197,6 @@ namespace Mork
 
         #region Draws
 
-        private static void DrawGMapGenRects()
-        {
-            for (int i = 0; i <= GMap.size - 14; i += 13)
-                for (int j = 0; j <= GMap.size - 14; j += 13)
-                {
-                    switch (gmapreshim)
-                    {
-                        case Gmapreshim.Normal:
-                            spriteBatch.Draw(GMap.data[gmap.obj[i, j]].tex,
-                                             new Vector2(250 + i / 13 * 5, 50 + j / 13 * 5),
-                                             GMap.data[gmap.obj[i, j]].col);
-                            break;
-                        case Gmapreshim.Height:
-                            int a = Convert.ToInt32(gmap.n[i, j] * 255);
-                            spriteBatch.Draw(interface_tex[12], new Vector2(250 + i / 13 * 5, 50 + j / 13 * 5),
-                                             new Color(a, a, a));
-                            break;
-                        case Gmapreshim.Tempirature:
-                            a = Convert.ToInt32(gmap.t[i, j]);
-                            spriteBatch.Draw(interface_tex[12], new Vector2(250 + i / 13 * 5, 50 + j / 13 * 5),
-                                             new Color(a, 0, 255 - a));
-                            break;
-                    }
-                }
-
-            for (int i = 0; i <= 77; i++)
-                for (int j = 0; j <= 77; j++)
-                {
-                    if (i + gmap_region.X < GMap.size - 1 && j + gmap_region.Y < GMap.size - 1)
-                    {
-                        switch (gmapreshim)
-                        {
-                            case Gmapreshim.Normal:
-                                spriteBatch.Draw(GMap.data[gmap.obj[i + (int)gmap_region.X, j + (int)gmap_region.Y]].tex,
-                                                 new Vector2(700 + i * 5, 50 + j * 5),
-                                                 GMap.data[gmap.obj[i + (int)gmap_region.X, j + (int)gmap_region.Y]].col);
-                                break;
-                            case Gmapreshim.Tempirature:
-                                int a = Convert.ToInt32(gmap.t[i + (int)gmap_region.X, j + (int)gmap_region.Y]);
-                                spriteBatch.Draw(interface_tex[12], new Vector2(700 + i * 5, 50 + j * 5),
-                                                 new Color(a, 0, 255 - a));
-                                break;
-                            case Gmapreshim.Height:
-                                a = Convert.ToInt32(gmap.n[i + (int)gmap_region.X, j + (int)gmap_region.Y] * 255);
-                                spriteBatch.Draw(interface_tex[12], new Vector2(700 + i * 5, 50 + j * 5),
-                                                 new Color(a, a, a));
-                                break;
-                        }
-                    }
-                }
-
-            for (int i = 5; i <= GMap.data.Count - 1; i++)
-            {
-                spriteBatch.Draw(GMap.data.ElementAt(i).Value.tex, new Vector2(250, 450 + (i - 5) * 12),
-                                 GMap.data.ElementAt(i).Value.col);
-                spriteBatch.DrawString(Font2, GMap.data.ElementAt(i).Value.name,
-                                       new Vector2(250 + 10, 445 + (i - 5) * 12), Color.White);
-            }
-        }
-
-        private static void InGameMessageDraw()
-        {
-            spriteBatch.DrawString(Font1, _messagestring, new Vector2(50, 50), Color.White);
-        }
-
-        private static void MainMenuDraw()
-        {
-            _titleAnimation += _titlePhase;
-            if (_titleAnimation >= 255 || _titleAnimation <= 0) _titlePhase *= -1;
-            spriteBatch.Draw(interface_tex[15], new Vector2(470, 20),
-                             new Color(255, _titleAnimation, _titleAnimation));
-        }
-
-        private static void BasicAllDraw()
-        {
-            int a = (int)midscreen.X - 33;
-            if (a < 0) a = 0;
-            int b = (int)midscreen.Y - 33;
-            if (b < 0) b = 0;
-            int aa = (int)midscreen.X + 33;
-            if (aa > MMap.mx - 1) aa = MMap.mx - 1;
-            int bb = (int)midscreen.Y + 33;
-            if (bb > MMap.my - 1) bb = MMap.my - 1;
-
-            var  ramka_3 = new Vector3();
-            if (Mouse.GetState().RightButton == ButtonState.Pressed)
-            {
-                ramka_2.X = Math.Max(Selector.X, ramka_1.X);
-                ramka_2.Y = Math.Max(Selector.Y, ramka_1.Y);
-                ramka_2.Z = Math.Max(Selector.Z, ramka_1.Z);
-
-                ramka_3 = new Vector3(Math.Min(Selector.X, ramka_1.X), Math.Min(Selector.Y, ramka_1.Y),
-                                  Math.Min(Selector.Z, ramka_1.Z));
-            }
-
-            float x_temp2 = 0;
-            float y_temp2 = 0;
-
-            int[,] drawed = WhoDrawedCalculate(a, b, aa, bb);
-
-            if (Generatear.IsCompleted)
-            for (int i = a; i < aa; i++)
-                for (int j = b; j < bb; j++)
-                {
-                    if (mmap.n[i, j, drawed[i, j]].blockID != 0) /*&& ground_tex_old[mmap.n[i, j].tex].Height > 20*/
-                    {
-                        x_temp2 = ToIsometricX(i, j);
-                        y_temp2 = ToIsometricY(i, j) - 40 + 20 +
-                                  (drawed[i, j] - Selector.Z)*20;
-
-
-                        DrawAllFloarCreators(ramka_3, x_temp2, y_temp2, drawed, i, j, false);
-
-                       //DrawTreesHigher(ramka_3, ref x_temp2, ref y_temp2, drawed, i, j);
-                    }
-
-                    //DrawCNodes(ref x_temp2, ref y_temp2, drawed, i, j);
-
-                    //if (Selector.X == i && Selector.Y == j)
-                    //{
-                    //    x_temp2 = ToIsometricX((int)Selector.X, (int)Selector.Y);
-                    //    y_temp2 = ToIsometricY((int)Selector.X, (int)Selector.Y) - 20;
-
-                    //    spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2),
-                    //                         MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50));
-                    //    for (int sel = 1; sel < drawed[i, j] - Selector.Z; sel++)
-                    //        spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2+sel*20),
-                    //                         MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50));
-                    //}
-                }
-
-            DrawHeroes(ref x_temp2, ref y_temp2, drawed);
-
-            DrawOrders(ref x_temp2, ref y_temp2, drawed);
-
-            string ssss = string.Format("{0} {1}, год {2} эпохи {3}", WorldLife.Day,
-                                        NamesGenerator.MonthNameR(WorldLife.Month), WorldLife.Year, WorldLife.Age);
-            string sss1 = string.Format("{0}:{1}:{2}", WorldLife.Hour, WorldLife.Min.ToString("00"),
-                                        WorldLife.Sec.ToString("00"));
-
-            if (PAUSE)
-            {
-                spriteBatch.Draw(interface_tex[6], new Vector2(0, 20), Color.Red);
-                spriteBatch.Draw(interface_tex[6], new Vector2(0, 15), Color.DarkRed);
-                for (int i = 0; i <= 10; i++)
-                {
-                    spriteBatch.DrawString(Font2, "PAUSE", new Vector2(i*100, 42), Color.White);
-                }
-            }
-            spriteBatch.Draw(interface_tex[6], Vector2.Zero, Color.DarkGray);
-            spriteBatch.Draw(interface_tex[6], new Vector2(0, -5), Color.Black);
-
-            spriteBatch.Draw(interface_tex[10], new Vector2(1024, 0), Color.DarkGray);
-            spriteBatch.Draw(interface_tex[10], new Vector2(1029, 0), Color.Black);
-
-            //spriteBatch.Draw(interface_tex[8], new Vector2(10,5), null, Color.Black, 0f, Vector2.Zero, new Vector2(Font2.MeasureString(ssss).X/100,1), SpriteEffects.None,0);
-            spriteBatch.DrawString(Font2, ssss, new Vector2(10, 5), Color.White);
-            spriteBatch.DrawString(Font2, sss1, new Vector2(10, 17), Color.White);
-            if (MMap.GoodVector3(Selector) && mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].explored)
-            {
-                if (mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].Storing != OnStoreID.Nothing &&
-                    mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].Storing_num > 0)
-                    spriteBatch.DrawString(Font1,
-                                           mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].Storing_num + " " +
-                                           dbmaterial.Data[mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].storing_material].
-                                               i_name +
-                                           dbonstore.data[mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].Storing].R_name +
-                                           " " +
-                                           dbonstore.data[mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].Storing].I_name,
-                                           new Vector2(1052, 40), Color.White);
-                spriteBatch.DrawString(Font1,
-                                       dbmaterial.Data[(MaterialID)mmap.GetNodeTagData(Selector, "material")].i_name + " " +
-                                       dbobject.Data[mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].blockID].I_name + ":" + mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].blockID,
-                                       new Vector2(1052, 60), Color.White);
-            }
-        }
-
-        private static void DrawTreesHigher(Vector3 ramka_3, ref float x_temp2, ref float y_temp2, int[,] drawed, int i, int j)
-        {
-            if (Selector.Z != 0 && mmap.n[i, j, (int)Selector.Z - 1].blockID != 0 &&
-                !dbobject.Data[mmap.n[i, j, (int)Selector.Z - 1].blockID].createfloor)
-            {
-                x_temp2 = ToIsometricX(i, j);
-                y_temp2 = ToIsometricY(i, j) - 40;
-
-                if (x_temp2 < resx + 40 && x_temp2 > -40 && y_temp2 < resy + 40 && y_temp2 > -40)
-                {
-                    DrawAllFloarCreators(ramka_3, x_temp2, y_temp2 + 40, drawed, i, j + 1, true);
-                    spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2), GetTexRectFromN(dbobject.Data[mmap.n[i, j, (int)Selector.Z - 1].blockID].metatex_n),
-                                     Color.White);
-                }
-            }
-        }
-
-        private static Rectangle GetTexRectFromN(int n)
-        {
-            return new Rectangle((n%10)*40, (n/10)*40, 40, 40);
-        }
-
-        private static void DrawOrders(ref float x_temp2, ref float y_temp2, int[,] drawed)
-        {
-            if (orders.list.Count > 0)
-            {
-                for (int i = 0; i <= orders.list.Count - 1; i++)
-                {
-                    x_temp2 = ToIsometricX((int)orders.list[i].dest.X, (int)orders.list[i].dest.Y) + 17;
-                    y_temp2 = ToIsometricY((int)orders.list[i].dest.X, (int)orders.list[i].dest.Y) - 15 +
-                              (drawed[(int)orders.list[i].dest.X, (int)orders.list[i].dest.Y] - Selector.Z) * 20;
-
-                    if (x_temp2 < resx + 40 && x_temp2 > -40 && y_temp2 < resy + 20 && y_temp2 > -20 &&
-                        orders.list[i].dest.Z == drawed[(int)orders.list[i].dest.X, (int)orders.list[i].dest.Y])
-                    {
-                        switch (orders.list[i].id)
-                        {
-                            case OrderID.dig_order:
-                                spriteBatch.Draw(interface_tex[4], new Vector2(x_temp2, y_temp2),
-                                                 new Color(255, 255, 255));
-                                break;
-                            case OrderID.digpit_order:
-                                spriteBatch.Draw(interface_tex[4], new Vector2(x_temp2, y_temp2),
-                                                 new Color(255, 255, 255));
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void DrawHeroes(ref float x_temp2, ref float y_temp2, int[,] drawed)
-        {
-            if (heroes.n.Count > 0)
-                for (int b = 0; b <= heroes.n.Count - 1; b++)
-                {
-                    //if (heroes.n[b].pos.X == i - 1 && heroes.n[b].pos.Y == j - 1 && (heroes.n[b].pos.Z == drawed[i, j] - 1))
-                    if (heroes.n[b].pos.Z >= drawed[(int)heroes.n[b].pos.X, (int)heroes.n[b].pos.Y] - 1)
-                    {
-                        x_temp2 = ToIsometricFloat((int)heroes.n[b].pos.X, (int)heroes.n[b].pos.Y).X;
-                        y_temp2 = ToIsometricFloat((int)heroes.n[b].pos.X, (int)heroes.n[b].pos.Y).Y + (heroes.n[b].pos.Z - Selector.Z - 1)*20 + 15;
-                        int aa = 255;
-
-                        if (heroes.n[b].pos.Z <= drawed[(int)heroes.n[b].pos.X, (int)heroes.n[b].pos.Y])
-                        {
-                            spriteBatch.Draw(unit_tex[heroes.n[b].tex], new Vector2(x_temp2, y_temp2), Color.White);
-                            if (heroes.n[b].item_ininv != OnStoreID.Nothing)
-                                spriteBatch.Draw(dbonstore.data[heroes.n[b].item_ininv].tex[0],
-                                                 new Vector2(x_temp2 - 15, y_temp2 - 20),
-                                                 dbmaterial.Data[heroes.n[b].ininv_material].color);
-                        }
-                    }
-                }
-        }
-
-        private static void DrawAllFloarCreators(Vector3 ramka_3, float x_temp2, float y_temp2, int[,] drawed, int i, int j,
-                                          bool no_condition)
-        {
-            if (x_temp2 < resx + 40 - 300 && x_temp2 > -40 && y_temp2 < resy + 40 && y_temp2 > -40 + 40)
-            {
-                int aa = (drawed[i, j] - (int)Selector.Z + 1) * 5;
-                if (drawed[i, j] - Selector.Z + 1 > 1) aa += 50;
-                if (mmap.n[i, j, drawed[i, j]].subterrain) aa += 60;
-
-                if (!mmap.n[i, j, drawed[i, j]].explored) aa = 255;
-
-                Color tcol = dbmaterial.Data[(MaterialID)mmap.GetNodeTagData(i, j, drawed[i, j],"material")].color;
-
-                int gg;
-                int bb;
-                int rr;
-
-                gg = tcol.G - aa;
-                bb = tcol.B - aa;
-                rr = tcol.R - aa;
-
-                if (buttonhelper_R && i >= ramka_3.X && j >= ramka_3.Y && drawed[i, j] >= ramka_3.Z && i <= ramka_2.X &&
-                    j <= ramka_2.Y && drawed[i, j] <= ramka_2.Z)
-                {
-                    rr = 255;
-                    gg = 255;
-                    bb = 0;
-                    if (!mmap.n[i, j, drawed[i, j]].explored)
-                    {
-                        rr = 100;
-                        gg = 100;
-                        bb = 0;
-                    }
-                }
-
-
-                if (no_condition || mmap.n[i, j, drawed[i, j]].explored && (rr != 0 || gg != 0 || bb != 0))
-                {
-                    //if (!dbobject.Data[mmap.n[i, j, drawed[i, j]].blockID].createfloor)
-                    //    spriteBatch.Draw(object_tex,
-                    //                     new Vector2(x_temp2, y_temp2 + 40), GetTexRectFromN(dbobject.Data[mmap.n[i, j, drawed[i, j] + 1].blockID].metatex_n), new Color(rr, gg, bb));
-                    spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2), GetTexRectFromN( dbobject.Data[mmap.n[i, j, drawed[i, j]].blockID].metatex_n),
-                                     new Color(rr, gg, bb));
-
-
-                    if (mmap.n[i, j, drawed[i, j]].Storing != OnStoreID.Nothing &&
-                        mmap.n[i, j, drawed[i, j]].Storing_num > 0)
-                    {
-                        tcol = dbmaterial.Data[mmap.n[i, j, drawed[i, j]].storing_material].color;
-
-                        gg = tcol.G - aa;
-                        bb = tcol.B - aa;
-                        rr = tcol.R - aa;
-
-                        int aaa = 0;
-                        if (mmap.n[i, j, drawed[i, j]].blockID == 1000) aaa = 13;
-                        spriteBatch.Draw(
-                            dbonstore.data[mmap.n[i, j, drawed[i, j]].Storing].tex[
-                                mmap.n[i, j, drawed[i, j]].Storing_num - 1], new Vector2(x_temp2, y_temp2 - 20 + aaa),
-                            new Color(rr, gg, bb));
-                    }
-                }
-                else spriteBatch.Draw(object_tex, new Vector2(x_temp2, y_temp2), GetTexRectFromN(dbobject.Data[12345].metatex_n),
-                                     new Color(rr, gg, bb));
-            }
-        }
-
-        private static int[,] WhoDrawedCalculate(int a, int b, int aa, int bb)
-        {
-            var drawed = new int[MMap.mx,MMap.my];
-            for (int i = a; i <= aa; i++)
-                for (int j = b; j <= bb; j++)
-                {
-                    drawed[i, j] = (int)Selector.Z;
-                    for (int k = (int)Selector.Z; k <= MMap.mz - 1; k++)
-                        if (mmap.n[i, j, k].blockID != 0) // && dbobject.data[mmap.n[i, j, k].Obj].createfloor 
-                        {
-                            drawed[i, j] = k;
-                            goto here;
-                        }
-                    here:
-                    ;
-                }
-            return drawed;
-        }
-
-        private static void DrawCNodes(ref float x_temp2, ref float y_temp2, int[,] drawed, int i, int j)
-        {
-            //foreach (CNode temp in mcea.n)
-            //{
-            //    if (temp.pos.X == i && temp.pos.Y == j && mmap.n[temp.pos.X, temp.pos.Y, drawed[i, j]].vision == 0)
-            //    {
-            //        x_temp2 = ToIsometricPos(temp.pos.X, temp.pos.Y).X + ToIsometricFloat(temp.off.X, temp.off.Y).X + 11;
-            //        y_temp2 = ToIsometricPos(temp.pos.X, temp.pos.Y).Y + ToIsometricFloat(temp.off.X, temp.off.Y).Y - 7;
-
-            //        spriteBatch.Draw(unit_tex[temp.tex], new Vector2(x_temp2, y_temp2), Color.White);
-            //    }
-            //}
-        }
-
         private static void GameDraw()
         {
             BasicAllDraw();
@@ -1640,159 +1227,6 @@ namespace Mork
         #region Updates
 
         private void GameUpdate(GameTime gt)
-        {
-            Selector.X = Convert.ToInt16(((MousePos.X - camera.X)/2 + (MousePos.Y - camera.Y)/1)/20) - 1;
-            Selector.Y = Convert.ToInt16(-((MousePos.X - camera.X)/2 - (MousePos.Y - camera.Y)/1)/20);
-
-            midscreen.X = Convert.ToInt16(((resx/2 - camera.X) /2 + (resy/2 - camera.Y)/1)/20) - 1;
-            midscreen.Y = Convert.ToInt16(-((resx/2 - camera.X) /2 - (resy/2 - camera.Y)/1)/20);
-
-            //if (Keyboard.GetState().IsKeyDown(Keys.E) == true && mh.hero_attack_step == 1) { CNode temp = mcea.GetNearCreature(); if (temp != null) mcea.AttackCreature(temp);}
-
-            space = false;
-
-            if (space_helper && Keyboard.GetState().IsKeyDown(Keys.Space) == false)
-            {
-                space_helper = false;
-                space = true;
-                PAUSE = !PAUSE;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                space_helper = true;
-
-
-            //if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-            //    heroes.n[0].patch = mmap.FindPatch(heroes.n[0].pos, new Vector3(Selector.X, Selector.Y, Selector.Z));
-            //if (Mouse.GetState().RightButton == ButtonState.Pressed)
-            //    mmap.n[Selector.X, Selector.Y, Selector.Z].Obj = 666;
-
-            bool LRUD = false;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y -= 4;
-                else camera.Y -= 10;
-
-                LRUD = true;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y += 4;
-                else camera.Y += 10;
-
-                LRUD = true;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X += 4;
-                else camera.X += 10;
-
-                LRUD = true;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X -= 4;
-                else camera.X -= 10;
-
-                LRUD = true;
-            }
-
-            //if (mh.pos.X > camera.X + ssizex - 12 && camera.X < MMap.mx - ssizex && !LRUD)
-            //{
-            //    camerafade_x -= 2;
-            //    if (camerafade_x <= -20)
-            //    {
-            //        camerafade_x = 0;
-            //        camera.X++;
-            //    }
-            //    //if (mh.pos.X > camera.X) camera.X++;
-            //}
-
-            //if (mh.pos.Y > camera.Y+ssizey - 12 && camera.Y < MMap.my - ssizey && !LRUD)
-            //{
-            //    camerafade_y -= 2;
-            //    if (camerafade_y <= -20)
-            //    {
-            //        camerafade_y = 0;
-            //        camera.Y++;
-            //    }
-
-            //    //if (mh.pos.Y > camera.Y) camera.Y++;
-            //}
-
-            //if (mh.pos.Y < camera.Y + 12 && camera.Y > 0 && !LRUD)
-            //{
-            //    camerafade_y += 2;
-            //    if (camerafade_y >= 20)
-            //    {
-            //        camerafade_y = 0;
-            //        camera.Y--;
-            //    }
-
-            //    //if (mh.pos.Y < camera.Y) camera.Y--;
-            //}
-
-            //if (mh.pos.X < camera.X + 12 && camera.X > 0 && !LRUD)
-            //{
-            //    camerafade_x += 2;
-            //    if (camerafade_x >= 20)
-            //    {
-            //        camerafade_x = 0;
-            //        camera.X--;
-            //    }
-            //    //if (mh.pos.X < camera.X) camera.X--;
-            //}
-
-            //mmap.water_render_step++; //замедление обработки воды
-            //if (mmap.water_render_step >= mmap.water_render_freq)
-            //{
-            //    mmap.water_render_step = 0;
-            //    mmap.WaterCalc(camera.Z, rnd.Next(1, 6));
-            //}
-            if (!PAUSE)
-            {
-                heroes.hero_move_step++; //замедление обработки перемещения героя
-                if (heroes.hero_move_step >= heroes.hero_move_freq)
-                {
-                    heroes.hero_move_step = 0;
-                    foreach (Hero mh in heroes.n)
-                        mh.MoveHuman(gt);
-                }
-                if (heroes.hero_action_step != 1 && !PAUSE)
-                    heroes.hero_action_step++; //замедление обработки атаки героя
-                if (heroes.hero_action_step >= heroes.hero_attack_freq)
-                {
-                    heroes.hero_action_step = 0;
-                }
-                mcea.move_step++;
-                if (mcea.move_step >= mcea.move_freq)
-                {
-                    mcea.move_step = 0;
-                    mcea.AIstep();
-                    mcea.MoveCrea();
-                }
-
-                WorldLife.WorldTick(ref mmap);
-
-
-                //mfloat.Tick(); // обработка плавающего текста
-            }
-
-
-            //vcalk_pre = new Vector3(vcalk_now);
-            //vcalk_now = new Vector3(mh.pos);
-            //if (vcalk_now != vcalk_pre) mmap.CalcWision(); // просчет видимости
-        }
-
-        private void MapEditorUpdate(GameTime gt)
         {
             {
                 if (Mouse.GetState().ScrollWheelValue > _wheellast)
@@ -1859,11 +1293,6 @@ namespace Mork
                     PAUSE = !PAUSE;
                 }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                {
-                    //mbut.InGameMainMenu();
-                }
-
                 if (Mouse.GetState().RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
 
 
@@ -1877,48 +1306,7 @@ namespace Mork
                     ramka_3 = new Vector3(Math.Min(Selector.X, ramka_1.X), Math.Min(Selector.Y, ramka_1.Y),
                                       Math.Min(Selector.Z, ramka_1.Z));
 
-                    switch (lclickaction)
-                    {
-                        case LClickAction.Crop:
-                            for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                                for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                                    for (int m = (int)ramka_3.Z; m <= ramka_2.Z; m++)
-                                    {
-                                        if (MMap.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
-                                            orders.NewOrder(new Vector3(i, j, m), OrderID.crop_order);
-                                    }
-                            break;
-                        case LClickAction.Dig:
-                            for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                                for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                                    //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                                {
-                                    if (MMap.GoodVector3(i, j, (int)ramka_2.Z) &&
-                                        dbobject.Data[mmap.n[i, j, (int)ramka_2.Z].blockID].is_rock)
-                                        orders.NewOrder(new Vector3(i, j, ramka_2.Z), OrderID.dig_order);
-                                }
-                            break;
-                        case LClickAction.MarkStore:
-                            for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                                for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                                    //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                                {
-                                    if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].blockID == 0 &&
-                                        dbobject.Data[mmap.n[i, j, (int)ramka_2.Z + 1].blockID].createfloor)
-                                    {
-                                        mmap.n[i, j, (int)ramka_2.Z].blockID = 1000;
-                                        buildings.list.Add(new Store(new Vector3(i, j, ramka_2.Z)));
-                                    }
-                                }
-                            break;
-                    }
-
                     ramka_1.X = -1;
-                }
-
-                foreach (Hero mh in heroes.n)
-                {
-                    mh.MoveHuman(gt);
                 }
 
                 if (!PAUSE && (asynccorear == null || asynccorear.IsCompleted))
@@ -1934,29 +1322,13 @@ namespace Mork
                 ingameUIpartLeftlistbox2.Items.Clear();
                 if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(mmap.GetNodeTagsInText(Selector));
 
-                foreach (var h in heroes.n)
-                {
-                    ingameUIpartLeftlistbox2.Items.Add(string.Format("{0} ord {1} id p {3}", h.pos,h.order, h.orderid, h.orderphase));
-                }
-
                 ingameUIpartLeftlistbox2.Refresh();
-
-                //mmap.CalcWision();
             }
         }
 
         private static void AsyncCore(GameTime gt)
         {
-            heroes.hero_move_step++; //замедление обработки перемещения героя
-            if (heroes.hero_move_step >= heroes.hero_move_freq)
-            {
-                heroes.hero_move_step = 0;
-                foreach (Hero mh in heroes.n)
-                    mh.MoveHuman(gt);
-            }
 
-            buildings.BuildingsActions();
-            orders.GivemOrders(ref heroes);
         }
 
         #endregion
