@@ -177,9 +177,9 @@ namespace Mork
             buildings = new Stores(); //!!!!
             gmap = new GMap(); //!!!!
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
-                    for (int k = 0; k <= MMap.mz - 1; k += 16)
+            for (int i = 0; i <= MMap1.mx - 1; i++)
+                for (int j = 0; j <= MMap1.my - 1; j++)
+                    for (int k = 0; k <= MMap1.mz - 1; k += 16)
                     {
                         mmap.n[i, j, k] = new MNode {blockID = 0};
 

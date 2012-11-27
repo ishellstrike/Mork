@@ -128,42 +128,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Objects\tree1.png">
-      <Name>tree1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\iso_blankslope_se.png">
-      <Name>iso_blankslope_se</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\iso_blankslope_sw.png">
-      <Name>iso_blankslope_sw</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\bereza.png">
-      <Name>bereza</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Lime.png">
-      <Name>Lime</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\yasen.png">
-      <Name>yasen</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Interface\dig.png">
       <Name>dig</Name>
       <Importer>TextureImporter</Importer>
@@ -171,96 +135,6 @@
     </Compile>
     <Compile Include="Textures\Interface\digpit.png">
       <Name>digpit</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\Basalt_wall.png">
-      <Name>Basalt_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\dirtwall.png">
-      <Name>dirtwall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\gabbro_wall.png">
-      <Name>gabbro_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall.png">
-      <Name>grasswall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\green_granite_wall.png">
-      <Name>green_granite_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\iso_sandwall.png">
-      <Name>iso_sandwall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\Ryolite_wall.png">
-      <Name>Ryolite_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\white_granite_wall.png">
-      <Name>white_granite_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\grasswall_less.png">
-      <Name>grasswall_less</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_lesser.png">
-      <Name>grasswall_lesser</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\granite_to_gabbro_wall.png">
-      <Name>granite_to_gabbro_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\Basalt_wall_t1.png">
-      <Name>Basalt_wall_t1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\Basalt_wall_t2.png">
-      <Name>Basalt_wall_t2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\Basalt_wall_t3.png">
-      <Name>Basalt_wall_t3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\magma.png">
-      <Name>magma</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\Mudstone.png">
-      <Name>Mudstone</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -292,47 +166,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\grasswall_blackosot.png">
-      <Name>grasswall_blackosot</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_gorez.png">
-      <Name>grasswall_gorez</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_kovil.png">
-      <Name>grasswall_kovil</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_mint.png">
-      <Name>grasswall_mint</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_poleviza.png">
-      <Name>grasswall_poleviza</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_tawolga.png">
-      <Name>grasswall_tawolga</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Interface\Int_left.png">
       <Name>Int_left</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\Store_wall.png">
-      <Name>Store_wall</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -400,52 +235,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\grasswall_snow.png">
-      <Name>grasswall_snow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_snow_less.png">
-      <Name>grasswall_snow_less</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\grasswall_belogolov.png">
-      <Name>grasswall_belogolov</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_ivanchai.png">
-      <Name>grasswall_ivanchai</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_klever.png">
-      <Name>grasswall_klever</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_sporish.png">
-      <Name>grasswall_sporish</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\grasswall_zveroboi.png">
-      <Name>grasswall_zveroboi</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\Sand_wall.png">
-      <Name>Sand_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Objects\OnStore\stone1.png">
       <Name>stone1</Name>
       <Importer>TextureImporter</Importer>
@@ -468,25 +257,6 @@
     </Compile>
     <Compile Include="Textures\Objects\OnStore\stone5.png">
       <Name>stone5</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\Carpentery.png">
-      <Name>Carpentery</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Objects\Blocks\microcline_wall.png">
-      <Name>microcline_wall</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Objects\Blocks\ortoclaz_wall.png">
-      <Name>ortoclaz_wall</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

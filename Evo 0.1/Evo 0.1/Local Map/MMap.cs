@@ -1,20 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Mork
 {
     [Serializable]////////////////////////////////////////////////////////////////////////
-    public class MMap
+    public class MMap1
     {
         enum Room_ids : byte { Null = 0, Coridor = 60, CoridorWall = 70, RoomDoor = 80, RoomWall = 90, SolidRock = 99 }
         public enum WAtt : byte { NoWalk_NoSee, NoWalk_See, Walk_NoSee, Walk_See };
@@ -231,12 +222,12 @@ namespace Mork
                         if (n[i, j, k].blockID == 12345)
                             goto here1;
                     }
-                here1: ;
+                    here1: ;
                 
-                for (int m = k; m >= rnd.Next(k-5, k); m--)
-                {
-                    if(m>0) if (n[i, j, m].blockID == 12345) n[i, j, m].blockID = id;
-                }
+                    for (int m = k; m >= rnd.Next(k-5, k); m--)
+                    {
+                        if(m>0) if (n[i, j, m].blockID == 12345) n[i, j, m].blockID = id;
+                    }
                 }
         }
 
@@ -251,9 +242,9 @@ namespace Mork
                         if (n[i, j, k].blockID == 12345)
                             goto here1;
                     }
-                here1: ;
+                    here1: ;
 
-                if (k <= 0) continue;
+                    if (k <= 0) continue;
 
                     for (int m = k; m >= k-count+1; m--)
                     {
@@ -273,7 +264,7 @@ namespace Mork
                         if (n[i, j, k].blockID == 12345)
                             goto here1;
                     }
-                here1: ;
+                    here1: ;
 
                     if (k <= 0) continue;
 
@@ -358,21 +349,21 @@ namespace Mork
                 i1 += ii; j1 += jj;
                 if(GoodVector3(i1, j1, m))
                 {
-                n[i1, j1, m].blockID = id;
+                    n[i1, j1, m].blockID = id;
                 }
 
                 if(rnd.Next(1,4) == 1)
-                ii = rnd.Next(-1, 1);
+                    ii = rnd.Next(-1, 1);
                 jj = rnd.Next(-1, 1);
             }
         }
 
         public void Generation_PlaceOnSurface()
         {
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= MMap1.mx - 1; i++)
+                for (int j = 0; j <= MMap1.my - 1; j++)
                 {
-                    for (int m = 0; m <= MMap.mz - 1; m++)
+                    for (int m = 0; m <= MMap1.mz - 1; m++)
                     {
                         if (Main.mmap.n[i, j, m].blockID != 0)
                         {
@@ -382,7 +373,7 @@ namespace Mork
                             goto here2;
                         }
                     }
-                here2: ;
+                    here2: ;
                 }
         }
 
@@ -397,9 +388,9 @@ namespace Mork
                         if (n[i, j, k].blockID == 0)
                             goto here1;
                     }
-                here1: ;
+                    here1: ;
 
-                if (k < 0) continue;
+                    if (k < 0) continue;
 
                     for (int m = k; m >= k - count + 1; m--)
                     {
@@ -419,7 +410,7 @@ namespace Mork
                         if (n[i, j, k].blockID == 0)
                             goto here1;
                     }
-                here1: ;
+                    here1: ;
 
                     if (k < 0) continue;
 
@@ -441,7 +432,7 @@ namespace Mork
                         if (n[i, j, k].blockID == 0)
                             goto here1;
                     }
-                here1: ;
+                    here1: ;
 
                     if (k < 0) continue;
 
@@ -474,10 +465,10 @@ namespace Mork
                         n[i, j, m].explored = false;
                     }
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= MMap1.mx - 1; i++)
+                for (int j = 0; j <= MMap1.my - 1; j++)
                 {
-                    for (int m = 0; m <= MMap.mz - 1; m++)
+                    for (int m = 0; m <= MMap1.mz - 1; m++)
                     {
                         if (n[i, j, m].blockID == 0)
                         {
@@ -491,15 +482,15 @@ namespace Mork
                             goto here2;
                         }
                     }
-                here2: ;
+                    here2: ;
                 }
         }
 
         public void SimpleGeneration_bygmap()
         {
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
-                    for (int k = 0; k <= MMap.mz - 1; k += 8)
+            for (int i = 0; i <= MMap1.mx - 1; i++)
+                for (int j = 0; j <= MMap1.my - 1; j++)
+                    for (int k = 0; k <= MMap1.mz - 1; k += 8)
                     {
                         Main.mmap.n[i, j, k].blockID = 0;
                         Main.mmap.n[i, j, k + 1].blockID = 0;
@@ -512,12 +503,12 @@ namespace Mork
                     }
 
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= MMap1.mx - 1; i++)
+                for (int j = 0; j <= MMap1.my - 1; j++)
                 {
-                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (MMap.mz - 1) * 0.3 + (MMap.mz - 1) * 0.7 - 5; k++)
+                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (MMap1.mz - 1) * 0.3 + (MMap1.mz - 1) * 0.7 - 5; k++)
                     {
-                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k)) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = 12345;
+                        if (MMap1.GoodVector3(i, j, MMap1.mz - 1 - k)) Main.mmap.n[i, j, MMap1.mz - 1 - k].blockID = 12345;
                     }
                 }
 
@@ -563,13 +554,13 @@ namespace Mork
             Main.mmap.Generation_FullLayerGrass(1);
 
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= MMap1.mx - 1; i++)
+                for (int j = 0; j <= MMap1.my - 1; j++)
                 {
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
-                    for (int k = 0; k <= ((0.4)) * (MMap.mz - 1) * 0.3 + (MMap.mz - 1) * 0.7 + 1; k++)
+                    for (int k = 0; k <= ((0.4)) * (MMap1.mz - 1) * 0.3 + (MMap1.mz - 1) * 0.7 + 1; k++)
                     {
-                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k) && Main.mmap.n[i, j, MMap.mz - 1 - k].blockID == 0) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = 888;//вода
+                        if (MMap1.GoodVector3(i, j, MMap1.mz - 1 - k) && Main.mmap.n[i, j, MMap1.mz - 1 - k].blockID == 0) Main.mmap.n[i, j, MMap1.mz - 1 - k].blockID = 888;//����
                     }
                 }
 
@@ -872,7 +863,7 @@ namespace Mork
             //if (GoodXY(X, Y) && Main.mmap.n[X, Y].floar != FloarID.Sandwall && Main.mmap.n[X, Y].explored) return true;
             //return false;
 
-              if (GoodVector3(X, Y, Z) && Main.dbobject.Data[Main.mmap.n[X, Y, Z+1].blockID].createfloor && Main.mmap.n[X, Y, Z].explored && Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable) return true;
+            if (GoodVector3(X, Y, Z) && Main.dbobject.Data[Main.mmap.n[X, Y, Z+1].blockID].createfloor && Main.mmap.n[X, Y, Z].explored && Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable) return true;
             return false;
         }
 
@@ -1142,45 +1133,5 @@ namespace Mork
 
             return revers_q;
         }
-    }
-    [Serializable]////////////////////////////////////////////////////////////////////////
-    public class MNode
-    {
-        //public FloarID floar = FloarID.Grass1;
-       public int blockID = 0;
-
-       public Dictionary<string, object> tags = new Dictionary<string, object>();
-
-       //public MaterialID material = MaterialID.Basic;
-
-       //public byte water = 0; // 0 - сухая 1 - влажная 2 - мокрая. 3-13 - заполненость водой. 13+ - под давлением
-
-       public bool subterrain = true;
-
-       //public byte watt = (byte)MMap.WAtt.Walk_See;
-
-       private OnStoreID storing = OnStoreID.Nothing;
-
-       public OnStoreID Storing
-       {
-           get { return storing; }
-           set { storing = value; }
-       }
-
-       private byte storing_num = 0;
-
-       public MaterialID storing_material = MaterialID.Basic;
-
-       public byte Storing_num
-       {
-           get { return storing_num; }
-           set { storing_num = value; if (storing_num == 0) storing = OnStoreID.Nothing; }
-       }
-
-       //public byte room_id = 0;
-       //public sbyte vision = 0;
-       public bool explored = true;
-
-        public byte health = 10;
     }
 }
