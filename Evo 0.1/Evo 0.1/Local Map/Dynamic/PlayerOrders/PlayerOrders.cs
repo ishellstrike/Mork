@@ -22,18 +22,51 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
 
         void MakingOrders(GameTime gt, LocalHeroes lh)
         {
-            foreach (var h in lh.n)
+            for (int o = 0; o < lh.n.Count; o++)
             {
-                if (h.current_order is DestroyOrder && IsNear(h.position, h.current_order.destination))
+                var h = lh.n[o];
+                if (h.current_order is DestroyOrder && IsNear(h.pos, h.current_order.dest))
                 {
-                    Main.mmap.n[(int) h.current_order.destination.X, (int) h.current_order.destination.Y, (int) h.current_order.destination.Z].health -= (float)(10*gt.TotalGameTime.TotalSeconds);
-                    if (Main.mmap.n[(int)h.current_order.destination.X, (int)h.current_order.destination.Y, (int)h.current_order.destination.Z].health <= 0)
+                    Main.mmap.n[(int) h.current_order.dest.X, (int) h.current_order.dest.Y, (int) h.current_order.dest.Z
+                        ].health -= (float) (10*gt.TotalGameTime.TotalSeconds);
+                    if (
+                        Main.mmap.n[
+                            (int) h.current_order.dest.X, (int) h.current_order.dest.Y, (int) h.current_order.dest.Z].
+                            health <= 0)
                     {
                         Main.mmap.n[
-                            (int) h.current_order.destination.X, (int) h.current_order.destination.Y,
-                            (int) h.current_order.destination.Z].blockID = 0;
-                        WorldLife.SubterrainPersonaly(h.current_order.destination, ref Main.mmap);
+                            (int) h.current_order.dest.X, (int) h.current_order.dest.Y, (int) h.current_order.dest.Z].
+                            blockID = 0;
+                        Main.mmap.n[
+                            (int) h.current_order.dest.X, (int) h.current_order.dest.Y, (int) h.current_order.dest.Z].
+                            health = 10;
+
+                        for (var i = -1; i <= 1; i++)
+                            for (var j = -1; j <= 1; j++)
+                            {
+                                if (MMap.GoodVector3(h.current_order.dest.X + i, h.current_order.dest.Y + j,
+                                                     h.current_order.dest.Z))
+                                    Main.mmap.n[
+                                        (int) h.current_order.dest.X + i, (int) h.current_order.dest.Y + j,
+                                        (int) h.current_order.dest.Z].explored = true;
+                            }
+                        if (MMap.GoodVector3(h.current_order.dest.X, h.current_order.dest.Y, h.current_order.dest.Z + 1))
+                            Main.mmap.n[
+                                (int) h.current_order.dest.X, (int) h.current_order.dest.Y,
+                                (int) h.current_order.dest.Z + 1].explored = true;
+
+                        WorldLife.SubterrainPersonaly(h.current_order.dest, ref Main.mmap);
                     }
+                }
+
+                if (h.current_order is BuildOrder && IsNear(h.pos, h.current_order.dest))
+                {
+                }
+
+                if (!IsNear(h.pos, h.current_order.dest) && h.iddle_time >= TimeSpan.FromSeconds(10))
+                {
+                    h.current_order.taken = false;
+                    h.current_order = new NothingOrder();
                 }
             }
         }
@@ -48,15 +81,24 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                     h.current_order = new NothingOrder();
                 }
 
-                if(h.current_order is MoveOrder && h.position == h.current_order.destination)
+                if(h.current_order is MoveOrder && h.pos == h.current_order.dest)
                 {
                     h.previous_order = h.current_order;
+                    h.current_order.complete = true;
                     h.current_order = new NothingOrder();
                 }
 
-                if(h.current_order is DestroyOrder && Main.mmap.n[(int)h.current_order.destination.X, (int)h.current_order.destination.Y, (int)h.current_order.destination.Z].blockID == 0)
+                if(h.current_order is DestroyOrder && Main.mmap.n[(int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z].blockID == 0)
                 {
                     h.previous_order = h.current_order;
+                    h.current_order.complete = true;
+                    h.current_order = new NothingOrder();
+                }
+
+                if (h.current_order is BuildOrder && Main.mmap.n[(int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z].blockID != 0)
+                {
+                    h.previous_order = h.current_order;
+                    h.current_order.complete = true;
                     h.current_order = new NothingOrder();
                 }
             }
@@ -66,7 +108,7 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
         {
             foreach (var order in n)
             {
-                if(!order.taken && IsReachable(order.destination))
+                if(!order.taken && IsReachable(order.dest))
                 {
                     foreach (var h in lh.n)
                     {
@@ -75,7 +117,7 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                             h.current_order = order;
                            
                             order.unit_owner = h;
-                            h.patch = Main.mmap.FindPatch(h.position, GetNear(order.destination));
+                            h.patch = Main.mmap.FindPatch(h.pos, GetNear(order.dest));
                             order.taken = true;
                             goto ordertaken;
                         }

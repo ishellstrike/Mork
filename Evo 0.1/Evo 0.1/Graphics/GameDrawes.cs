@@ -219,7 +219,7 @@ namespace Mork
                 else
                 {
                     aa = (drawed[i, j] - (int) Selector.Z + 1)*5;
-                    if (drawed[i, j] - Selector.Z + 1 > 1) aa += 50;
+                    if (drawed[i, j] - Selector.Z + 1 > 1) aa += 100;
                     if (mmap.n[i, j, drawed[i, j]].subterrain) aa += 60;
                 }
 
@@ -288,23 +288,23 @@ namespace Mork
         {
             foreach (var h in lheroes.n)
             {
-                if (MMap.GoodVector3(h.position) && h.position.Z >= drawed[(int) h.position.X, (int) h.position.Y] - 1)
+                if (MMap.GoodVector3(h.pos) && h.pos.Z >= drawed[(int) h.pos.X, (int) h.pos.Y] - 1)
                     DrawLocalSmth(h);
             }
 
             foreach (var u in lunits.n)
             {
-                if (MMap.GoodVector3(u.position) && u.position.Z >= drawed[(int)u.position.X, (int)u.position.Y] - 1)
+                if (MMap.GoodVector3(u.pos) && u.pos.Z >= drawed[(int)u.pos.X, (int)u.pos.Y] - 1)
                     DrawLocalSmth(u);
             }
         }
 
         private static void DrawLocalSmth(LocalUnit lu)
         {
-            Vector2 ix = ToIsometricFloat(lu.position.X, lu.position.Y);
-            ix.Y = ix.Y + (lu.position.Z - Selector.Z - 1)*20 + 1;
+            Vector2 ix = ToIsometricFloat(lu.pos.X, lu.pos.Y);
+            ix.Y = ix.Y + (lu.pos.Z - Selector.Z - 1)*20 + 1;
             spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None,
-                             1 - (float) (lu.position.X + lu.position.Y)/(MMap.mx + MMap.my));
+                             1 - (float) (lu.pos.X + lu.pos.Y)/(MMap.mx + MMap.my));
         }
     }
 }

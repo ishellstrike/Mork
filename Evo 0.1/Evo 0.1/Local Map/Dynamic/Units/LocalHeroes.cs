@@ -14,7 +14,10 @@ namespace Mork.Local_Map.Dynamic.Units
         {
             foreach (var lh in n)
             {
+                lh.pre_pos = lh.pos;
                 lh.MoveUnit(gt);
+                if (lh.pos == lh.pre_pos) lh.iddle_time += gt.ElapsedGameTime;
+                else lh.iddle_time = TimeSpan.Zero;
             }
         }
     }

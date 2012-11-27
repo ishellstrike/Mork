@@ -27,18 +27,18 @@ namespace Mork
             var j = where.Y;
             for (var m = 0; m <= MMap.mz - 1; m++)
             {
-                mmap.n[(int)i, (int)j, (int)m].subterrain = true;
+                mmap.n[(int)i, (int)j, m].subterrain = true;
             }
 
             for (var m = 0; m <= MMap.mz - 1; m++)
             {
-                if (mmap.n[(int)i, (int)j, (int)m].blockID == 0)
+                if (mmap.n[(int)i, (int)j, m].blockID == 0)
                 {
-                    mmap.n[(int)i, (int)j, (int)m].subterrain = false;
+                    mmap.n[(int)i, (int)j, m].subterrain = false;
                 }
                 else
                 {
-                    mmap.n[(int)i, (int)j, (int)m].subterrain = false;
+                    mmap.n[(int)i, (int)j, m].subterrain = false;
                     goto here;
                 }
             }

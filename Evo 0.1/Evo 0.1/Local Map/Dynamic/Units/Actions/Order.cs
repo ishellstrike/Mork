@@ -8,7 +8,7 @@ namespace Mork.Local_Map.Dynamic.Actions
 {
     public abstract class Order
     {
-        public Vector3 destination;
+        public Vector3 dest;
         public bool complete;
         public bool taken;
         public LocalUnit unit_owner;

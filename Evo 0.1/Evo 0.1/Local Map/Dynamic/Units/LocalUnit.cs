@@ -10,10 +10,13 @@ namespace Mork.Local_Map.Dynamic
 {
     public abstract class LocalUnit
     {
-        public Vector3 position;
+        public Vector3 pos;
         public int unit_id;
         public Order current_order = new NothingOrder();
         public Order previous_order = new NothingOrder();
+
+        public Vector3 pre_pos;
+        public TimeSpan iddle_time;
 
         public Stack<Vector3> patch = new Stack<Vector3>();
 
@@ -24,16 +27,16 @@ namespace Mork.Local_Map.Dynamic
                 Vector3 temp = new Vector3();
                 temp = patch.Peek();/////////
 
-                if (position.X > temp.X) position.X -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (position.Y > temp.Y) position.Y -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (position.Z > temp.Z) position.Z -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
+                if (pos.X > temp.X) pos.X -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
+                if (pos.Y > temp.Y) pos.Y -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
+                if (pos.Z > temp.Z) pos.Z -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
 
-                if (position.X < temp.X) position.X += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (position.Y < temp.Y) position.Y += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (position.Z < temp.Z) position.Z += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
+                if (pos.X < temp.X) pos.X += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
+                if (pos.Y < temp.Y) pos.Y += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
+                if (pos.Z < temp.Z) pos.Z += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
 
                 //затаптывание травы
-                if ((int)position.X == (int)temp.X && (int)position.Y == (int)temp.Y && (int)position.Z == (int)temp.Z)
+                if ((int)pos.X == (int)temp.X && (int)pos.Y == (int)temp.Y && (int)pos.Z == (int)temp.Z)
                 {
                     //if (Main.mmap.n[pos.X, pos.Y, pos.Z+1].Obj == ObjectID.DirtWall_Grass3 && rnd.Next(0,20) == 0) Main.mmap.n[pos.X, pos.Y, pos.Z+1].Obj = ObjectID.DirtWall_Grass2;
                     //else

@@ -24,7 +24,10 @@ using TomShane.Neoforce.Controls;
 using Color = Microsoft.Xna.Framework.Color;
 using Label = TomShane.Neoforce.Controls.Label;
 using ListBox = TomShane.Neoforce.Controls.ListBox;
+using Orientation = TomShane.Neoforce.Controls.Orientation;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using ScrollBar = TomShane.Neoforce.Controls.ScrollBar;
+using ToolTip = TomShane.Neoforce.Controls.ToolTip;
 using TrackBar = TomShane.Neoforce.Controls.TrackBar;
 
 
@@ -184,8 +187,6 @@ namespace Mork
 
         protected override void Initialize()
         {
-            WindowsDesigner();
-
             base.Initialize();
 
             Assembly currentAssembly = Assembly.Load("Mork");
@@ -246,11 +247,17 @@ namespace Mork
         private ListBox ingameUIpartLeftlistbox2;
         private Button ingameshowOrdersB;
         private Button ingameshowZonesB;
+        private Button ingameshowBuildingsB;
 
         private Window orderssubmenu;
         private Button digorder;
         private Button cutorder;
         private Label orderslabel;
+
+        private Window buildinsgwindow;
+        private Button[] buildingsbuttons;
+        private ScrollBar buildingssb;
+        private int lastvalue;
 
         private Window zonessubmenu;
 
@@ -556,6 +563,17 @@ namespace Mork
             ingameshowZonesB.Parent = ingameUIpartLeft;
             ingameshowZonesB.Click += new TomShane.Neoforce.Controls.EventHandler(ingameshowZonesB_Click);
 
+            ingameshowBuildingsB = new Button(Manager);
+            ingameshowBuildingsB.Init();
+            ingameshowBuildingsB.Text = "Постройки (Z)";
+            ingameshowBuildingsB.Width = resx / 5 - 20;
+            ingameshowBuildingsB.Height = 25;
+            ingameshowBuildingsB.Left = (20) / 2;
+            ingameshowBuildingsB.Top = 70;
+            ingameshowBuildingsB.Anchor = Anchors.Bottom;
+            ingameshowBuildingsB.Parent = ingameUIpartLeft;
+            ingameshowBuildingsB.Click += new TomShane.Neoforce.Controls.EventHandler(ingameshowBuildingsB_Click);
+
             ingameUIpartLeftlistbox = new ListBox(Manager);
             ingameUIpartLeftlistbox.Init();
             ingameUIpartLeftlistbox.Text = "";
@@ -622,6 +640,49 @@ namespace Mork
             Manager.Add(orderssubmenu);
             #endregion
 
+            #region Buildings window
+            buildinsgwindow = new Window(Manager) { BackColor = Color.Black };
+            buildinsgwindow.Init();
+            buildinsgwindow.Text = "";
+            buildinsgwindow.SetPosition(20, 20);
+            buildinsgwindow.Width = 42*6 + 20;
+            buildinsgwindow.Height = 300;
+            buildinsgwindow.Visible = false;
+            buildinsgwindow.Resizable = false;
+
+            buildingssb = new ScrollBar(Manager, Orientation.Vertical);
+            buildingssb.Init();
+            buildingssb.Top = 0;
+            buildingssb.Width = 20;
+            buildingssb.Left = buildinsgwindow.Width - buildingssb.Width - 20;
+            buildingssb.Height = buildinsgwindow.Height - 40;
+            buildingssb.Parent = buildinsgwindow;
+            buildingssb.ValueChanged += new TomShane.Neoforce.Controls.EventHandler(buildingssb_ValueChanged);
+
+            buildingsbuttons = new Button[dbobject.Data.Count];
+            int i = 0;
+            foreach (var dbo in dbobject.Data)
+            {
+                buildingsbuttons[i] = new Button(Manager);
+                buildingsbuttons[i].Init();
+                buildingsbuttons[i].Text = "";
+                buildingsbuttons[i].Width = 40;
+                buildingsbuttons[i].Height = 40;
+                buildingsbuttons[i].Left = i%5*42;
+                buildingsbuttons[i].Top = i/5*42;
+                buildingsbuttons[i].Tag = buildingsbuttons[i].Top;
+                buildingsbuttons[i].Anchor = Anchors.Bottom;
+                buildingsbuttons[i].Parent = buildinsgwindow;
+                buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbo.Value.metatex_n));
+                buildingsbuttons[i].ToolTip = new ToolTip(Manager);
+                buildingsbuttons[i].ToolTip.Text = dbo.Value.I_name + " id " + dbo.Key;
+                buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
+                i++;
+            }
+
+            Manager.Add(buildinsgwindow);
+            #endregion
+
             #region Ingamemesages
             Ingamemesages = new Window(Manager);
             Ingamemesages.Init();
@@ -651,6 +712,25 @@ namespace Mork
 
             Manager.Add(Ingamemesages);
             #endregion
+        }
+
+        void buildingssb_ValueChanged(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            foreach (var button in buildingsbuttons)
+            {
+                button.Top = (int)(button.Tag) - (int)(buildingssb.Value/50f*42f*dbobject.Data.Count/5);
+            }
+            lastvalue = buildingssb.Value;
+        }
+
+        void ingameshowBuildingsB_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            buildinsgwindow.Show();
+        }
+
+        void Buildingsbutton_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            
         }
 
         void cutorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
@@ -932,18 +1012,18 @@ namespace Mork
 
             for (var i = 0; i <= 9; i++)
             {
-                Main.lheroes.n.Add(new LocalHero(){position = new Vector3(20,20,0)});
+                Main.lheroes.n.Add(new LocalHero(){pos = new Vector3(20,20,0)});
                 var temp = Main.lheroes.n[Main.lheroes.n.Count - 1];
                 var k = 0;
-                temp.position = new Vector3(temp.position.X + rnd.Next(0, 6) - 3, temp.position.Y + rnd.Next(0, 6) - 3, k);
+                temp.pos = new Vector3(temp.pos.X + rnd.Next(0, 6) - 3, temp.pos.Y + rnd.Next(0, 6) - 3, k);
                 for (k = 0; k <= MMap.mz - 1; k++)
                 {
-                    if (MMap.GoodVector3(temp.position.X, temp.position.Y, k) && Main.mmap.n[(int)temp.position.X, (int)temp.position.Y, k].blockID == 0) continue;
+                    if (MMap.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.mmap.n[(int)temp.pos.X, (int)temp.pos.Y, k].blockID == 0) continue;
                     k--;
                     goto here;
                 }
             here: ;
-            temp.position = new Vector3(temp.position.X, temp.position.Y, k);
+            temp.pos = new Vector3(temp.pos.X, temp.pos.Y, k);
             }
         }
         
@@ -1365,7 +1445,7 @@ namespace Mork
                             for (int m = (int) ramka_3.Z; m <= ramka_2.Z; m++)
                             {
                                 if (MMap.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
-                                    playerorders.n.Add(new DestroyOrder {destination = new Vector3(i, j, m)});
+                                    playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, m)});
                             }
                     break;
                 case LClickAction.Dig:
@@ -1375,7 +1455,7 @@ namespace Mork
                         {
                             if (MMap.GoodVector3(i, j, (int) ramka_2.Z) &&
                                 dbobject.Data[mmap.n[i, j, (int) ramka_2.Z].blockID].is_rock)
-                                playerorders.n.Add(new DestroyOrder {destination = new Vector3(i, j, ramka_2.Z)});
+                                playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, ramka_2.Z)});
                         }
                     break;
             }
