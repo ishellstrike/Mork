@@ -19,9 +19,9 @@ namespace Mork.Local_Map.Dynamic
 
         public void MoveUnit(GameTime gt)
         {
-            Vector3 temp = new Vector3();
             if (patch.Count > 0)
             {
+                Vector3 temp = new Vector3();
                 temp = patch.Peek();/////////
 
                 if (position.X > temp.X) position.X -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;

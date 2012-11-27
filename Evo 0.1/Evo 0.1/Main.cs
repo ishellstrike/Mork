@@ -1248,110 +1248,133 @@ namespace Mork
                 midscreen.X = Convert.ToInt16(((resx/2 - camera.X)/2 + (resy/2 - camera.Y)/1)/20) - 1;
                 midscreen.Y = Convert.ToInt16(-((resx/2 - camera.X)/2 - (resy/2 - camera.Y)/1)/20);
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Down) || Keyboard.GetState().IsKeyDown(Keys.S))
-                {
-                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y -= (float)(400*gt.ElapsedGameTime.TotalSeconds);
-                    else camera.Y -= (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Keys.Up) || Keyboard.GetState().IsKeyDown(Keys.W))
-                {
-                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.Y += (float)(400 * gt.ElapsedGameTime.TotalSeconds);
-                    else camera.Y += (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Keys.Left) || Keyboard.GetState().IsKeyDown(Keys.A))
-                {
-                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X += (float)(400 * gt.ElapsedGameTime.TotalSeconds);
-                    else camera.X += (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D))
-                {
-                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
-                        Keyboard.GetState().IsKeyDown(Keys.RightShift) == false) camera.X -= (float)(400 * gt.ElapsedGameTime.TotalSeconds);
-                    else camera.X -= (float)(1000 * gt.ElapsedGameTime.TotalSeconds);
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Keys.N))
-                {
-                    for (var i = 0; i <= MMap.mx - 1; i++)
-                        for (var j = 0; j <= MMap.my - 1; j++)
-                            for (var k = 0; k <= MMap.mz - 1; k++)
-                            {
-                                Main.mmap.n[i, j, k].explored = true;
-                            }
-                }
-
-                if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                {
-                    space = true;
-                }
-                if (space && Keyboard.GetState().IsKeyDown(Keys.Space) == false)
-                {
-                    space = false;
-                    PAUSE = !PAUSE;
-                }
+                KeyboardUpdate(gt);
 
                 if (Mouse.GetState().RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
 
 
                 if (click_R)
                 {
-                    var ramka_3 = new Vector3();
-                    ramka_2.X = Math.Max(Selector.X, ramka_1.X);
-                    ramka_2.Y = Math.Max(Selector.Y, ramka_1.Y);
-                    ramka_2.Z = Math.Max(Selector.Z, ramka_1.Z);
-
-                    ramka_3 = new Vector3(Math.Min(Selector.X, ramka_1.X), Math.Min(Selector.Y, ramka_1.Y),
-                                      Math.Min(Selector.Z, ramka_1.Z));
-
-                    switch (lclickaction)
-                    {
-                        case LClickAction.Crop:
-                            for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                                for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                                    for (int m = (int)ramka_3.Z; m <= ramka_2.Z; m++)
-                                    {
-                                        if (MMap.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
-                                            playerorders.n.Add(new DestroyOrder{destination = new Vector3(i, j, m)});
-                                    }
-                            break;
-                        case LClickAction.Dig:
-                            for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                                for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                                //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                                {
-                                    if (MMap.GoodVector3(i, j, (int)ramka_2.Z) &&
-                                        dbobject.Data[mmap.n[i, j, (int)ramka_2.Z].blockID].is_rock)
-                                        playerorders.n.Add(new DestroyOrder { destination = new Vector3(i, j, ramka_2.Z) });
-                                }
-                            break;
-                    }
-
-                    ramka_1.X = -1;
+                    Ramka();
                 }
 
-                if (!PAUSE && (asynccorear == null || asynccorear.IsCompleted))
+                if (!PAUSE)
                 {
                     WorldLife.WorldTick(ref mmap);
 
-                    asynccorear = asynccore.BeginInvoke(gt, null, null);
-                }
+                    playerorders.OrdersUpdate(gt, lheroes);
+                    lheroes.Update(gt);
+                    lunits.Update(gt);
 
-                playerorders.OrdersUpdate(lheroes);
+                    //asynccorear = asynccore.BeginInvoke(gt, null, null);
+                }
 
                 ingameUIpartLeftlistbox.Items.Clear();
                 ingameUIpartLeftlistbox.Items.AddRange(mmap.GetMapTagsInText());
+
+                if (MMap.GoodVector3(Selector))
+                {
+                    ingameUIpartLeftlistbox2.Items.Add("hp = " +
+                                                       mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].
+                                                           health);
+                }
 
                 ingameUIpartLeftlistbox2.Items.Clear();
                 if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(mmap.GetNodeTagsInText(Selector));
 
                 ingameUIpartLeftlistbox2.Refresh();
             }
+        }
+
+        private void KeyboardUpdate(GameTime gt)
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Down) || Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
+                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
+                    camera.Y -= (float) (400*gt.ElapsedGameTime.TotalSeconds);
+                else camera.Y -= (float) (1000*gt.ElapsedGameTime.TotalSeconds);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up) || Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
+                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
+                    camera.Y += (float) (400*gt.ElapsedGameTime.TotalSeconds);
+                else camera.Y += (float) (1000*gt.ElapsedGameTime.TotalSeconds);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left) || Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
+                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
+                    camera.X += (float) (400*gt.ElapsedGameTime.TotalSeconds);
+                else camera.X += (float) (1000*gt.ElapsedGameTime.TotalSeconds);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
+                    Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
+                    camera.X -= (float) (400*gt.ElapsedGameTime.TotalSeconds);
+                else camera.X -= (float) (1000*gt.ElapsedGameTime.TotalSeconds);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.N))
+            {
+                for (var i = 0; i <= MMap.mx - 1; i++)
+                    for (var j = 0; j <= MMap.my - 1; j++)
+                        for (var k = 0; k <= MMap.mz - 1; k++)
+                        {
+                            Main.mmap.n[i, j, k].explored = true;
+                        }
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                space = true;
+            }
+            if (space && Keyboard.GetState().IsKeyDown(Keys.Space) == false)
+            {
+                space = false;
+                PAUSE = !PAUSE;
+            }
+        }
+
+        private static void Ramka()
+        {
+            var ramka_3 = new Vector3();
+            ramka_2.X = Math.Max(Selector.X, ramka_1.X);
+            ramka_2.Y = Math.Max(Selector.Y, ramka_1.Y);
+            ramka_2.Z = Math.Max(Selector.Z, ramka_1.Z);
+
+            ramka_3 = new Vector3(Math.Min(Selector.X, ramka_1.X), Math.Min(Selector.Y, ramka_1.Y),
+                                  Math.Min(Selector.Z, ramka_1.Z));
+
+            switch (lclickaction)
+            {
+                case LClickAction.Crop:
+                    for (int i = (int) ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int) ramka_3.Y; j <= ramka_2.Y; j++)
+                            for (int m = (int) ramka_3.Z; m <= ramka_2.Z; m++)
+                            {
+                                if (MMap.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
+                                    playerorders.n.Add(new DestroyOrder {destination = new Vector3(i, j, m)});
+                            }
+                    break;
+                case LClickAction.Dig:
+                    for (int i = (int) ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int) ramka_3.Y; j <= ramka_2.Y; j++)
+                            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            if (MMap.GoodVector3(i, j, (int) ramka_2.Z) &&
+                                dbobject.Data[mmap.n[i, j, (int) ramka_2.Z].blockID].is_rock)
+                                playerorders.n.Add(new DestroyOrder {destination = new Vector3(i, j, ramka_2.Z)});
+                        }
+                    break;
+            }
+
+            ramka_1.X = -1;
         }
 
         private static void AsyncCore(GameTime gt)

@@ -862,8 +862,9 @@ namespace Mork.Local_Map
         {
             //if (GoodXY(X, Y) && Main.mmap.n[X, Y].floar != FloarID.Sandwall && Main.mmap.n[X, Y].explored) return true;
             //return false;
-
-            if (GoodVector3(X, Y, Z) && Main.dbobject.Data[Main.mmap.n[X, Y, Z+1].blockID].createfloor && Main.mmap.n[X, Y, Z].explored && Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable) return true;
+            if (GoodVector3(X, Y, Z) && Main.dbobject.Data[Main.mmap.n[X, Y, Z + 1].blockID].createfloor &&
+                    Main.mmap.n[X, Y, Z].explored && Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable)
+                    return true;
             return false;
         }
 

@@ -34,6 +34,6 @@ namespace Mork.Local_Map
 
         public bool explored = true;
 
-        public byte health = 10;
+        public float health = 10;
     }
 }
