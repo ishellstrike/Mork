@@ -30,10 +30,10 @@ namespace Mork
             {
                 _elapsedTime += gameTime.ElapsedGameTime;
 
-                if (_elapsedTime > TimeSpan.FromMilliseconds(100))
+                if (_elapsedTime > TimeSpan.FromMilliseconds(123))
                 {
-                    _elapsedTime -= TimeSpan.FromMilliseconds(100);
-                    _frameRate = _frameCounter*10;
+                    _elapsedTime -= TimeSpan.FromMilliseconds(123);
+                    _frameRate = (int)(_frameCounter*8.13008);
 
                     graph[curent] = _frameRate;
                     curent++;

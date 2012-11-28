@@ -11,7 +11,7 @@ namespace Mork
 {
     public partial class Main
     {
-        private static void DrawGMapGenRects()
+        private static void DrawGMapGenRects(GameTime gameTime)
         {
             for (int i = 0; i <= GMap.size - 14; i += 13)
                 for (int j = 0; j <= GMap.size - 14; j += 13)
@@ -72,15 +72,15 @@ namespace Mork
             }
         }
 
-        private static void InGameMessageDraw()
+        private static void InGameMessageDraw(GameTime gameTime)
         {
             spriteBatch.DrawString(Font1, _messagestring, new Vector2(50, 50), Color.White);
         }
 
-        private static void MainMenuDraw()
+        private static void MainMenuDraw(GameTime gt)
         {
-            _titleAnimation += _titlePhase;
-            if (_titleAnimation >= 255 || _titleAnimation <= 0) _titlePhase *= -1;
+            _titleAnimation += (float)(_titlePhase*gt.ElapsedGameTime.TotalSeconds);
+            if (_titleAnimation >= 1 || _titleAnimation <= 0) _titlePhase *= -1;
             spriteBatch.Draw(interface_tex[15], new Vector2(470, 20),
                              new Color(255, _titleAnimation, _titleAnimation));
         }
@@ -188,14 +188,13 @@ namespace Mork
             {
                 float x_temp2 = ToIsometricX((int) Selector.X, (int) Selector.Y);
                 float y_temp2 = ToIsometricY((int) Selector.X, (int) Selector.Y) - 20;
+                Color col = MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50);
 
-                spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2), null,
-                                 MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
-                                     1 - (float)(Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
+                spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2), null, col, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
+                                     1 - (Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
                 for (int sel = 1; sel < drawed[(int) Selector.X, (int) Selector.Y] - Selector.Z; sel++)
-                    spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2 + sel*20), null,
-                                     MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50), 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
-                                     1 - (float)(Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
+                    spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2 + sel*20), null, col, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
+                                     1 - (Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
             }
         }
 
@@ -204,9 +203,7 @@ namespace Mork
             return new Rectangle((n%10)*40, (n/10)*40, 40, 40);
         }
 
-        private static void DrawAllFloarCreators(Vector3 ramka_3, float x_temp2, float y_temp2, int[,] drawed, int i,
-                                                 int j,
-                                                 bool no_condition)
+        private static void DrawAllFloarCreators(Vector3 ramka_3, float x_temp2, float y_temp2, int[,] drawed, int i, int j, bool no_condition)
         {
             bool inramka = false;
 
@@ -246,6 +243,19 @@ namespace Mork
                     inramka = true;
                 }
 
+                if ((int)Selector.X == i && (int)Selector.Y == j & (int)Selector.Z == drawed[i, j])
+                {
+                    if (MMap.IsWalkable(Selector))
+                    {
+                        rr = 50;
+                        bb = 50;
+                    }
+                    else
+                    {
+                        gg = 50;
+                        bb = 50;
+                    }
+                }
 
                 if (no_condition || mmap.n[i, j, drawed[i, j]].explored && (rr != 0 || gg != 0 || bb != 0))
                 {

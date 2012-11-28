@@ -140,9 +140,6 @@
     <Reference Include="TomShane.Neoforce.Controls">
       <HintPath>.\TomShane.Neoforce.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="TomShane.Neoforce.Importers">
-      <HintPath>.\TomShane.Neoforce.Importers.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bad Database\Material\DBMaterial.cs" />
@@ -155,6 +152,9 @@
     <Compile Include="Graphics\GameDrawes.cs" />
     <Compile Include="Graphics\LineBatch.cs" />
     <Compile Include="LoadContent.cs" />
+    <Compile Include="Local Map\Dynamic\Local Items\ItemStorageSystem.cs" />
+    <Compile Include="Local Map\Dynamic\Local Items\Local Item.cs" />
+    <Compile Include="Local Map\Dynamic\Local Items\Local Items.cs" />
     <Compile Include="Local Map\Dynamic\PlayerOrders\PlayerOrders.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\BuildOrder.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\DestroyOrder.cs" />

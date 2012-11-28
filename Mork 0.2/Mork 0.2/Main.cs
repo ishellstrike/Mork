@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
 using Mork.Local_Map;
 using Mork.Local_Map.Dynamic.Actions;
+using Mork.Local_Map.Dynamic.Local_Items;
 using Mork.Local_Map.Dynamic.PlayerOrders;
 using Mork.Local_Map.Dynamic.Units;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
@@ -124,6 +125,8 @@ namespace Mork
         //public static Stores buildings;
         public static GMap gmap;
         public static PlayerOrders playerorders = new PlayerOrders();
+        public static LocalItems localitems = new LocalItems();
+        public static ItemStorageSystem iss = new ItemStorageSystem();
 
         public static Gmapreshim gmapreshim = Gmapreshim.Normal;
 
@@ -144,7 +147,7 @@ namespace Mork
         private readonly GraphicsDeviceManager graphics;
         public static LineBatch lineBatch;
 
-        public static Action DrawProc;
+        public static Action<GameTime> DrawProc;
         public static Action CalcProc;
 
         public static Vector2 mousepos;
@@ -160,7 +163,7 @@ namespace Mork
         private int _fpsN;
         private TimeSpan _fpsTime;
 
-        private static int _titleAnimation = 1;
+        private static float _titleAnimation = 1;
         private static int _titlePhase = -1;
         private static int _wheellast;
         private static Vector3 ramka_1 = new Vector3(-1, 0, 0);
@@ -1176,7 +1179,7 @@ namespace Mork
 
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
-            DrawProc();
+            DrawProc(gameTime);
 
             _fpsCol = Color.Lerp(Color.Lime, Color.Red, 1 - ((_fpsCur - 30)/30.0f));
 
@@ -1280,7 +1283,7 @@ namespace Mork
 
         #region Draws
 
-        private static void GameDraw()
+        private static void GameDraw(GameTime gameTime)
         {
             BasicAllDraw();
 
