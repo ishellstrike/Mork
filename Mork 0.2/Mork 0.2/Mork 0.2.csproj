@@ -189,7 +189,7 @@
     <Content Include="MORK.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Evo 0.1Content\Mork 0.2Content.contentproj">
+    <ProjectReference Include="..\Mork 0.2Content\Mork 0.2Content.contentproj">
       <Name>Mork 0.2Content %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
       <Project>{4A29435B-DAC3-4411-99E8-1C55218B5A83}</Project>

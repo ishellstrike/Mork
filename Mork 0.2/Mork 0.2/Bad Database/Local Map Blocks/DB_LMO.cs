@@ -73,7 +73,7 @@ namespace Mork
                          });
 
             Data.Add(11,
-                     new LMO(1, false, "габбро", "габбро", "габбро",
+                     new LMO(31, false, "габбро", "габбро", "габбро",
                                     "из габбро")
                          {
                              createfloor = true,
@@ -83,7 +83,7 @@ namespace Mork
                          });
 
             Data.Add(12,
-                     new LMO(5, false, "темный гранит",
+                     new LMO(31, false, "темный гранит",
                                     "темного гранита", "темным гранитом", "из темного гранита")
                          {
                              createfloor = true,
@@ -93,7 +93,7 @@ namespace Mork
                          });
 
             Data.Add(13,
-                     new LMO(6, false, "зеленый гранит",
+                     new LMO(29, false, "зеленый гранит",
                                     "зеленого гранита", "зеленым гранитом", "из зеленого гранита")
                          {
                              createfloor = true,
@@ -103,7 +103,7 @@ namespace Mork
                          });
 
             Data.Add(14,
-                     new LMO(4, false, "базальт", "дерн", "дерн",
+                     new LMO(28, false, "базальт", "дерн", "дерн",
                                     "дерн")
                          {
                              createfloor = true,
@@ -113,7 +113,7 @@ namespace Mork
                          });
 
             Data.Add(15,
-                     new LMO(6, false, "теплый базальт", "дерн",
+                     new LMO(25, false, "теплый базальт", "дерн",
                                     "дерн", "дерн")
                          {
                              createfloor = true,
@@ -123,7 +123,7 @@ namespace Mork
                          });
 
             Data.Add(16,
-                     new LMO(3, false, "гор€чий базальт", "дерн",
+                     new LMO(24, false, "гор€чий базальт", "дерн",
                                     "дерн", "дерн")
                          {
                              createfloor = true,
@@ -133,7 +133,7 @@ namespace Mork
                          });
 
             Data.Add(17,
-                     new LMO(6, false, "раскаленный базальт",
+                     new LMO(23, false, "раскаленный базальт",
                                     "дерн", "дерн", "дерн")
                          {
                              createfloor = true,
@@ -143,13 +143,13 @@ namespace Mork
                          });
 
             Data.Add(18,
-                     new LMO(7, false, "магма", "дерн", "дерн", "дерн")
+                     new LMO(22, false, "магма", "дерн", "дерн", "дерн")
                          {
                              createfloor = true,
                          });
 
             Data.Add(19,
-                     new LMO(8, false, "риолит", "дерн", "дерн",
+                     new LMO(27, false, "риолит", "дерн", "дерн",
                                     "дерн")
                          {
                              createfloor = true,
@@ -365,7 +365,7 @@ namespace Mork
             }
 
             Data.Add(800,
-                     new LMO(2, false, "зеленый турмалин", "", "", ""));
+                     new LMO(24, false, "зеленый турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
 
@@ -374,7 +374,7 @@ namespace Mork
 
 
             Data.Add(801,
-                     new LMO(7, false, "синий турмалин", "", "", ""));
+                     new LMO(24, false, "синий турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
 
@@ -382,7 +382,7 @@ namespace Mork
             }
 
             Data.Add(802,
-                     new LMO(4, false, "красный турмалин", "", "", ""));
+                     new LMO(24, false, "красный турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
 
@@ -390,7 +390,7 @@ namespace Mork
             }
 
             Data.Add(803,
-                     new LMO(3, false, "прозрачный турмалин", "", "", ""));
+                     new LMO(24, false, "прозрачный турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
 
@@ -398,7 +398,7 @@ namespace Mork
             }
 
             Data.Add(804,
-                     new LMO(7, false, "черный турмалин", "", "", ""));
+                     new LMO(24, false, "черный турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
 
@@ -406,7 +406,7 @@ namespace Mork
             }
 
             Data.Add(805,
-                     new LMO(4, false, "желтый турмалин", "", "", ""));
+                     new LMO(24, false, "желтый турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
 
@@ -414,14 +414,14 @@ namespace Mork
             }
 
             Data.Add(806,
-                     new LMO(3, false, "коричневый турмалин", "", "", ""));
+                     new LMO(24, false, "коричневый турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
 
                 Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
-            Data.Add(807, new LMO(6, false, "мрамор", "", "", ""));
+            Data.Add(807, new LMO(30, false, "мрамор", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
                 Data.ElementAt(Data.Count - 1).Value.is_rock = true;

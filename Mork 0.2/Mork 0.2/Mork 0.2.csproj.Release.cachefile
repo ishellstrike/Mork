@@ -1,3 +1,5 @@
+Content\Textures\SpriteFont1.xnb
+Content\Textures\SpriteFont2.xnb
 Content\Textures\Cur2.xnb
 Content\Textures\transparent_pixel.xnb
 Content\Textures\Units\human1.xnb
@@ -33,8 +35,6 @@ Content\Textures\Objects\OnStore\stone4.xnb
 Content\Textures\Objects\OnStore\stone5.xnb
 Content\Textures\Interface\Saving.xnb
 Content\Textures\Interface\Building_41x28_16fr.xnb
-Content\Textures\SpriteFont1.xnb
-Content\Textures\SpriteFont2.xnb
 Content\Textures\Objects\Blocks\Blocks.xnb
 Content\Skins\Default.skin
 Content\Skins\Extended.skin

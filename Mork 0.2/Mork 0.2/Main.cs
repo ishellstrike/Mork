@@ -665,7 +665,7 @@ namespace Mork
             {
                 buildingsbuttons[i] = new Button(Manager);
                 buildingsbuttons[i].Init();
-                buildingsbuttons[i].Text = "";
+                buildingsbuttons[i].Text = dbo.Value.I_name;
                 buildingsbuttons[i].Width = 40;
                 buildingsbuttons[i].Height = 40;
                 buildingsbuttons[i].Left = i%5*42;
