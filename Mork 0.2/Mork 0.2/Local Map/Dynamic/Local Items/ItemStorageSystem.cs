@@ -7,6 +7,6 @@ namespace Mork.Local_Map.Dynamic.Local_Items
 {
     public class ItemStorageSystem
     {
-
+        public List<LocalItem> n = new List<LocalItem>();
     }
 }

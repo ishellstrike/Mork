@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Mork.Local_Map.Dynamic.Local_Items;
 
 namespace Mork.Local_Map
 {
@@ -852,37 +853,12 @@ namespace Mork.Local_Map
 
         public static bool IsWalkable(Vector3 loc)
         {
-            //if (GoodXY(loc) && Main.mmap.n[loc.X, loc.Y].floar != FloarID.Sandwall && Main.mmap.n[loc.X, loc.Y].explored) return true;
-            //return false;
+            return Main.dbobject.Data[Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z].blockID].walkable;
+        }
 
-            if (GoodVector3(loc) && Main.dbobject.Data[Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z + 1].blockID].createfloor && Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z].explored && Main.dbobject.Data[Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z].blockID].walkable) return true;
-            return false;
-        } 
         public static bool IsWalkable(int X, int Y, int Z)
         {
-            //if (GoodXY(X, Y) && Main.mmap.n[X, Y].floar != FloarID.Sandwall && Main.mmap.n[X, Y].explored) return true;
-            //return false;
-            if (GoodVector3(X, Y, Z) && Main.dbobject.Data[Main.mmap.n[X, Y, Z + 1].blockID].createfloor &&
-                    Main.mmap.n[X, Y, Z].explored && Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable)
-                    return true;
-            return false;
-        }
-
-        public static bool IsWalkable_noex(Vector3 loc)
-        {
-            //if (GoodXY(loc) && Main.mmap.n[loc.X, loc.Y].floar != FloarID.Sandwall) return true;
-            //return false;
-
-            if (GoodVector3(loc) && Main.dbobject.Data[Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z + 1].blockID].createfloor && Main.dbobject.Data[Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z].blockID].walkable) return true;
-            return false;
-        }
-        public static bool IsWalkable_noex(int X, int Y, int Z)
-        {
-            //if (GoodXY(X, Y) && Main.mmap.n[X, Y].floar != FloarID.Sandwall) return true;
-            //return false;
-
-            if (GoodVector3(X, Y, Z) && Main.dbobject.Data[Main.mmap.n[X, Y, Z+1].blockID].createfloor && Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable) return true;
-            return false;
+            return Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable;
         }
 
         public static bool InScreen(Vector3 loc)
@@ -989,7 +965,7 @@ namespace Mork.Local_Map
                     }
 
                     // via z-1
-                    if (temp.Z > 0)
+                    if (temp.Z >= 1)
                     {
                         if (temp.X != mx - 1 && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1))
                         {
@@ -1133,6 +1109,31 @@ namespace Mork.Local_Map
                 return new Stack<Vector3>();
 
             return revers_q;
+        }
+
+        public void KillBlock(Vector3 p)
+        {
+            KillBlock((int) p.X, (int) p.Y, (int) p.Z);
+        }
+
+        public void KillBlock(int x, int y, int z)
+        {
+            Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num, id = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath, pos = new Vector3(x,y,z)});
+
+            n[x, y, z].blockID = 0;
+            n[x, y, z].health = 10;
+
+            for (var i = -1; i <= 1; i++)
+                for (var j = -1; j <= 1; j++)
+                {
+                    if (GoodVector3(x + i, y + j, z))
+                        n[x + i, y + j, z].explored = true;
+                }
+
+            if (GoodVector3(x, y, z + 1))
+                n[x, y, z + 1].explored = true;
+
+            WorldLife.SubterrainPersonaly(new Vector3(x,y,z), ref Main.mmap);
         }
     }
 }

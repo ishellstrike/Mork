@@ -5,16 +5,11 @@ namespace Mork
         public int metatex_n;
 
         public bool walkable = true;
-        public bool is_tree;
-        public bool is_rock;
         public bool createfloor;
+        public bool placeble = true;
 
-        public OnStoreID dropafterdeath = OnStoreID.Nothing;
+        public int dropafterdeath;
         public byte dropafterdeath_num = 1;
-
-        public MaterialID base_material = MaterialID.Basic;
-
-        public bool using_material = true;
 
         public string I_name = "";
         public string R_name = "";

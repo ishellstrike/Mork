@@ -131,8 +131,8 @@ namespace Mork
         public static Gmapreshim gmapreshim = Gmapreshim.Normal;
 
         public static Vector3 camera = new Vector3(0, 0, 0);
-        public static Vector3 Selector = new Vector3();
-        public static Vector3 midscreen = new Vector3();
+        public static Vector3 Selector;
+        public static Vector3 midscreen;
 
         public static bool buttonhelper_L;
         public static bool buttonhelper_R;
@@ -152,11 +152,10 @@ namespace Mork
 
         public static Vector2 mousepos;
         public static SpriteFont Font1, Font2;   
-        private static Vector3 ramka_2 = new Vector3();
+        private static Vector3 ramka_2;
         public Vector2 MousePos;
         private static bool PAUSE;
         public float SavingDeg;
-        private Texture2D _curTex; // стандартный курсор
 
         private Color _fpsCol;
         private int _fpsCur;
@@ -171,7 +170,7 @@ namespace Mork
         public bool space, space_helper;
 
         private int tick_of_5;
-        private Vector3 vcalk_now = new Vector3(), vcalk_pre = new Vector3();
+        private Vector3 vcalk_now, vcalk_pre;
 
 
         private const int Textlogmax = 10;
@@ -1357,6 +1356,7 @@ namespace Mork
 
 
                 ingameUIpartLeftlistbox2.Items.Clear();
+                
 
                 if (MMap.GoodVector3(Selector))
                 {
@@ -1442,22 +1442,12 @@ namespace Mork
 
             switch (lclickaction)
             {
-                case LClickAction.Crop:
-                    for (int i = (int) ramka_3.X; i <= ramka_2.X; i++)
-                        for (int j = (int) ramka_3.Y; j <= ramka_2.Y; j++)
-                            for (int m = (int) ramka_3.Z; m <= ramka_2.Z; m++)
-                            {
-                                if (MMap.GoodVector3(i, j, m) && dbobject.Data[mmap.n[i, j, m].blockID].is_tree)
-                                    playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, m)});
-                            }
-                    break;
                 case LClickAction.Dig:
                     for (int i = (int) ramka_3.X; i <= ramka_2.X; i++)
                         for (int j = (int) ramka_3.Y; j <= ramka_2.Y; j++)
                             //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
                         {
-                            if (MMap.GoodVector3(i, j, (int) ramka_2.Z) &&
-                                dbobject.Data[mmap.n[i, j, (int) ramka_2.Z].blockID].is_rock)
+                            if (MMap.GoodVector3(i, j, (int) ramka_2.Z))
                                 playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, ramka_2.Z)});
                         }
                     break;

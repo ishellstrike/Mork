@@ -9,5 +9,7 @@ namespace Mork.Local_Map.Dynamic.Local_Items
     public class LocalItem
     {
         public Vector3 pos;
+        public int id;
+        public int count;
     }
 }

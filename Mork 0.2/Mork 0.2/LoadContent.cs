@@ -36,8 +36,6 @@ namespace Mork
             spriteBatch = new SpriteBatch(GraphicsDevice);
             lineBatch = new LineBatch(GraphicsDevice);
 
-            _curTex = Content.Load<Texture2D>(@"Textures\Cur2");
-
             base.LoadContent();
             object_tex = ContentLoad(@"Textures\Objects\Blocks\Blocks");
 

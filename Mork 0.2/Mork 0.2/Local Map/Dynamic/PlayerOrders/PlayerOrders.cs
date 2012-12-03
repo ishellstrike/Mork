@@ -34,28 +34,7 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                             (int) h.current_order.dest.X, (int) h.current_order.dest.Y, (int) h.current_order.dest.Z].
                             health <= 0)
                     {
-                        Main.mmap.n[
-                            (int) h.current_order.dest.X, (int) h.current_order.dest.Y, (int) h.current_order.dest.Z].
-                            blockID = 0;
-                        Main.mmap.n[
-                            (int) h.current_order.dest.X, (int) h.current_order.dest.Y, (int) h.current_order.dest.Z].
-                            health = 10;
-
-                        for (var i = -1; i <= 1; i++)
-                            for (var j = -1; j <= 1; j++)
-                            {
-                                if (MMap.GoodVector3(h.current_order.dest.X + i, h.current_order.dest.Y + j,
-                                                     h.current_order.dest.Z))
-                                    Main.mmap.n[
-                                        (int) h.current_order.dest.X + i, (int) h.current_order.dest.Y + j,
-                                        (int) h.current_order.dest.Z].explored = true;
-                            }
-                        if (MMap.GoodVector3(h.current_order.dest.X, h.current_order.dest.Y, h.current_order.dest.Z + 1))
-                            Main.mmap.n[
-                                (int) h.current_order.dest.X, (int) h.current_order.dest.Y,
-                                (int) h.current_order.dest.Z + 1].explored = true;
-
-                        WorldLife.SubterrainPersonaly(h.current_order.dest, ref Main.mmap);
+                        Main.mmap.KillBlock((int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z);
                     }
                 }
 
@@ -118,8 +97,8 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                            
                             order.unit_owner = h;
                             h.patch = Main.mmap.FindPatch(h.pos, GetNear(order.dest));
-                            order.taken = true;
-                            goto ordertaken;
+                            if (h.patch.Count > 0) order.taken = true;
+                                goto ordertaken;
                         }
                     }
                 }
@@ -135,10 +114,7 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                     MMap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z) ||
                     MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z) ||
                     MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z) ||
-                    MMap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z - 1) ||
-                    MMap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z - 1) ||
-                    MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z - 1) ||
-                    MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1) ||
+                    MMap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z + 1) ||
                     MMap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z - 1));
         }
 
@@ -154,12 +130,10 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
             if (MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y + 1, loc.Z);
             if (MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y - 1, loc.Z);
 
-            if (MMap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X + 1, loc.Y, loc.Z - 1);
-            if (MMap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X - 1, loc.Y, loc.Z - 1);
-            if (MMap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y + 1, loc.Z - 1);
-            if (MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y - 1, loc.Z - 1);
+            if (MMap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z + 1)) return new Vector3(loc.X, loc.Y, loc.Z + 1);
+            if (MMap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y, loc.Z - 1);
 
-            return MMap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z - 1) ? new Vector3(loc.X, loc.Y, loc.Z - 1) : new Vector3();
+            return new Vector3();
         }
     }
 }

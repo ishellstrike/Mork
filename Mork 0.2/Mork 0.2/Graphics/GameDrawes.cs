@@ -119,7 +119,7 @@ namespace Mork
                         if (mmap.n[i, j, drawed[i, j]].blockID != 0) /*&& ground_tex_old[mmap.n[i, j].tex].Height > 20*/
                         {
                             x_temp2 = ToIsometricX(i, j);
-                            y_temp2 = ToIsometricY(i, j) - 40 + 20 +
+                            y_temp2 = ToIsometricY(i, j) - 20 +
                                       (drawed[i, j] - Selector.Z)*20;
 
                             DrawAllFloarCreators(ramka_3, x_temp2, y_temp2, drawed, i, j, false);
@@ -130,56 +130,80 @@ namespace Mork
 
             DrawSelector(drawed);
 
-            string ssss = String.Format("{0} {1}, год {2} эпохи {3}", WorldLife.Day,
-                                        NamesGenerator.MonthNameR(WorldLife.Month), WorldLife.Year, WorldLife.Age);
-            string sss1 = String.Format("{0}:{1}:{2}", WorldLife.Hour, WorldLife.Min.ToString("00"),
-                                        WorldLife.Sec.ToString("00"));
+            DrawLocalItems(drawed);
 
-            if (PAUSE)
+            GameInterface();
+        }
+
+        private static void DrawLocalItems(int[,] drawed)
+        {
+            foreach (var i in localitems.n)
             {
-                spriteBatch.Draw(interface_tex[6], new Vector2(0, 20), Color.Red);
-                spriteBatch.Draw(interface_tex[6], new Vector2(0, 15), Color.DarkRed);
-                for (int i = 0; i <= 10; i++)
+                if (MMap.GoodVector3(i.pos) && i.pos.Z >= drawed[(int)i.pos.X, (int)i.pos.Y] - 1)
                 {
-                    spriteBatch.DrawString(Font2, "PAUSE", new Vector2(i*100, 42), Color.White);
+                    Vector2 pos = ToIsometricFloat(i.pos.X, i.pos.Y);
+                    pos.Y = pos.Y + (i.pos.Z - Selector.Z - 1) * 20 + 1;
+
+                    spriteBatch.Draw(object_tex, new Vector2(pos.X, pos.Y),
+                                     GetTexRectFromN(dbobject.Data[12345].metatex_n), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (i.pos.X + i.pos.Y + 1) / (MMap.mx + MMap.my));
                 }
             }
-            spriteBatch.Draw(interface_tex[6], Vector2.Zero, Color.DarkGray);
-            spriteBatch.Draw(interface_tex[6], new Vector2(0, -5), Color.Black);
+        }
 
-            spriteBatch.Draw(interface_tex[10], new Vector2(1024, 0), Color.DarkGray);
-            spriteBatch.Draw(interface_tex[10], new Vector2(1029, 0), Color.Black);
+        private static void GameInterface()
+        {
+            //string ssss = String.Format("{0} {1}, год {2} эпохи {3}", WorldLife.Day,
+            //                            NamesGenerator.MonthNameR(WorldLife.Month), WorldLife.Year, WorldLife.Age);
+            //string sss1 = String.Format("{0}:{1}:{2}", WorldLife.Hour, WorldLife.Min.ToString("00"),
+            //                            WorldLife.Sec.ToString("00"));
 
-            //spriteBatch.Draw(interface_tex[8], new Vector2(10,5), null, Color.Black, 0f, Vector2.Zero, new Vector2(Font2.MeasureString(ssss).X/100,1), SpriteEffects.None,0);
-            spriteBatch.DrawString(Font2, ssss, new Vector2(10, 5), Color.White);
-            spriteBatch.DrawString(Font2, sss1, new Vector2(10, 17), Color.White);
-            if (MMap.GoodVector3(Selector) && mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].explored)
-            {
-                if (mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing != OnStoreID.Nothing &&
-                    mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing_num > 0)
-                    spriteBatch.DrawString(Font1,
-                                           mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing_num +
-                                           " " +
-                                           dbmaterial.Data[
-                                               mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].
-                                                   storing_material].
-                                               i_name +
-                                           dbonstore.data[
-                                               mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing].
-                                               R_name +
-                                           " " +
-                                           dbonstore.data[
-                                               mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing].
-                                               I_name,
-                                           new Vector2(1052, 40), Color.White);
-                spriteBatch.DrawString(Font1,
-                                       dbmaterial.Data[(MaterialID) mmap.GetNodeTagData(Selector, "material")].i_name +
-                                       " " +
-                                       dbobject.Data[
-                                           mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].blockID].I_name +
-                                       ":" + mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].blockID,
-                                       new Vector2(1052, 60), Color.White);
-            }
+            //if (PAUSE)
+            //{
+            //    spriteBatch.Draw(interface_tex[6], new Vector2(0, 20), Color.Red);
+            //    spriteBatch.Draw(interface_tex[6], new Vector2(0, 15), Color.DarkRed);
+            //    for (int i = 0; i <= 10; i++)
+            //    {
+            //        spriteBatch.DrawString(Font2, "PAUSE", new Vector2(i*100, 42), Color.White);
+            //    }
+            //}
+
+            //spriteBatch.Draw(interface_tex[6], Vector2.Zero, Color.DarkGray);
+            //spriteBatch.Draw(interface_tex[6], new Vector2(0, -5), Color.Black);
+
+            //spriteBatch.Draw(interface_tex[10], new Vector2(1024, 0), Color.DarkGray);
+            //spriteBatch.Draw(interface_tex[10], new Vector2(1029, 0), Color.Black);
+
+            ////spriteBatch.Draw(interface_tex[8], new Vector2(10,5), null, Color.Black, 0f, Vector2.Zero, new Vector2(Font2.MeasureString(ssss).X/100,1), SpriteEffects.None,0);
+            //spriteBatch.DrawString(Font2, ssss, new Vector2(10, 5), Color.White);
+            //spriteBatch.DrawString(Font2, sss1, new Vector2(10, 17), Color.White);
+            //if (MMap.GoodVector3(Selector) && mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].explored)
+            //{
+            //    if (mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing != OnStoreID.Nothing &&
+            //        mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing_num > 0)
+            //        spriteBatch.DrawString(Font1,
+            //                               mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing_num +
+            //                               " " +
+            //                               dbmaterial.Data[
+            //                                   mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].
+            //                                       storing_material].
+            //                                   i_name +
+            //                               dbonstore.data[
+            //                                   mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing].
+            //                                   R_name +
+            //                               " " +
+            //                               dbonstore.data[
+            //                                   mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].Storing].
+            //                                   I_name,
+            //                               new Vector2(1052, 40), Color.White);
+            //    spriteBatch.DrawString(Font1,
+            //                           dbmaterial.Data[(MaterialID) mmap.GetNodeTagData(Selector, "material")].i_name +
+            //                           " " +
+            //                           dbobject.Data[
+            //                               mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].blockID].I_name +
+            //                           ":" + mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].blockID,
+            //                           new Vector2(1052, 60), Color.White);
+
+            //}
         }
 
         private static void DrawSelector(int[,] drawed)
@@ -313,8 +337,7 @@ namespace Mork
         {
             Vector2 ix = ToIsometricFloat(lu.pos.X, lu.pos.Y);
             ix.Y = ix.Y + (lu.pos.Z - Selector.Z - 1)*20 + 1;
-            spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None,
-                             1 - (float) (lu.pos.X + lu.pos.Y)/(MMap.mx + MMap.my));
+            spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (lu.pos.X + lu.pos.Y)/(MMap.mx + MMap.my));
         }
     }
 }

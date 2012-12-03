@@ -3,6 +3,12 @@ using System.Linq;
 
 namespace Mork
 {
+    public enum KnownIDs
+    {
+        error = 666,
+        stoneboulder = 5000,
+    }
+
     public class DB_LMO
     {
         public readonly Dictionary<int, LMO> Data = new Dictionary<int, LMO>();
@@ -16,27 +22,18 @@ namespace Mork
             Data.Add(100,
                      new LMO(3, false, "береза", "березы", "березой", "березовый")
                          {
-                             is_tree = true,
                              basic_hp = 100,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Berezovi
                          });
 
             Data.Add(101,
                      new LMO(4, false, "липа", "липы", "липой", "липовый")
                          {
-                             is_tree = true,
                              basic_hp = 100,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Lipovi
                          });
 
             Data.Add(102,
                      new LMO(5, false, "ясень", "ясеня", "ясенем", "ясеневый")
                          {
-                             is_tree = true,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Yasenivi
                          });
 
             Data.Add(500,
@@ -48,28 +45,24 @@ namespace Mork
                      new LMO(4, false, "дерн", "дерна", "дерном", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true
                          });
 
             Data.Add(401,
                      new LMO(1, false, "дерн", "дерна", "дерном", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true
                          });
 
             Data.Add(402,
                      new LMO(4, false, "дерн", "дерна", "дерном", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true
                          });
 
             Data.Add(10,
                      new LMO(32, false, "почва", "дерн", "дерн", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(11,
@@ -77,9 +70,6 @@ namespace Mork
                                     "из габбро")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.Gabbrovi,
                          });
 
             Data.Add(12,
@@ -87,9 +77,7 @@ namespace Mork
                                     "темного гранита", "темным гранитом", "из темного гранита")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.GGranitovi,
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(13,
@@ -97,9 +85,7 @@ namespace Mork
                                     "зеленого гранита", "зеленым гранитом", "из зеленого гранита")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.GGranitovi
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(14,
@@ -107,9 +93,7 @@ namespace Mork
                                     "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.Basaltovi,
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(15,
@@ -117,9 +101,7 @@ namespace Mork
                                     "дерн", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.Basaltovi,
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(16,
@@ -127,9 +109,7 @@ namespace Mork
                                     "дерн", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.Basaltovi,
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(17,
@@ -137,9 +117,7 @@ namespace Mork
                                     "дерн", "дерн", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.Basaltovi,
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(18,
@@ -153,9 +131,7 @@ namespace Mork
                                     "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.Ryolitovi,
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(20,
@@ -163,9 +139,7 @@ namespace Mork
                                     "дерн", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
-                             dropafterdeath = OnStoreID.StoneBoulder,
-                             base_material = MaterialID.WGranitovi,
+                             dropafterdeath = (int)KnownIDs.stoneboulder
                          });
 
             Data.Add(12345,
@@ -173,7 +147,6 @@ namespace Mork
                                     "бланк")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(22,
@@ -181,7 +154,6 @@ namespace Mork
                                     "бланк")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(23,
@@ -189,7 +161,6 @@ namespace Mork
                                     "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(24,
@@ -197,7 +168,6 @@ namespace Mork
                                     "дерном", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(25,
@@ -205,7 +175,6 @@ namespace Mork
                                     "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(26,
@@ -213,7 +182,6 @@ namespace Mork
                                     "дерном", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(27,
@@ -221,14 +189,12 @@ namespace Mork
                                     "дерном", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(28,
                      new LMO(6, false, "ковыль", "дерна", "дерном", "дерн")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(1000,
@@ -236,7 +202,6 @@ namespace Mork
             {
 
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-                Data.ElementAt(Data.Count - 1).Value.is_rock = false;
                 Data.ElementAt(Data.Count - 1).Value.walkable = true;
             }
 
@@ -245,131 +210,97 @@ namespace Mork
                      new LMO(6, false, "снег", "снега", "снегом", "снежный")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(31,
                      new LMO(4, false, "снег", "снега", "снегом", "снежный")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(32,
                      new LMO(7, false, "спорыш", "", "", "")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(33,
                      new LMO(4, false, "иван чай", "", "", "")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(34,
                      new LMO(7, false, "клевер", "", "", "")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(35,
                      new LMO(8, false, "зверобой", "", "", "")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(36,
                      new LMO(4, false, "белоголов", "", "", "")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(37,
                      new LMO(33, false, "песок", "", "", "")
                          {
                              createfloor = true,
-                             is_rock = true,
                          });
 
             Data.Add(103,
                      new LMO(5, false, "ель", "липы", "липой", "липовый")
                          {
-                             is_tree = true,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Elovi,
                          });
 
             Data.Add(104,
                      new LMO(3, false, "сосна", "липы", "липой", "липовый")
                          {
-                             is_tree = true,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Sosnovi,
                          });
 
             Data.Add(105,
                      new LMO(4, false, "пихта", "липы", "липой", "липовый")
                          {
-                             is_tree = true,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Pihtovi,
                          });
 
             Data.Add(106,
                      new LMO(1, false, "кедр", "липы", "липой", "липовый")
                          {
-                             is_tree = true,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Kedrovi,
                          });
 
             Data.Add(107,
                      new LMO(7, false, "лиственница", "липы", "липой",
                                     "липовый")
                          {
-                             is_tree = true,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Listvenizevi,
                          });
 
             Data.Add(108,
                      new LMO(3, false, "дуб", "липы", "липой", "липовый")
                          {
-                             is_tree = true,
-                             dropafterdeath = OnStoreID.WoodLog,
-                             base_material = MaterialID.Dubovi,
                          });
 
             Data.Add(109,
                      new LMO(6, false, "бук", "липы", "липой", "липовый"));
             {
-                Data.ElementAt(Data.Count - 1).Value.is_tree = true;
 
-                Data.ElementAt(Data.Count - 1).Value.dropafterdeath = OnStoreID.WoodLog;
-                Data.ElementAt(Data.Count - 1).Value.base_material = MaterialID.Bukovi;
             }
 
             Data.Add(110,
                      new LMO(3, false, "клен", "липы", "липой", "липовый"));
             {
-                Data.ElementAt(Data.Count - 1).Value.is_tree = true;
 
-                Data.ElementAt(Data.Count - 1).Value.dropafterdeath = OnStoreID.WoodLog;
-                Data.ElementAt(Data.Count - 1).Value.base_material = MaterialID.Klenovi;
             }
 
             Data.Add(800,
                      new LMO(24, false, "зеленый турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
 
@@ -377,138 +308,117 @@ namespace Mork
                      new LMO(24, false, "синий турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
             Data.Add(802,
                      new LMO(24, false, "красный турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
             Data.Add(803,
                      new LMO(24, false, "прозрачный турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
             Data.Add(804,
                      new LMO(24, false, "черный турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
             Data.Add(805,
                      new LMO(24, false, "желтый турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
             Data.Add(806,
                      new LMO(24, false, "коричневый турмалин", "", "", ""));
             {
                 Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
             }
 
-            Data.Add(807, new LMO(30, false, "мрамор", "", "", ""));
+            Data.Add(807, new LMO(30, false, "мрамор", "", "", "")
             {
-                Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-                Data.ElementAt(Data.Count - 1).Value.is_rock = true;
-                Data.ElementAt(Data.Count - 1).Value.dropafterdeath = OnStoreID.StoneBoulder;
-                Data.ElementAt(Data.Count - 1).Value.base_material = MaterialID.Mramorni;
-            }
+                createfloor = true,
+                dropafterdeath = (int) KnownIDs.stoneboulder
+            });
 
             Data.Add(808, new LMO(2, false, "галенит", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
-            Data.Add(809, new LMO(3, false, "сфалерит", "", "", ""));
-            Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
-            Data.ElementAt(Data.Count - 1).Value.dropafterdeath = OnStoreID.StoneBoulder;
-            Data.ElementAt(Data.Count - 1).Value.base_material = MaterialID.Sfaleritovi;
+            Data.Add(809, new LMO(3, false, "сфалерит", "", "", "")
+            {
+                createfloor = true,
+                dropafterdeath = (int) KnownIDs.stoneboulder
+            });
 
             Data.Add(810, new LMO(5, false, "серебряная руда", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(811, new LMO(6, false, "руда олова", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(812, new LMO(7, false, "висмутовая руда", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(813, new LMO(5, false, "криолит", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(814, new LMO(4, false, "мятлик", "дерна", "дерном", "дерн"));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(815, new LMO(6, false, "сланец", "дерна", "дерном", "дерн"));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(816, new LMO(3, false, "гнейс", "дерна", "дерном", "дерн"));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(817, new LMO(5, false, "красный циркон", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(818, new LMO(4, false, "прозрачный циркон", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(819, new LMO(7, false, "черный циркон", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(820, new LMO(5, false, "желтый циркон", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
             Data.Add(821, new LMO(6, false, "коричневый циркон", "", "", ""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
 
-            Data.Add(822, new LMO(4, true, "мастерская плотника", "овая", "", ""));
-            Data.ElementAt(Data.Count - 1).Value.createfloor = false;
-            Data.ElementAt(Data.Count - 1).Value.using_material = true;
+            Data.Add(822, new LMO(4, true, "мастерская плотника", "овая", "", "")
+            {
+                createfloor = false,
+            });
 
             Data.Add(888, new LMO(34, true, "вода", "ая", "", ""));
-            Data.ElementAt(Data.Count - 1).Value.createfloor = false;
-            Data.ElementAt(Data.Count - 1).Value.walkable = false;
+            Data.Last().Value.createfloor = false;
+            Data.Last().Value.walkable = false;
 
-            Data.Add(824, new LMO(3, false, "ортоклаз", "", "", ""));
-            Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
-            Data.ElementAt(Data.Count - 1).Value.dropafterdeath = OnStoreID.StoneBoulder;
-            Data.ElementAt(Data.Count - 1).Value.base_material = MaterialID.Ortoclazi;
+            Data.Add(824, new LMO(3, false, "ортоклаз", "", "", "")
+            {
+                createfloor = true,
+                dropafterdeath = (int) KnownIDs.stoneboulder
+            });
 
-            Data.Add(825, new LMO(5, false, "микроклин", "", "", ""));
-            Data.ElementAt(Data.Count - 1).Value.createfloor = true;
-            Data.ElementAt(Data.Count - 1).Value.is_rock = true;
-            Data.ElementAt(Data.Count - 1).Value.dropafterdeath = OnStoreID.StoneBoulder;
-            Data.ElementAt(Data.Count - 1).Value.base_material = MaterialID.Microclini;
+            Data.Add(825, new LMO(5, false, "микроклин", "", "", "")
+            {
+                createfloor = true,
+                dropafterdeath = (int) KnownIDs.stoneboulder
+            });
 
-            Data.Add(666, new LMO(35, false, "ошибка id", "","",""));
+            Data.Add((int)KnownIDs.error, new LMO(35, false, "ошибка id", "","",""));
             Data.ElementAt(Data.Count - 1).Value.createfloor = true;
+
+            Data.Add((int) KnownIDs.stoneboulder, new LMO(36, false, "булыжник", "", "", "")
+            {
+                placeble = false
+            });
         }
     }
 }
