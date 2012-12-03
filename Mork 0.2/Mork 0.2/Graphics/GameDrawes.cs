@@ -337,7 +337,7 @@ namespace Mork
         {
             Vector2 ix = ToIsometricFloat(lu.pos.X, lu.pos.Y);
             ix.Y = ix.Y + (lu.pos.Z - Selector.Z - 1)*20 + 1;
-            spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (lu.pos.X + lu.pos.Y)/(MMap.mx + MMap.my));
+            spriteBatch.Draw(unit_tex[1], ix, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (lu.pos.X + lu.pos.Y + 1)/(MMap.mx + MMap.my));
         }
     }
 }

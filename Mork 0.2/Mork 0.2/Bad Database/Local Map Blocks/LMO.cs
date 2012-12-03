@@ -5,11 +5,11 @@ namespace Mork
         public int metatex_n;
 
         public bool walkable = true;
-        public bool createfloor;
         public bool placeble = true;
 
-        public int dropafterdeath;
+        public int dropafterdeath = 666;
         public byte dropafterdeath_num = 1;
+        public float chanse = 1;
 
         public string I_name = "";
         public string R_name = "";

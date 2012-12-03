@@ -93,7 +93,13 @@ namespace Mork
                     lb.AddLine(new Vector2(10 + index, 100) + offset, new Vector2(10 + index, 100 - a) + offset, col, 1);
                 }
 
-                sb.DrawString(fnt, string.Concat("max = ",max," min = ", min), new Vector2(10,115)+offset, Color.Red);
+                int average = 0;
+                foreach (var i in graph)
+                {
+                    average += i;
+                }
+                average /= graph.Length;
+                sb.DrawString(fnt, string.Concat("average = ", average), new Vector2(10, 115) + offset, Color.Red);
 
                 sb.End();
             }

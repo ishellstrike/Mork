@@ -522,10 +522,10 @@ namespace Mork.Local_Map
             Main.mmap.Generation_FullLayer(15, 2);
             Main.mmap.Generation_FullLayer(14, 18);
 
-            Main.mmap.Generation_BasicLayer(34);
-            Main.mmap.Generation_FullLayer(34, 7);
-            Main.mmap.Generation_FullLayer(34, 1);
-            Main.mmap.Generation_FullLayer(34, 6);
+            Main.mmap.Generation_BasicLayer((int)KnownIDs.Gabro);
+            Main.mmap.Generation_FullLayer((int)KnownIDs.Gabro, 7);
+            Main.mmap.Generation_FullLayer((int)KnownIDs.GabroToGranete, 1);
+            Main.mmap.Generation_FullLayer((int)KnownIDs.GrenFranite, 6);
 
             int[] granite_clust = metamorf_clust;
             int[] granite_jila = { 55, 55 };
@@ -543,8 +543,8 @@ namespace Mork.Local_Map
 
             for (int i = 0; i <= 20; i++ )
             {
-                Main.mmap.Generation_FullLayer(37, 2);
-                Main.mmap.Generation_FullLayer(37, 2);
+                Main.mmap.Generation_FullLayer(824, 2);
+                Main.mmap.Generation_FullLayer(828, 2);
             }
 
 
@@ -858,7 +858,9 @@ namespace Mork.Local_Map
 
         public static bool IsWalkable(int X, int Y, int Z)
         {
-            return Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable;
+            if (GoodVector3(X, Y, Z))
+                return Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable;
+            else return false;
         }
 
         public static bool InScreen(Vector3 loc)
@@ -1118,6 +1120,7 @@ namespace Mork.Local_Map
 
         public void KillBlock(int x, int y, int z)
         {
+            if (Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath != (int) KnownIDs.error)
             Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num, id = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath, pos = new Vector3(x,y,z)});
 
             n[x, y, z].blockID = 0;
