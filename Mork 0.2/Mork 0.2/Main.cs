@@ -1461,7 +1461,7 @@ namespace Mork
                         for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
                         //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
                         {
-                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z))
+                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z+1].blockID != 0)
                                 playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
                         }
                     break;

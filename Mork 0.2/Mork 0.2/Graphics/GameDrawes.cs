@@ -126,6 +126,22 @@ namespace Mork
                         }
                     }
 
+            //if(Selector.Z == camera.Z)
+            //    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+            //        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+
+            //    {
+            //        byte rc = 255;
+            //        byte gc = 255;
+            //        byte bc;
+            //        if (!mmap.n[i, j, drawed[i, j]].explored)
+            //        {
+            //            rc = 100;
+            //            gc = 100;
+            //            bc = 0;
+            //        }
+            //    }
+
             DrawLocalUnits(drawed);
 
             DrawSelector(drawed);
@@ -251,21 +267,6 @@ namespace Mork
                 var gg = tcol.G - aa;
                 var bb = tcol.B - aa;
                 var rr = tcol.R - aa;
-
-                if (buttonhelper_R && i >= ramka_3.X && j >= ramka_3.Y && drawed[i, j] >= ramka_3.Z && i <= ramka_2.X &&
-                    j <= ramka_2.Y && drawed[i, j] <= ramka_2.Z)
-                {
-                    rr = 255;
-                    gg = 255;
-                    bb = 0;
-                    if (!mmap.n[i, j, drawed[i, j]].explored)
-                    {
-                        rr = 100;
-                        gg = 100;
-                        bb = 0;
-                    }
-                    inramka = true;
-                }
 
                 if ((int)Selector.X == i && (int)Selector.Y == j & (int)Selector.Z == drawed[i, j])
                 {

@@ -1135,5 +1135,18 @@ namespace Mork.Local_Map
 
             WorldLife.SubterrainPersonaly(new Vector3(x,y,z), ref Main.mmap);
         }
+
+        public void SetBlock(Vector3 p, int id)
+        {
+            SetBlock((int)p.X, (int)p.Y, (int)p.Z, id);
+        }
+
+        public void SetBlock(int x, int y, int z, int id)
+        {
+            n[x, y, z].blockID = id;
+            n[x, y, z].health = Main.dbobject.Data[id].basic_hp;
+
+            WorldLife.SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
+        }
     }
 }

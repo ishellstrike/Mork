@@ -10,6 +10,7 @@ namespace Mork.Local_Map.Dynamic.Actions
     {
         public Vector3 dest;
         public bool complete;
+        public bool sleep = false;
         public bool taken;
         public LocalUnit unit_owner;
 
