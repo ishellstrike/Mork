@@ -8,9 +8,6 @@ namespace Mork.Local_Map
     [Serializable]////////////////////////////////////////////////////////////////////////
     public class MMap
     {
-        enum Room_ids : byte { Null = 0, Coridor = 60, CoridorWall = 70, RoomDoor = 80, RoomWall = 90, SolidRock = 99 }
-        public enum WAtt : byte { NoWalk_NoSee, NoWalk_See, Walk_NoSee, Walk_See };
-
         Random rnd = new Random();
 
         public static Int32 mx = 128, my = 128, mz = 128;

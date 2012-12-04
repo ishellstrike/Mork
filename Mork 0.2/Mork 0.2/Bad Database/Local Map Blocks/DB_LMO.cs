@@ -3,14 +3,16 @@ using System.Linq;
 
 namespace Mork
 {
-    public enum KnownIDs
+    public static class KnownIDs
     {
-        error = 666,
-        stoneboulder = 5000,
-        Gabro = 11,
+        public const int error = 666;
+        public const int stoneboulder = 5000;
+        public const int Gabro = 11;
+               
+        public const int GabroToGranete = 12;
+        public const int GrenFranite = 13;
 
-        GabroToGranete = 12,
-        GrenFranite = 13,
+        public const int StorageEntrance = 20000;
     }
 
     public class DB_LMO
@@ -378,6 +380,11 @@ namespace Mork
             Data.Add((int) KnownIDs.stoneboulder, new LMO(36, false, "булыжник", "", "", "")
             {
                 placeble = false
+            });
+
+            Data.Add(KnownIDs.StorageEntrance, new LMO(1, false, "сортировочная станция", "", "", "")
+            {
+                placeble = true
             });
         }
     }

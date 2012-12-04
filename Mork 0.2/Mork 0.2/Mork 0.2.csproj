@@ -144,7 +144,6 @@
   <ItemGroup>
     <Compile Include="Bad Database\Material\DBMaterial.cs" />
     <Compile Include="Bad Database\Local Map Blocks\DB_LMO.cs" />
-    <Compile Include="Bad Database\On Store\DBOnStore.cs" />
     <Compile Include="FPSCounter.cs" />
     <Compile Include="Generators\Civilizations.cs" />
     <Compile Include="Global Map\GObj.cs" />
@@ -173,8 +172,6 @@
     <Compile Include="Generators\NamesGenerator.cs" />
     <Compile Include="Local Map\MNode.cs" />
     <Compile Include="Bad Database\Material\Material.cs" />
-    <Compile Include="Bad Database\On Store\OnStoreData.cs" />
-    <Compile Include="Bad Database\On Store\OnStoreID.cs" />
     <Compile Include="Bad Database\Material\MaterialTypeID.cs" />
     <Compile Include="Bad Database\Material\MaterialID.cs" />
     <Compile Include="Bad Database\Local Map Blocks\LMO.cs" />

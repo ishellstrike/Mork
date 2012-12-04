@@ -79,7 +79,6 @@ namespace Mork
 
             dbmaterial = new DBMaterial(); //!!!!
             dbobject = new DB_LMO(); //!!!!
-            dbonstore = new DBOnStore(); //!!!!
             //buildings = new Stores(); //!!!!
             gmap = new GMap(); //!!!!
 

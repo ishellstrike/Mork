@@ -64,7 +64,8 @@ namespace Mork
             Nothing,
             Dig,
             MarkStore,
-            Crop
+            Crop,
+            Build
         }
 
         public enum OnStoreTexes
@@ -107,6 +108,7 @@ namespace Mork
         private static IAsyncResult asynccorear;
 
         public static LClickAction lclickaction = LClickAction.Nothing;
+        public static int buildingselect;
 
         public static MouseState mousestate = new MouseState();
 
@@ -121,7 +123,6 @@ namespace Mork
 
         public static DBMaterial dbmaterial;
         public static DB_LMO dbobject;
-        public static DBOnStore dbonstore;
         //public static Stores buildings;
         public static GMap gmap;
         public static PlayerOrders playerorders = new PlayerOrders();
@@ -672,7 +673,8 @@ namespace Mork
                 buildingsbuttons[i].Height = 40;
                 buildingsbuttons[i].Left = i%5*42;
                 buildingsbuttons[i].Top = i/5*42;
-                buildingsbuttons[i].Tag = buildingsbuttons[i].Top;
+                int[] tg = { buildingsbuttons[i].Top, dbo.Key};
+                buildingsbuttons[i].Tag = tg;
                 buildingsbuttons[i].Anchor = Anchors.Bottom;
                 buildingsbuttons[i].Parent = buildinsgwindow;
                 buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbo.Value.metatex_n));
@@ -720,7 +722,7 @@ namespace Mork
         {
             foreach (var button in buildingsbuttons)
             {
-                button.Top = (int)(button.Tag) - (int)(buildingssb.Value/50f*42f*dbobject.Data.Count/5);
+                button.Top = ((int[])(button.Tag))[0] - (int)(buildingssb.Value/50f*42f*dbobject.Data.Count/5);
             }
             lastvalue = buildingssb.Value;
         }
@@ -728,11 +730,13 @@ namespace Mork
         void ingameshowBuildingsB_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
             buildinsgwindow.Show();
+            orderssubmenu.Close();
+            lclickaction = LClickAction.Build;
         }
 
         void Buildingsbutton_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            
+            buildingselect = ((sender as Button).Tag as int[])[1];
         }
 
         void cutorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
@@ -1449,6 +1453,16 @@ namespace Mork
                         {
                             if (MMap.GoodVector3(i, j, (int) ramka_2.Z))
                                 playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, ramka_2.Z)});
+                        }
+                    break;
+
+                    case LClickAction.Build:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z))
+                                playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
                         }
                     break;
             }
