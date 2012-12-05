@@ -6,7 +6,11 @@ namespace Mork
     public static class KnownIDs
     {
         public const int error = 666;
+
         public const int stoneboulder = 5000;
+        public const int stonebrick = 5001;
+        public const int stonebrickwall = 5002;
+
         public const int Gabro = 11;
                
         public const int GabroToGranete = 12;
@@ -62,42 +66,48 @@ namespace Mork
                      new LMO(31, false, "темный гранит",
                                     "темного гранита", "темным гранитом", "из темного гранита")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add((int)KnownIDs.GrenFranite,
                      new LMO(29, false, "зеленый гранит",
                                     "зеленого гранита", "зеленым гранитом", "из зеленого гранита")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add(14,
                      new LMO(28, false, "базальт", "дерн", "дерн",
                                     "дерн")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add(15,
                      new LMO(25, false, "теплый базальт", "дерн",
                                     "дерн", "дерн")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add(16,
                      new LMO(24, false, "горячий базальт", "дерн",
                                     "дерн", "дерн")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add(17,
                      new LMO(23, false, "раскаленный базальт",
                                     "дерн", "дерн", "дерн")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add(18,
@@ -109,14 +119,16 @@ namespace Mork
                      new LMO(27, false, "риолит", "дерн", "дерн",
                                     "дерн")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add(20,
                      new LMO(30, false, "белый гранит", "дерн",
                                     "дерн", "дерн")
                          {
-                             dropafterdeath = (int)KnownIDs.stoneboulder
+                             dropafterdeath = (int)KnownIDs.stoneboulder,
+                             dropafterdeath_num = 2
                          });
 
             Data.Add(12345,
@@ -304,8 +316,9 @@ namespace Mork
 
             Data.Add(807, new LMO(30, false, "мрамор", "", "", "")
             {
-                
-                dropafterdeath = (int) KnownIDs.stoneboulder
+
+                dropafterdeath = (int)KnownIDs.stoneboulder,
+                dropafterdeath_num = 2
             });
 
             Data.Add(808, new LMO(2, false, "галенит", "", "", ""));
@@ -314,7 +327,8 @@ namespace Mork
             Data.Add(809, new LMO(3, false, "сфалерит", "", "", "")
             {
                 
-                dropafterdeath = (int) KnownIDs.stoneboulder
+                dropafterdeath = (int) KnownIDs.stoneboulder,
+                dropafterdeath_num = 2
             });
 
             Data.Add(810, new LMO(5, false, "серебряная руда", "", "", ""));
@@ -380,6 +394,19 @@ namespace Mork
             Data.Add((int) KnownIDs.stoneboulder, new LMO(36, false, "булыжник", "", "", "")
             {
                 placeble = false
+            });
+
+            Data.Add((int)KnownIDs.stonebrickwall, new LMO(43, false, "каменная кладка", "", "", "")
+            {
+                placeble = true,
+                basic_hp = 1000,
+                dropafterdeath = KnownIDs.stonebrick,
+                dropafterdeath_num = 20
+            });
+
+            Data.Add((int)KnownIDs.stonebrick, new LMO(43, false, "каменный кирпич", "", "", "")
+            {
+                placeble = false,
             });
 
             Data.Add(KnownIDs.StorageEntrance, new LMO(1, false, "сортировочная станция", "", "", "")

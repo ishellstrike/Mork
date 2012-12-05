@@ -63,9 +63,8 @@ namespace Mork
         {
             Nothing,
             Dig,
-            MarkStore,
-            Crop,
-            Build
+            Build,
+            Supply
         }
 
         public enum OnStoreTexes
