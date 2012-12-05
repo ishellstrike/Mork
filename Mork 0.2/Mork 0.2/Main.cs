@@ -66,7 +66,9 @@ namespace Mork
             Dig,
             Build,
             Supply,
-            Cancel
+            Cancel,
+            Collect,
+            MarkStorage
         }
 
         public enum OnStoreTexes
@@ -88,7 +90,7 @@ namespace Mork
         public static IAsyncResult Savear;
 
         public static IAsyncResult Generatear;
-        public static int generate_d_fase;
+        public static float generate_d_fase;
 
         public static Gstate gstate = Gstate.MainMenu;
         private static string _messagestring = " ";
@@ -134,6 +136,7 @@ namespace Mork
         public static PlayerOrders playerorders = new PlayerOrders();
         public static LocalItems localitems = new LocalItems();
         public static ItemStorageSystem iss = new ItemStorageSystem();
+        public static Storages globalstorage = new Storages();
 
         public static Gmapreshim gmapreshim = Gmapreshim.Normal;
 
@@ -262,6 +265,7 @@ namespace Mork
         private Button digorder;
         private Button supplyorder;
         private Button cancelorder;
+        private Button collectorder;
         private Label orderslabel;
 
         private Window buildinsgwindow;
@@ -653,6 +657,17 @@ namespace Mork
             cancelorder.Parent = orderssubmenu;
             cancelorder.Click += new TomShane.Neoforce.Controls.EventHandler(cancelorder_Click);
 
+            collectorder = new Button(Manager);
+            collectorder.Init();
+            collectorder.Text = "Cобрать";
+            collectorder.Width = orderssubmenu.Width - 40;
+            collectorder.Height = 24;
+            collectorder.Left = 20;
+            collectorder.Top = 110;
+            collectorder.Anchor = Anchors.Bottom;
+            collectorder.Parent = orderssubmenu;
+            collectorder.Click += new TomShane.Neoforce.Controls.EventHandler(collectorder_Click);
+
 
             orderslabel = new Label(Manager);
             orderslabel.Left = 5;
@@ -748,6 +763,11 @@ namespace Mork
 
             Manager.Add(Ingamemesages);
             #endregion
+        }
+
+        void collectorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            lclickaction = LClickAction.Collect;
         }
 
         void supplyorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
@@ -1016,6 +1036,8 @@ namespace Mork
 
         private void ToGame()
         {
+            iss.AddItem(KnownIDs.StorageEntrance, 100000);
+
             SetPhase(Main.Gstate.NewGame);
             Action ingamegen = InGameGeneration;
             Generatear = ingamegen.BeginInvoke(null, null);
@@ -1265,16 +1287,16 @@ namespace Mork
             {
                 spriteBatch.Draw(interface_tex[16], new Vector2(60, 40), null, Color.White, SavingDeg,
                                  new Vector2(32, 32), Vector2.One, SpriteEffects.None, 0);
-                SavingDeg += (float) Math.PI/10;
+                SavingDeg += (float) Math.PI/10 * (float)gameTime.ElapsedGameTime.TotalSeconds*50;
                 if (SavingDeg >= Math.PI*2) SavingDeg = 0;
             }
 
             if (Generatear != null && !Generatear.IsCompleted)
             {
-                spriteBatch.Draw(interface_tex[17], new Vector2(130, 40), new Rectangle(generate_d_fase*41, 0, 41, 28),
+                spriteBatch.Draw(interface_tex[17], new Vector2(130, 40), new Rectangle((int)generate_d_fase*41, 0, 41, 28),
                                  Color.White, 0, new Vector2(32, 32), Vector2.One, SpriteEffects.None, 0);
 
-                if (tick_of_5 == 1) generate_d_fase++;
+                generate_d_fase += (float)gameTime.ElapsedGameTime.TotalSeconds*20;
                 if (generate_d_fase > 15) generate_d_fase = 0;
             }
             else generate_d_fase = 0;
@@ -1541,6 +1563,16 @@ namespace Mork
                         }
                     break;
 
+                case LClickAction.Collect:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z))
+                                playerorders.n.Add(new CollectOrder { dest = new Vector3(i, j, ramka_2.Z) });
+                        }
+                    break;
+
                     case LClickAction.Build:
                     for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
                         for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
@@ -1550,6 +1582,7 @@ namespace Mork
                                 playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
                         }
                     break;
+
                     case LClickAction.Supply:
                     for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
                         for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)

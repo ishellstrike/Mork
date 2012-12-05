@@ -16,7 +16,7 @@ namespace Mork.Local_Map.Dynamic
         public Order current_order = new NothingOrder();
         public Order previous_order = new NothingOrder();
 
-        public LocalItems carry;
+        public LocalItem carry = new LocalItem();
 
         public Vector3 pre_pos;
         public TimeSpan iddle_time;

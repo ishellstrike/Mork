@@ -391,15 +391,15 @@ namespace Mork
                 dropafterdeath = (int) KnownIDs.stoneboulder
             });
 
-            Data.Add((int)KnownIDs.error, new LMO(35, false, "ошибка id", "","",""));
+            Data.Add(KnownIDs.error, new LMO(35, false, "ошибка id", "","",""));
         
 
-            Data.Add((int) KnownIDs.stoneboulder, new LMO(36, false, "булыжник", "", "", "")
+            Data.Add(KnownIDs.stoneboulder, new LMO(36, false, "булыжник", "", "", "")
             {
                 placeble = false
             });
 
-            Data.Add((int)KnownIDs.stonebrickwall, new LMO(43, false, "каменная кладка", "", "", "")
+            Data.Add(KnownIDs.stonebrickwall, new LMO(43, false, "каменная кладка", "", "", "")
             {
                 placeble = true,
                 basic_hp = 1000,

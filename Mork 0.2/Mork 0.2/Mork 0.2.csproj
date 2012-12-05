@@ -154,6 +154,7 @@
     <Compile Include="Local Map\Dynamic\Local Items\ItemStorageSystem.cs" />
     <Compile Include="Local Map\Dynamic\Local Items\Local Item.cs" />
     <Compile Include="Local Map\Dynamic\Local Items\Local Items.cs" />
+    <Compile Include="Local Map\Dynamic\Local Items\Storages.cs" />
     <Compile Include="Local Map\Dynamic\PlayerOrders\PlayerOrders.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\BuildOrder.cs" />
     <Compile Include="Local Map\Dynamic\Units\Actions\DestroyOrder.cs" />

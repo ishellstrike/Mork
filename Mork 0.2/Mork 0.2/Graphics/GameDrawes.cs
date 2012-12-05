@@ -164,7 +164,7 @@ namespace Mork
                     pos.Y = pos.Y + (i.pos.Z - Selector.Z - 1) * 20 + 1;
 
                     spriteBatch.Draw(object_tex, new Vector2(pos.X, pos.Y),
-                                     GetTexRectFromN(dbobject.Data[12345].metatex_n), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (i.pos.X + i.pos.Y + 1) / (MMap.mx + MMap.my));
+                                     GetTexRectFromN(dbobject.Data[i.id].metatex_n), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (i.pos.X + i.pos.Y + 1) / (MMap.mx + MMap.my));
                 }
             }
         }

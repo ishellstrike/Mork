@@ -118,6 +118,17 @@ namespace Mork.Local_Map
             s.Add("DBName = " + Main.dbobject.Data[n[x, y, z].blockID].I_name);
             foreach (var tag in n[x, y, z].tags)
             {
+                if (tag.Value is LocalItems)
+                {
+                    s.Add("Storage =");
+                    foreach (var o in (tag.Value as LocalItems).n)
+                    {
+                        s.Add("id " + o.id + " " + o.count);
+                    }
+                    s.Add("----------------");
+
+                }
+                else
                 s.Add(tag.Key + " = " + tag.Value);
             }
 
@@ -1264,6 +1275,11 @@ namespace Mork.Local_Map
 
             if(Main.dbobject.Data[id].activeblock)
                 active.Add(new Vector3(x,y,z));
+
+            if(id == KnownIDs.StorageEntrance)
+            {
+                n[x, y, z].tags.Add("storage", new LocalItems());
+            }
 
             WorldLife.SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
         }

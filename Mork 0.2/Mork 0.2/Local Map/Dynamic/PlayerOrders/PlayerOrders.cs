@@ -52,6 +52,20 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                     }
                 }
 
+                if (h.current_order is CollectOrder && IsNear(h.pos, h.current_order.dest))
+                {
+                    var temp = Main.localitems.GetNearItem(h.pos);
+                    if (temp.id != 0 && h.carry.id == 0)
+                    {
+                        h.carry.id = temp.id;
+                        h.carry.count = temp.count;
+
+                        Main.localitems.n.Remove(temp);
+
+                        h.current_order = new ToStoreOrder();
+                    }
+                }
+
                 if (h.current_order is BuildOrder && IsNear(h.pos, h.current_order.dest))
                 {
                     var allow = true;
