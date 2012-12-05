@@ -12,6 +12,8 @@ namespace Mork.Local_Map
 
         public static Int32 mx = 128, my = 128, mz = 128;
         public MNode[,,] n = new MNode[mx, my, mz];
+        public float[,] wshine = new float[mx, my];
+        public short[,] whinenapr = new short[mx, my];
 
         public List<Vector3> active = new List<Vector3>(); //active blocks update inner logic every cycle
 
@@ -563,6 +565,15 @@ namespace Mork.Local_Map
         /// </summary>
         public void SimpleGeneration_bygmap()
         {
+            for (int i0 = 0; i0 < wshine.GetUpperBound(0); i0++)
+                for (int i1 = 0; i1 < wshine.GetUpperBound(1); i1++)
+                {
+                    wshine[i0, i1] = (float)rnd.NextDouble();
+                    if(rnd.Next(0,1) == 0)
+                    whinenapr[i0, i1] = -1;
+                    else whinenapr[i0, i1] = 1;
+                }
+
             for (int i = 0; i <= MMap.mx - 1; i++)
                 for (int j = 0; j <= MMap.my - 1; j++)
                     for (int k = 0; k <= MMap.mz - 1; k += 8)
@@ -635,7 +646,7 @@ namespace Mork.Local_Map
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
                     for (int k = 0; k <= ((0.4)) * (MMap.mz - 1) * 0.3 + (MMap.mz - 1) * 0.7 + 1; k++)
                     {
-                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k) && Main.mmap.n[i, j, MMap.mz - 1 - k].blockID == 0) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = 888;//вода
+                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k) && Main.mmap.n[i, j, MMap.mz - 1 - k].blockID == 0) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = KnownIDs.water;//вода
                     }
                 }
 
@@ -1220,9 +1231,10 @@ namespace Mork.Local_Map
         public void KillBlock(int x, int y, int z)
         {
             if (Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath != (int)KnownIDs.error)
-                Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
-                                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
-            //Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num, id = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath, pos = new Vector3(x,y,z)});
+                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num, id = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath, pos = new Vector3(x, y, z) });
+                //Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
+                //                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
+                
 
             n[x, y, z].blockID = 0;
             n[x, y, z].health = 10;

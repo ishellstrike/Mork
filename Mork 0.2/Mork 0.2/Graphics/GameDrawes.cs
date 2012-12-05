@@ -87,7 +87,7 @@ namespace Mork
                              new Color(255, _titleAnimation, _titleAnimation));
         }
 
-        private static void BasicAllDraw()
+        private static void BasicAllDraw(GameTime gt)
         {
             int a = (int) midscreen.X - 33;
             if (a < 0) a = 0;
@@ -124,7 +124,7 @@ namespace Mork
                             y_temp2 = ToIsometricY(i, j) - 20 +
                                       (drawed[i, j] - Selector.Z)*20;
 
-                            DrawAllFloarCreators(ramka_3, x_temp2, y_temp2, drawed, i, j, false);
+                            DrawAllFloarCreators(ramka_3, x_temp2, y_temp2, drawed, i, j, false, gt);
                         }
                     }
 
@@ -279,7 +279,7 @@ namespace Mork
             }
         }
 
-        private static void DrawAllFloarCreators(Vector3 ramka_3, float x_temp2, float y_temp2, int[,] drawed, int i, int j, bool no_condition)
+        private static void DrawAllFloarCreators(Vector3 ramka_3, float x_temp2, float y_temp2, int[,] drawed, int i, int j, bool no_condition, GameTime gt)
         {
             bool inramka = false;
 
@@ -296,7 +296,13 @@ namespace Mork
                     if (mmap.n[i, j, drawed[i, j]].subterrain) aa += 60;
                 }
 
+                if (mmap.n[i, j, drawed[i, j]].blockID == KnownIDs.water)
+                {
+                    mmap.wshine[i, j] += (float)gt.ElapsedGameTime.TotalSeconds * mmap.whinenapr[i, j];
+                    if (mmap.wshine[i, j] >= 1 || mmap.wshine[i, j] <= 0) mmap.whinenapr[i, j] *= -1;
 
+                    aa += (int)(mmap.wshine[i, j] * 30);
+                }
 
                 Color tcol = dbmaterial.Data[(MaterialID) mmap.GetNodeTagData(i, j, drawed[i, j], "material")].color;
 

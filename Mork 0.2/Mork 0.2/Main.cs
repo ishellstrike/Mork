@@ -1238,7 +1238,8 @@ namespace Mork
                 outp += string.Format("mpos = {0}", mousepos)+Environment.NewLine;
                 outp += string.Format("ord = {0}", playerorders.n.Count) + Environment.NewLine;
                 outp += string.Format("act = {0}", mmap.active.Count) + Environment.NewLine;
-                spriteBatch.DrawString(Font2, outp, new Vector2(400, 5), Color.White);
+                outp += string.Format("time = {0}", gameTime.TotalGameTime) + Environment.NewLine;
+                spriteBatch.DrawString(Font2, outp, new Vector2(800, 5), Color.White);
             }
 
             //int kk = 0;
@@ -1342,7 +1343,7 @@ namespace Mork
 
         private static void GameDraw(GameTime gameTime)
         {
-            BasicAllDraw();
+            BasicAllDraw(gameTime);
 
             for (int i = 0; i <= Textlogmax - 1; i++) // отрисова лога
             {
