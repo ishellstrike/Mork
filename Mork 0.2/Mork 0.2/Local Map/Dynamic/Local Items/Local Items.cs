@@ -9,7 +9,7 @@ namespace Mork.Local_Map.Dynamic.Local_Items
     public class LocalItems
     {
         public List<LocalItem> n = new List<LocalItem>();
-        public byte carp = 100;
+        public byte carp = 10;
 
         public LocalItem GetNearItem(int x, int y, int z)
         {

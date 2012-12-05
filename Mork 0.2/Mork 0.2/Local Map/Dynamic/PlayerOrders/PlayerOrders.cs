@@ -89,11 +89,13 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                         {
                             tempstor.n.Add(new LocalItem() {count = h.carry.count, id = h.carry.id});
                             h.carry = new LocalItem();
+                            h.current_order = new NothingOrder();
                         }
                         else
                         {
                             Main.localitems.n.Add(new LocalItem() { count = h.carry.count, id = h.carry.id });
                             h.carry = new LocalItem();
+                            h.current_order = new NothingOrder();
                         }
                     }
                 }

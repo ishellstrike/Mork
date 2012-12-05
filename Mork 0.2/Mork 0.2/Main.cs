@@ -29,6 +29,7 @@ using ListBox = TomShane.Neoforce.Controls.ListBox;
 using Orientation = TomShane.Neoforce.Controls.Orientation;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using ScrollBar = TomShane.Neoforce.Controls.ScrollBar;
+using TextBox = TomShane.Neoforce.Controls.TextBox;
 using ToolTip = TomShane.Neoforce.Controls.ToolTip;
 using TrackBar = TomShane.Neoforce.Controls.TrackBar;
 
@@ -68,7 +69,8 @@ namespace Mork
             Supply,
             Cancel,
             Collect,
-            MarkStorage
+            MarkStorage,
+            Info
         }
 
         public enum OnStoreTexes
@@ -260,6 +262,7 @@ namespace Mork
         private Button ingameshowOrdersB;
         private Button ingameshowZonesB;
         private Button ingameshowBuildingsB;
+        private Button ingameshowallinfo;
 
         private Window orderssubmenu;
         private Button digorder;
@@ -273,6 +276,9 @@ namespace Mork
         private ScrollBar buildingssb;
         private Label[] buildingsbuttonslabel;
         private int lastvalue;
+
+        private Window SummaryWindow;
+        private TextBox summarytb;
 
         private Window zonessubmenu;
 
@@ -545,6 +551,34 @@ namespace Mork
             Manager.Add(maploadmenu);
             #endregion
 
+            #region Summary Window
+            SummaryWindow = new Window(Manager) { Color = Color.Black };
+            SummaryWindow.Init();
+            SummaryWindow.Text = "";
+            SummaryWindow.SetPosition(100, 100);
+            SummaryWindow.Width = resx / 4;
+            SummaryWindow.Height = resy / 4;
+            SummaryWindow.Visible = true;
+            SummaryWindow.BorderVisible = true;
+            SummaryWindow.Movable = true;
+            SummaryWindow.Resizable = false;
+
+            summarytb = new TextBox(Manager);
+            summarytb.Init();
+            summarytb.Text = "";
+            summarytb.Width = resx / 4 - 30;
+            summarytb.Height = resy / 4 - 60;
+            summarytb.Left = (20) / 2;
+            summarytb.CaretVisible = false;
+            summarytb.Passive = true;
+            summarytb.Mode = TextBoxMode.Multiline;
+            summarytb.Top = (20) / 2;
+            summarytb.Anchor = Anchors.Bottom;
+            summarytb.Parent = SummaryWindow;
+
+            Manager.Add(SummaryWindow);
+            #endregion
+
             #region ingameUIpartLeft
             ingameUIpartLeft = new Window(Manager) { Color = Color.Black };
             ingameUIpartLeft.Init();
@@ -589,6 +623,17 @@ namespace Mork
             ingameshowBuildingsB.Anchor = Anchors.Bottom;
             ingameshowBuildingsB.Parent = ingameUIpartLeft;
             ingameshowBuildingsB.Click += new TomShane.Neoforce.Controls.EventHandler(ingameshowBuildingsB_Click);
+
+            ingameshowallinfo = new Button(Manager);
+            ingameshowallinfo.Init();
+            ingameshowallinfo.Text = "Подробная информация";
+            ingameshowallinfo.Width = resx / 5 - 20;
+            ingameshowallinfo.Height = 25;
+            ingameshowallinfo.Left = (20) / 2;
+            ingameshowallinfo.Top = 100;
+            ingameshowallinfo.Anchor = Anchors.Bottom;
+            ingameshowallinfo.Parent = ingameUIpartLeft;
+            ingameshowallinfo.Click += new TomShane.Neoforce.Controls.EventHandler(ingameshowallinfo_Click);
 
             ingameUIpartLeftlistbox = new ListBox(Manager);
             ingameUIpartLeftlistbox.Init();
@@ -764,6 +809,11 @@ namespace Mork
 
             Manager.Add(Ingamemesages);
             #endregion
+        }
+
+        void ingameshowallinfo_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            lclickaction = LClickAction.Info; 
         }
 
         void collectorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
@@ -1347,6 +1397,12 @@ namespace Mork
             IngamemesagesOk.Visible = false;
         }
 
+        public void ShowIngameSummary(string s)
+        {
+            SummaryWindow.Show();
+            summarytb.Text = s;
+            summarytb.Refresh();
+        }
 
         private static Vector2 ToIsometricPos(int x, int y)
         {
@@ -1565,7 +1621,7 @@ namespace Mork
         /// раздача приказов для выделенной рамки, приказ зависит от Main.lclickaction
         /// </summary>
         /// <param name="gt"></param>
-        private static void Ramka(GameTime gt)
+        private void Ramka(GameTime gt)
         {
             var ramka_3 = new Vector3();
             ramka_2.X = Math.Max(Selector.X, ramka_1.X);
@@ -1614,6 +1670,19 @@ namespace Mork
                         {
                             if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].tags.ContainsKey("convert"))
                                 playerorders.n.Add(new SupplyOrder { dest = new Vector3(i, j, ramka_2.Z)});
+                        }
+                    break;
+
+                    case LClickAction.Info:
+                    if(MMap.GoodVector3(Selector))
+                        {
+                            string s = "";
+                            var t = mmap.GetNodeTagsInText((int) Selector.X, (int) Selector.Y, (int) Selector.Z);
+                            foreach (var ss in t)
+                            {
+                                s += ss + Environment.NewLine;
+                            }
+                            ShowIngameSummary(s);
                         }
                     break;
 
