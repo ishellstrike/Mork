@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
 using Mork.Local_Map;
 using Mork.Local_Map.Dynamic;
+using Mork.Local_Map.Dynamic.Actions;
+using Mork.Local_Map.Dynamic.Units.Actions;
 
 namespace Mork
 {
@@ -126,27 +128,28 @@ namespace Mork
                         }
                     }
 
-            //if(Selector.Z == camera.Z)
-            //    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-            //        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-
-            //    {
-            //        byte rc = 255;
-            //        byte gc = 255;
-            //        byte bc;
-            //        if (!mmap.n[i, j, drawed[i, j]].explored)
-            //        {
-            //            rc = 100;
-            //            gc = 100;
-            //            bc = 0;
-            //        }
-            //    }
+            if (Selector.Z == camera.Z)
+                for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                    for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                    {
+                        byte rc = 255;
+                        byte gc = 255;
+                        byte bc;
+                        if (!mmap.n[i, j, drawed[i, j]].explored)
+                        {
+                            rc = 100;
+                            gc = 100;
+                            bc = 0;
+                        }
+                    }
 
             DrawLocalUnits(drawed);
 
             DrawSelector(drawed);
 
             DrawLocalItems(drawed);
+
+            DrawOrders(drawed);
 
             GameInterface();
         }
@@ -243,6 +246,39 @@ namespace Mork
             return new Rectangle((n%10)*40, (n/10)*40, 40, 40);
         }
 
+        private static void DrawOrders(int[,] drawed)
+        {
+            if (playerorders.n.Count > 0)
+            {
+                for (int i = 0; i <= playerorders.n.Count - 1; i++)
+                {
+                    var x_temp2 = ToIsometricX((int)playerorders.n[i].dest.X, (int)playerorders.n[i].dest.Y) + 17;
+                    var y_temp2 = ToIsometricY((int)playerorders.n[i].dest.X, (int)playerorders.n[i].dest.Y) - 15 +
+                              (drawed[(int)playerorders.n[i].dest.X, (int)playerorders.n[i].dest.Y] - Selector.Z) * 20;
+
+                    if (x_temp2 < resx + 40 && x_temp2 > -40 && y_temp2 < resy + 20 && y_temp2 > -20 &&
+                        (int)playerorders.n[i].dest.Z == drawed[(int)playerorders.n[i].dest.X, (int)playerorders.n[i].dest.Y])
+                    {
+                        if(playerorders.n[i] is DestroyOrder)
+                        {
+                            spriteBatch.Draw(interface_tex[4], new Vector2(x_temp2, y_temp2),
+                                             new Color(255, 255, 255));
+                        }
+                        if (playerorders.n[i] is SupplyOrder)
+                        {
+                            spriteBatch.Draw(interface_tex[19], new Vector2(x_temp2, y_temp2),
+                                                new Color(255, 255, 255));
+                        }
+                        if (playerorders.n[i] is BuildOrder)
+                        {
+                            spriteBatch.Draw(interface_tex[18], new Vector2(x_temp2, y_temp2),
+                                        new Color(255, 255, 255));
+                        }
+                    }
+                }
+            }
+        }
+
         private static void DrawAllFloarCreators(Vector3 ramka_3, float x_temp2, float y_temp2, int[,] drawed, int i, int j, bool no_condition)
         {
             bool inramka = false;
@@ -267,6 +303,21 @@ namespace Mork
                 var gg = tcol.G - aa;
                 var bb = tcol.B - aa;
                 var rr = tcol.R - aa;
+
+                if (buttonhelper_R && i >= ramka_3.X && j >= ramka_3.Y && drawed[i, j] >= ramka_3.Z && i <= ramka_2.X &&
+                    j <= ramka_2.Y && drawed[i, j] <= ramka_2.Z)
+                {
+                    rr = 255;
+                    gg = 255;
+                    bb = 0;
+                    if (!mmap.n[i, j, drawed[i, j]].explored)
+                    {
+                        rr = 100;
+                        gg = 100;
+                        bb = 0;
+                    }
+                    inramka = true;
+                }
 
                 if ((int)Selector.X == i && (int)Selector.Y == j & (int)Selector.Z == drawed[i, j])
                 {

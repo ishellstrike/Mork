@@ -76,6 +76,8 @@ namespace Mork
         public const int ssizex = 50, ssizey = 35;
         public const int resx = 1280, resy = 768;
 
+        private bool debug;
+
         public static string OurName = "";
         public static string OurVer = "";
 
@@ -110,6 +112,9 @@ namespace Mork
         public static int buildingselect;
 
         public static MouseState mousestate = new MouseState();
+
+        public static KeyboardState ks;
+        public static KeyboardState lks;
 
         public static Texture2D object_tex;
 
@@ -755,7 +760,7 @@ namespace Mork
 
         void cutorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            Main.lclickaction = Main.LClickAction.Crop;
+            Main.lclickaction = Main.LClickAction.Dig;
         }
 
         void digorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
@@ -887,6 +892,7 @@ namespace Mork
         }
 
         private List<string> files = new List<string>();
+
         void mainmenuloadmapB_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
             mainmenu.Close();
@@ -1137,6 +1143,8 @@ namespace Mork
             Manager.Update(gameTime);
 
             base.Update(gameTime);
+
+            if(debug)
             FrameRateCounter.Update(gameTime);
         }
 
@@ -1198,10 +1206,9 @@ namespace Mork
 
             DrawProc(gameTime);
 
-            _fpsCol = Color.Lerp(Color.Lime, Color.Red, 1 - ((_fpsCur - 30)/30.0f));
-
-            spriteBatch.DrawString(Font2, string.Format("FPS: {0}, sel: {1}, mou: {2}", _fpsCur, Selector, mousepos),
-                                   new Vector2(400, 5), _fpsCol);
+            if(debug)
+            spriteBatch.DrawString(Font2, string.Format("mou: {0}", mousepos),
+                                   new Vector2(400, 5), Color.White);
 
             //int kk = 0;
             //foreach (Hero h in heroes.n)
@@ -1245,7 +1252,9 @@ namespace Mork
 
             Manager.EndDraw();
 
+            if(debug)
             FrameRateCounter.Draw(gameTime, Font2, spriteBatch, lineBatch, resx, resy);
+
             lineBatch.Draw();
             lineBatch.Clear();
 
@@ -1422,7 +1431,10 @@ namespace Mork
 
         private void KeyboardUpdate(GameTime gt)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Down) || Keyboard.GetState().IsKeyDown(Keys.S))
+            lks = ks;
+            ks = Keyboard.GetState();
+
+            if (ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S))
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
                     Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
@@ -1430,7 +1442,7 @@ namespace Mork
                 else camera.Y -= (float) (1000*gt.ElapsedGameTime.TotalSeconds);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Up) || Keyboard.GetState().IsKeyDown(Keys.W))
+            if (ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W))
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
                     Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
@@ -1438,7 +1450,7 @@ namespace Mork
                 else camera.Y += (float) (1000*gt.ElapsedGameTime.TotalSeconds);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Left) || Keyboard.GetState().IsKeyDown(Keys.A))
+            if (ks.IsKeyDown(Keys.Left) || ks.IsKeyDown(Keys.A))
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
                     Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
@@ -1446,7 +1458,7 @@ namespace Mork
                 else camera.X += (float) (1000*gt.ElapsedGameTime.TotalSeconds);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D))
+            if (ks.IsKeyDown(Keys.Right) || ks.IsKeyDown(Keys.D))
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) == false &
                     Keyboard.GetState().IsKeyDown(Keys.RightShift) == false)
@@ -1454,7 +1466,7 @@ namespace Mork
                 else camera.X -= (float) (1000*gt.ElapsedGameTime.TotalSeconds);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.N))
+            if (ks.IsKeyDown(Keys.N) && !lks.IsKeyDown(Keys.N))
             {
                 for (var i = 0; i <= MMap.mx - 1; i++)
                     for (var j = 0; j <= MMap.my - 1; j++)
@@ -1464,14 +1476,14 @@ namespace Mork
                         }
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            if (ks.IsKeyDown(Keys.Space) && !lks.IsKeyDown(Keys.Space))
             {
-                space = true;
-            }
-            if (space && Keyboard.GetState().IsKeyDown(Keys.Space) == false)
-            {
-                space = false;
                 PAUSE = !PAUSE;
+            }
+
+            if(ks.IsKeyDown(Keys.F4) && !lks.IsKeyDown(Keys.F4))
+            {
+                debug = !debug;
             }
         }
 

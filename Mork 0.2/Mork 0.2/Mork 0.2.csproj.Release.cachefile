@@ -36,6 +36,8 @@ Content\Textures\Objects\OnStore\stone5.xnb
 Content\Textures\Interface\Saving.xnb
 Content\Textures\Interface\Building_41x28_16fr.xnb
 Content\Textures\Objects\Blocks\Blocks.xnb
+Content\Textures\Interface\build.xnb
+Content\Textures\Interface\supply.xnb
 Content\Skins\Default.skin
 Content\Skins\Extended.skin
 Content\Skins\Green.skin

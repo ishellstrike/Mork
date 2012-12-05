@@ -72,6 +72,8 @@ namespace Mork
             LoadTexture2D(interface_tex, @"Textures\Interface\mork1"); //15
             LoadTexture2D(interface_tex, @"Textures\Interface\Saving"); //16
             LoadTexture2D(interface_tex, @"Textures\Interface\Building_41x28_16fr"); //17
+            LoadTexture2D(interface_tex, @"Textures\Interface\build"); //18
+            LoadTexture2D(interface_tex, @"Textures\Interface\supply"); //19
 
             Font1 = Content.Load<SpriteFont>(@"Textures\SpriteFont1");
             Font2 = Content.Load<SpriteFont>(@"Textures\SpriteFont2");

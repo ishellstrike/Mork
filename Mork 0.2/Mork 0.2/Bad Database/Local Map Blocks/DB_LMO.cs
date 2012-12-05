@@ -132,7 +132,7 @@ namespace Mork
                          });
 
             Data.Add(12345,
-                     new LMO(36, false, "бланк", "бланк", "бланк",
+                     new LMO(45, false, "бланк", "бланк", "бланк",
                                     "бланк")
                          {
                          });
@@ -404,7 +404,7 @@ namespace Mork
                 dropafterdeath_num = 20
             });
 
-            Data.Add((int)KnownIDs.stonebrick, new LMO(43, false, "каменный кирпич", "", "", "")
+            Data.Add((int)KnownIDs.stonebrick, new LMO(44, false, "каменный кирпич", "", "", "")
             {
                 placeble = false,
             });

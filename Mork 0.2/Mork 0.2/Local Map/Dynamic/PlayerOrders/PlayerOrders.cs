@@ -22,9 +22,9 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
             MakingOrders(gt, lh);
 
             s10 += gt.ElapsedGameTime;
-            if(s10.TotalSeconds >= 10)
+            if(s10.TotalSeconds >= 1)
             {
-                s10 -= TimeSpan.FromSeconds(10);
+                s10 -= TimeSpan.FromSeconds(1);
                 foreach (var order in n)
                 {
                     order.sleep = false;
@@ -60,7 +60,7 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                         if ((int)he.pos.X == (int)h.current_order.dest.X && (int)he.pos.Z == (int)h.current_order.dest.Z && (int)he.pos.Z == (int)h.current_order.dest.Z)
                             allow = false;
                     }
-                    if (Main.mmap.n[(int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z].blockID == 0 && allow && Main.iss.n[(h.current_order as BuildOrder).blockID].count < 1)
+                    if (Main.mmap.n[(int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z].blockID == 0 && allow && Main.iss.n[(h.current_order as BuildOrder).blockID].count >= 1)
                     {
                         Main.mmap.SetBlock((int) h.current_order.dest.X, (int) h.current_order.dest.Y,
                                            (int) h.current_order.dest.Z, (h.current_order as BuildOrder).blockID);

@@ -127,12 +127,12 @@ namespace Mork
 
             int primitiveCount = m_vertices.Count / 3;
 
-            foreach (EffectPass pass in m_basicEffect.CurrentTechnique.Passes)
+            foreach (var pass in m_basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
 
-                if (m_vertices.Capacity > 0)
-                    m_device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                if (m_vertices.Count > 0)
+                    m_device.DrawUserPrimitives(PrimitiveType.TriangleList,
                     m_vertices.ToArray(), 0, primitiveCount);
             }
         }
