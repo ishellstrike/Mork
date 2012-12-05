@@ -60,10 +60,11 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                         if ((int)he.pos.X == (int)h.current_order.dest.X && (int)he.pos.Z == (int)h.current_order.dest.Z && (int)he.pos.Z == (int)h.current_order.dest.Z)
                             allow = false;
                     }
-                    if (Main.mmap.n[(int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z].blockID == 0 && allow)
+                    if (Main.mmap.n[(int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z].blockID == 0 && allow && Main.iss.n[(h.current_order as BuildOrder).blockID].count < 1)
                     {
                         Main.mmap.SetBlock((int) h.current_order.dest.X, (int) h.current_order.dest.Y,
                                            (int) h.current_order.dest.Z, (h.current_order as BuildOrder).blockID);
+                        Main.iss.n[(h.current_order as BuildOrder).blockID].count--;
                         h.current_order.complete = true;
                         h.current_order = new NothingOrder();
                     }
@@ -112,6 +113,22 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
 
             for (int index = 0; index < n.Count; index++)
             {
+                for (int o = 0; o < lh.n.Count; o++)
+                {
+                    var h = lh.n[o];
+                    if (h.current_order is BuildOrder && Main.iss.n[(h.current_order as BuildOrder).blockID].count < 1)
+                    {
+                        h.current_order.complete = true;
+                        h.current_order = new NothingOrder();
+                    }
+
+                    if (h.current_order is MoveOrder && IsNear(h.current_order.dest, h.pos))
+                    {
+                        h.current_order.complete = true;
+                        h.current_order = new NothingOrder();
+                    }
+                }
+
                 if(n[index].complete)n.RemoveAt(index);
             }
         }

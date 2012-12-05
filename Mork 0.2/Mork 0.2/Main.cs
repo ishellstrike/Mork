@@ -260,6 +260,7 @@ namespace Mork
         private Window buildinsgwindow;
         private Button[] buildingsbuttons;
         private ScrollBar buildingssb;
+        private Label[] buildingsbuttonslabel;
         private int lastvalue;
 
         private Window zonessubmenu;
@@ -663,6 +664,7 @@ namespace Mork
             buildingssb.ValueChanged += new TomShane.Neoforce.Controls.EventHandler(buildingssb_ValueChanged);
 
             buildingsbuttons = new Button[dbobject.Data.Count];
+            buildingsbuttonslabel = new Label[dbobject.Data.Count];
             int i = 0;
             foreach (var dbo in dbobject.Data)
             {
@@ -681,6 +683,17 @@ namespace Mork
                 buildingsbuttons[i].ToolTip = new ToolTip(Manager);
                 buildingsbuttons[i].ToolTip.Text = dbo.Value.I_name + " id " + dbo.Key;
                 buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
+                iss.n.Add(dbo.Key, new LocalItem() { id = dbo.Key, count = 0});
+
+                buildingsbuttonslabel[i] = new Label(Manager);
+                buildingsbuttonslabel[i].Init();
+                buildingsbuttonslabel[i].Text = "0";
+                buildingsbuttonslabel[i].Width = 40;
+                buildingsbuttonslabel[i].Height = 40;
+                buildingsbuttonslabel[i].Left = i % 5 * 42;
+                buildingsbuttonslabel[i].Top = i / 5 * 42;
+                buildingsbuttonslabel[i].Parent = buildinsgwindow;
+
                 i++;
             }
 
@@ -720,9 +733,11 @@ namespace Mork
 
         void buildingssb_ValueChanged(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            foreach (var button in buildingsbuttons)
+            for (int index = 0; index < buildingsbuttons.Length; index++)
             {
-                button.Top = ((int[])(button.Tag))[0] - (int)(buildingssb.Value/50f*42f*dbobject.Data.Count/5);
+                var button = buildingsbuttons[index];
+                button.Top = ((int[]) (button.Tag))[0] - (int) (buildingssb.Value/50f*42f*dbobject.Data.Count/5);
+                buildingsbuttonslabel[index].Top = button.Top;
             }
             lastvalue = buildingssb.Value;
         }
@@ -1376,6 +1391,33 @@ namespace Mork
                 if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(mmap.GetNodeTagsInText(Selector));
 
                 ingameUIpartLeftlistbox2.Refresh();
+
+                for (int index = 0; index < buildingsbuttons.Length; index++)
+                {
+                    var button = buildingsbuttons[index];
+                    button.Visible = iss.n[(button.Tag as int[])[1]].count != 0;
+                    buildingsbuttonslabel[index].Text = iss.n[(button.Tag as int[])[1]].count.ToString();
+                }
+                //buildingsbuttons = new Button[iss.n.Count];
+                //for (int i = 0; i < iss.n.Count; i++)
+                //{
+                //        buildingsbuttons[i] = new Button(Manager);
+                //        buildingsbuttons[i].Init();
+                //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].I_name;
+                //        buildingsbuttons[i].Width = 40;
+                //        buildingsbuttons[i].Height = 40;
+                //        buildingsbuttons[i].Left = i%5*42;
+                //        buildingsbuttons[i].Top = i/5*42;
+                //        int[] tg = { buildingsbuttons[i].Top - (int)(buildingssb.Value/50f*42f*iss.n.Count/5), iss.n[i].id };
+                //        buildingsbuttons[i].Tag = tg;
+                //        buildingsbuttons[i].Anchor = Anchors.Bottom;
+                //        buildingsbuttons[i].Parent = buildinsgwindow;
+                //        buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbobject.Data[iss.n[i].id].metatex_n));
+                //        buildingsbuttons[i].ToolTip = new ToolTip(Manager);
+                //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].I_name + " id " + iss.n[i].id;
+                //        buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
+                //}
+                //buildinsgwindow.Refresh();
             }
         }
 
@@ -1461,7 +1503,7 @@ namespace Mork
                         for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
                         //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
                         {
-                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z+1].blockID != 0)
+                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z+1].blockID != 0 && iss.n[buildingselect].count >= 1)
                                 playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
                         }
                     break;

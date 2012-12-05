@@ -1117,8 +1117,10 @@ namespace Mork.Local_Map
 
         public void KillBlock(int x, int y, int z)
         {
-            if (Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath != (int) KnownIDs.error)
-            Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num, id = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath, pos = new Vector3(x,y,z)});
+            if (Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath != (int)KnownIDs.error)
+                Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
+                                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
+            //Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num, id = Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath, pos = new Vector3(x,y,z)});
 
             n[x, y, z].blockID = 0;
             n[x, y, z].health = 10;
