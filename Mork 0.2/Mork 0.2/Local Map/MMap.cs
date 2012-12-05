@@ -13,6 +13,8 @@ namespace Mork.Local_Map
         public static Int32 mx = 128, my = 128, mz = 128;
         public MNode[,,] n = new MNode[mx, my, mz];
 
+        public List<Vector3> active = new List<Vector3>(); //active blocks update inner logic every cycle
+
         public string Name = "test map 1";
 
         Dictionary<string, object> tags = new Dictionary<string, object>();
@@ -57,6 +59,14 @@ namespace Mork.Local_Map
             else n[x, y, z].tags[added_tag.Key] = added_tag.Value;
         }
 
+        /// <summary>
+        /// ”становить новый таг карты
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="s">строковый идентификатор</param>
+        /// <param name="o">значение тага</param>
         public void SetNodeTag(int x, int y, int z, string s, object o)
         {
             if (!n[x, y, z].tags.ContainsKey(s))
@@ -64,18 +74,39 @@ namespace Mork.Local_Map
             else n[x, y, z].tags[s] = o;
         }
 
+        /// <summary>
+        /// ѕолучить значение тага карты
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="s">строковый идентификатор</param>
+        /// <returns>значение тага</returns>
         public object GetNodeTagData(int x, int y, int z, string s)
         {
             if (n[x, y, z].tags.ContainsKey(s)) return n[x, y, z].tags[s];
             return 0;
         }
 
+        /// <summary>
+        /// ѕолучить значение тага карты
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="s">строковый идентификатор</param>
+        /// <returns>значение тага</returns>
         public object GetNodeTagData(Vector3 d, string s)
         {
             if (n[(int)d.X, (int)d.Y, (int)d.Z].tags.ContainsKey(s)) return n[(int)d.X, (int)d.Y, (int)d.Z].tags[s];
             return 0;
         }
 
+        /// <summary>
+        /// ѕолучить все таги нода карты в текстовом виде
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns>массив строк тагов</returns>
         public List<string> GetNodeTagsInText(int x, int y, int z)
         {
             List<string> s = new List<string>();
@@ -91,6 +122,11 @@ namespace Mork.Local_Map
             return s;
         }
 
+        /// <summary>
+        /// ѕолучить все таги нода карты в текстовом виде
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns>массив строк тагов</returns>
         public List<string> GetNodeTagsInText(Vector3 pos)
         {
             return GetNodeTagsInText((int)pos.X, (int)pos.Y, (int)pos.Z);
@@ -204,11 +240,19 @@ namespace Mork.Local_Map
         //    n[pos_x, pos_y].vision = 0;
         //}
 
+        /// <summary>
+        /// ѕолучить границы карты в виде вектора3
+        /// </summary>
+        /// <returns></returns>
         public Vector3 Bounds()
         {
             return new Vector3(mx - 1, my - 1, mz - 1);
         }
 
+        /// <summary>
+        /// генераци€ базового сло€ с нечеткой границей
+        /// </summary>
+        /// <param name="id">заполнить базовый слой указанным блоком</param>
         public void Generation_BasicLayer(int id)
         {
             for(int i=0;i<=mx-1;i++)
@@ -229,6 +273,11 @@ namespace Mork.Local_Map
                 }
         }
 
+        /// <summary>
+        /// заколнить слой толщиной count блоком id
+        /// </summary>
+        /// <param name="id">идентификатор</param>
+        /// <param name="count">толщина сло€</param>
         public void Generation_FullLayer(int id, int count)
         {
             for (int i = 0; i <= mx - 1; i++)
@@ -251,6 +300,16 @@ namespace Mork.Local_Map
                 }
         }
 
+        /// <summary>
+        /// заколнить слой толщиной count блоком id с кластерами clust (частотой c_freq) и жилами jila (частотой j_freq и прот€женнойстью length)
+        /// </summary>
+        /// <param name="id">идентификатор</param>
+        /// <param name="count">толщина сло€</param>
+        /// <param name="clust">идентификаторы кластеров</param>
+        /// <param name="c_freq">частота встречани€ кластеров</param>
+        /// <param name="jila">идентификаторы жил</param>
+        /// <param name="j_freq">частота встречани€ жил</param>
+        /// <param name="length">прот€женность жил</param>
         public void GenerationFullLayerCluster(int id, int count, int[] clust, int c_freq, int[] jila, int j_freq, int length)
         {
             for (int i = 0; i <= mx - 1; i++)
@@ -375,6 +434,10 @@ namespace Mork.Local_Map
                 }
         }
 
+        /// <summary>
+        /// генераци€ сло€ под поверхностью
+        /// </summary>
+        /// <param name="count"></param>
         public void Generation_FullLayer_under(int count)
         {
             for (int i = 0; i <= mx - 1; i++)
@@ -397,6 +460,10 @@ namespace Mork.Local_Map
                 }
         }
 
+        /// <summary>
+        /// генераци€ сло€ под слоем под поверхностью
+        /// </summary>
+        /// <param name="count"></param>
         public void Generation_FullLayer_under_under(int count)
         {
             for (int i = 0; i <= mx - 1; i++)
@@ -419,6 +486,10 @@ namespace Mork.Local_Map
                 }
         }
 
+        /// <summary>
+        /// генераци€ верхнего сло€ (чаще всего травы)
+        /// </summary>
+        /// <param name="count"></param>
         public void Generation_FullLayerGrass(int count)
         {
             for (int i = 0; i <= mx - 1; i++)
@@ -453,6 +524,9 @@ namespace Mork.Local_Map
 
         }
 
+        /// <summary>
+        /// полный пересчет значений нодов subterrain
+        /// </summary>
         public void RecalcExploredSubterrain()
         {
             for (int i = 0; i <= mx - 1; i++)
@@ -484,6 +558,9 @@ namespace Mork.Local_Map
                 }
         }
 
+        /// <summary>
+        /// проста€ генераци€ локальный карты по данным глобальной карты (базова€ верси€)
+        /// </summary>
         public void SimpleGeneration_bygmap()
         {
             for (int i = 0; i <= MMap.mx - 1; i++)
@@ -831,23 +908,48 @@ namespace Mork.Local_Map
         //        }
         //}
 
+        /// <summary>
+        /// ѕроверка, входит ли вектор в границы карты
+        /// </summary>
+        /// <param name="loc"></param>
+        /// <returns></returns>
         public static bool GoodVector3(Vector3 loc)
         {
             if (loc != null && loc.X >= 0 && loc.Y >= 0 && loc.X <= mx - 1 && loc.Y <= my - 1 && loc.Z >= 0 && loc.Z <= mz - 1) return true;
             return false;
         }
+
+        /// <summary>
+        /// ѕроверка, входит ли вектор в границы карты
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <returns></returns>
         public static bool GoodVector3(int X, int Y, int Z)
         {
             if (X >= 0 && Y >= 0 && X <= mx - 1 && Y <= my - 1 && Z >= 0 && Z <= mz - 1) return true;
             return false;
         }
 
+        /// <summary>
+        /// ѕроверка, входит ли вектор в границы карты
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <returns></returns>
         public static bool GoodVector3(float X, float Y, float Z)
         {
             if (X >= 0 && Y >= 0 && X <= mx - 1 && Y <= my - 1 && Z >= 0 && Z <= mz - 1) return true;
             return false;
         }
 
+        /// <summary>
+        /// ѕроверка на проходимость блока
+        /// </summary>
+        /// <param name="loc"></param>
+        /// <returns></returns>
         public static bool IsWalkable(Vector3 loc)
         {
             return Main.dbobject.Data[Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z].blockID].walkable;
