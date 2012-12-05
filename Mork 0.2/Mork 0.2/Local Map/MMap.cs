@@ -1250,7 +1250,41 @@ namespace Mork.Local_Map
             n[x, y, z].blockID = id;
             n[x, y, z].health = Main.dbobject.Data[id].basic_hp;
 
+            if(Main.dbobject.Data[id].activeblock)
+                active.Add(new Vector3(x,y,z));
+
             WorldLife.SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
+        }
+
+        public void ActivateBlock(int x, int y, int z)
+        {
+            active.Add(new Vector3(x,y,z));
+        }
+
+        public void ActivateBlock(Vector3 pos)
+        {
+            active.Add(pos);
+        }
+
+        public void DeactivateBlock(Vector3 pos)
+        {
+            if (active.Contains(pos))
+                active.Remove(pos); 
+        }
+
+        public void DeactivateBlock(int x, int y, int z)
+        {
+            Vector3 a = new Vector3(x,y,z);
+            if (active.Contains(a))
+                active.Remove(a);
+        }
+
+        public void UpdateActiveblocks(GameTime gt)
+        {
+            foreach (var act in active)
+            {
+                
+            }
         }
     }
 }

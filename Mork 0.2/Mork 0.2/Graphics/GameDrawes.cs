@@ -176,15 +176,15 @@ namespace Mork
             //string sss1 = String.Format("{0}:{1}:{2}", WorldLife.Hour, WorldLife.Min.ToString("00"),
             //                            WorldLife.Sec.ToString("00"));
 
-            //if (PAUSE)
-            //{
-            //    spriteBatch.Draw(interface_tex[6], new Vector2(0, 20), Color.Red);
-            //    spriteBatch.Draw(interface_tex[6], new Vector2(0, 15), Color.DarkRed);
-            //    for (int i = 0; i <= 10; i++)
-            //    {
-            //        spriteBatch.DrawString(Font2, "PAUSE", new Vector2(i*100, 42), Color.White);
-            //    }
-            //}
+            if (PAUSE)
+            {
+                spriteBatch.Draw(interface_tex[6], new Vector2(0, 20), null, Color.Red, 0, Vector2.Zero, 1, SpriteEffects.None, 0.03f);
+                spriteBatch.Draw(interface_tex[6], new Vector2(0, 15), null, Color.DarkRed, 0, Vector2.Zero, 1, SpriteEffects.None, 0.02f);
+                for (int i = 0; i <= 10; i++)
+                {
+                    spriteBatch.DrawString(Font2, "PAUSE", new Vector2(i * 100, 42), Color.Red, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                }
+            }
 
             //spriteBatch.Draw(interface_tex[6], Vector2.Zero, Color.DarkGray);
             //spriteBatch.Draw(interface_tex[6], new Vector2(0, -5), Color.Black);

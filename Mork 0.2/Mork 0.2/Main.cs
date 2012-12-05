@@ -17,6 +17,7 @@ using Mork.Local_Map.Dynamic.Actions;
 using Mork.Local_Map.Dynamic.Local_Items;
 using Mork.Local_Map.Dynamic.PlayerOrders;
 using Mork.Local_Map.Dynamic.Units;
+using Mork.Local_Map.Dynamic.Units.Actions;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 using WButton = System.Windows.Forms.Button;
@@ -64,7 +65,8 @@ namespace Mork
             Nothing,
             Dig,
             Build,
-            Supply
+            Supply,
+            Cancel
         }
 
         public enum OnStoreTexes
@@ -258,7 +260,8 @@ namespace Mork
 
         private Window orderssubmenu;
         private Button digorder;
-        private Button cutorder;
+        private Button supplyorder;
+        private Button cancelorder;
         private Label orderslabel;
 
         private Window buildinsgwindow;
@@ -628,16 +631,28 @@ namespace Mork
             digorder.Parent = orderssubmenu;
             digorder.Click += new TomShane.Neoforce.Controls.EventHandler(digorder_Click);
 
-            cutorder = new Button(Manager);
-            cutorder.Init();
-            cutorder.Text = "Срубить";
-            cutorder.Width = orderssubmenu.Width - 40;
-            cutorder.Height = 24;
-            cutorder.Left = 20;
-            cutorder.Top = 50;
-            cutorder.Anchor = Anchors.Bottom;
-            cutorder.Parent = orderssubmenu;
-            cutorder.Click += new TomShane.Neoforce.Controls.EventHandler(cutorder_Click);
+            supplyorder = new Button(Manager);
+            supplyorder.Init();
+            supplyorder.Text = "Обеспечить ресурсами";
+            supplyorder.Width = orderssubmenu.Width - 40;
+            supplyorder.Height = 24;
+            supplyorder.Left = 20;
+            supplyorder.Top = 50;
+            supplyorder.Anchor = Anchors.Bottom;
+            supplyorder.Parent = orderssubmenu;
+            supplyorder.Click += new TomShane.Neoforce.Controls.EventHandler(supplyorder_Click);
+
+            cancelorder = new Button(Manager);
+            cancelorder.Init();
+            cancelorder.Text = "Отменить все приказы";
+            cancelorder.Width = orderssubmenu.Width - 40;
+            cancelorder.Height = 24;
+            cancelorder.Left = 20;
+            cancelorder.Top = 80;
+            cancelorder.Anchor = Anchors.Bottom;
+            cancelorder.Parent = orderssubmenu;
+            cancelorder.Click += new TomShane.Neoforce.Controls.EventHandler(cancelorder_Click);
+
 
             orderslabel = new Label(Manager);
             orderslabel.Left = 5;
@@ -735,6 +750,16 @@ namespace Mork
             #endregion
         }
 
+        void supplyorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            lclickaction = LClickAction.Supply;
+        }
+
+        void cancelorder_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
+        {
+            lclickaction = LClickAction.Cancel;
+        }
+
         void buildingssb_ValueChanged(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
             for (int index = 0; index < buildingsbuttons.Length; index++)
@@ -781,6 +806,7 @@ namespace Mork
         void ingameshowOrdersB_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
             orderssubmenu.Show();
+            buildinsgwindow.Close();
         }
 
         Action<string> sp = LoadGMapFromDisc;
@@ -1206,9 +1232,14 @@ namespace Mork
 
             DrawProc(gameTime);
 
-            if(debug)
-            spriteBatch.DrawString(Font2, string.Format("mou: {0}", mousepos),
-                                   new Vector2(400, 5), Color.White);
+            if (debug)
+            {
+                string outp = "";
+                outp += string.Format("mpos = {0}", mousepos)+Environment.NewLine;
+                outp += string.Format("ord = {0}", playerorders.n.Count) + Environment.NewLine;
+                outp += string.Format("act = {0}", mmap.active.Count) + Environment.NewLine;
+                spriteBatch.DrawString(Font2, outp, new Vector2(400, 5), Color.White);
+            }
 
             //int kk = 0;
             //foreach (Hero h in heroes.n)
@@ -1364,7 +1395,7 @@ namespace Mork
 
                 if (click_R)
                 {
-                    Ramka();
+                    Ramka(gt);
                 }
 
                 if (!PAUSE)
@@ -1487,7 +1518,7 @@ namespace Mork
             }
         }
 
-        private static void Ramka()
+        private static void Ramka(GameTime gt)
         {
             var ramka_3 = new Vector3();
             ramka_2.X = Math.Max(Selector.X, ramka_1.X);
@@ -1518,6 +1549,34 @@ namespace Mork
                                 playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
                         }
                     break;
+                    case LClickAction.Supply:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].tags.ContainsKey("convert"))
+                                playerorders.n.Add(new SupplyOrder { dest = new Vector3(i, j, ramka_2.Z)});
+                        }
+                    break;
+
+                    case LClickAction.Cancel:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            for (int index = 0; index < playerorders.n.Count; index++)
+                            {
+                                var o = playerorders.n[index];
+                                if (o.dest.X == i && o.dest.Y == j && ramka_2.Z == o.dest.Z)
+                                {
+                                    if(o.unit_owner != null)
+                                    o.unit_owner.current_order = new NothingOrder();
+                                    playerorders.n.Remove(o);
+                                }
+                            }
+                        }
+                    break;
+
             }
 
             ramka_1.X = -1;

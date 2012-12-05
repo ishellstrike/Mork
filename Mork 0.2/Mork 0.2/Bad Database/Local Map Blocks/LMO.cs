@@ -6,6 +6,7 @@ namespace Mork
 
         public bool walkable = true;
         public bool placeble = true;
+        public bool activeblock = false;
 
         public int dropafterdeath = 666;
         public byte dropafterdeath_num = 1;

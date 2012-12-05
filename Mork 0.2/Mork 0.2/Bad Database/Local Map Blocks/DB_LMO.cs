@@ -5,6 +5,7 @@ namespace Mork
 {
     public static class KnownIDs
     {
+        public static int BrickMaker = 5010;
         public const int error = 666;
 
         public const int stoneboulder = 5000;
@@ -411,7 +412,14 @@ namespace Mork
 
             Data.Add(KnownIDs.StorageEntrance, new LMO(1, false, "сортировочная станция", "", "", "")
             {
-                placeble = true
+                placeble = true,
+                activeblock = true
+            });
+
+            Data.Add(KnownIDs.BrickMaker, new LMO(1, false, "камнедробитель", "", "", "")
+            {
+                placeble = true,
+                activeblock = true
             });
         }
     }
