@@ -1260,6 +1260,11 @@ namespace Mork.Local_Map
             if (GoodVector3(x, y, z + 1))
                 n[x, y, z + 1].explored = true;
 
+            if (n[x, y, z].blockID == KnownIDs.StorageEntrance)
+            {
+                Main.globalstorage.n.Remove(new Vector3(x, y, z));
+            }
+
             WorldLife.SubterrainPersonaly(new Vector3(x,y,z), ref Main.mmap);
         }
 
@@ -1279,6 +1284,7 @@ namespace Mork.Local_Map
             if(id == KnownIDs.StorageEntrance)
             {
                 n[x, y, z].tags.Add("storage", new LocalItems());
+                Main.globalstorage.n.Add(new Vector3(x,y,z));
             }
 
             WorldLife.SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
