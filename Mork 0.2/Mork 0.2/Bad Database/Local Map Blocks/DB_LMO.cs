@@ -415,7 +415,8 @@ namespace Mork
             Data.Add(KnownIDs.StorageEntrance, new LMO(1, false, "сортировочная станция", "", "", "")
             {
                 placeble = true,
-                activeblock = true
+                activeblock = true,
+                walkable = true
             });
 
             Data.Add(KnownIDs.BrickMaker, new LMO(1, false, "камнедробитель", "", "", "")

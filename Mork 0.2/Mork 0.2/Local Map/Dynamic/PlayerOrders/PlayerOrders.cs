@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Mork.Local_Map.Dynamic.Actions;
+using Mork.Local_Map.Dynamic.Local_Items;
 using Mork.Local_Map.Dynamic.Units;
 using Mork.Local_Map.Dynamic.Units.Actions;
 
@@ -11,6 +12,8 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
 {
     public class PlayerOrders
     {
+        Random rnd = new Random();
+
         public List<Order> n = new List<Order>();
 
         public TimeSpan s10;
@@ -62,7 +65,36 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
 
                         Main.localitems.n.Remove(temp);
 
-                        h.current_order = new ToStoreOrder();
+                        if(Main.globalstorage.n.Count > 0)
+                        {
+                            Vector3 st = Main.globalstorage.GetFreeStorage();
+                            if(st != new Vector3(-1))
+                            {
+                                h.current_order = new ToStoreOrder() {dest = st};
+                                Main.AddToLog("ToStoreOrder patch find for " + h.pos + " " + h.patch.Count);
+                                h.patch = Main.mmap.FindPatch(h.pos, st);
+                                (h.current_order as ToStoreOrder).storagepos = st;
+                            }
+                        }
+                    }
+                }
+
+                if (h.current_order is ToStoreOrder && IsNear(h.pos, h.current_order.dest))
+                {
+                    if (h.carry.id != 0)
+                    {
+                        Vector3 st = (h.current_order as ToStoreOrder).storagepos;
+                        LocalItems tempstor = Main.mmap.n[(int)st.X, (int)st.Y, (int)st.Z].tags["storage"] as LocalItems;
+                        if (tempstor.n.Count < tempstor.carp)
+                        {
+                            tempstor.n.Add(new LocalItem() {count = h.carry.count, id = h.carry.id});
+                            h.carry = new LocalItem();
+                        }
+                        else
+                        {
+                            Main.localitems.n.Add(new LocalItem() { count = h.carry.count, id = h.carry.id });
+                            h.carry = new LocalItem();
+                        }
                     }
                 }
 

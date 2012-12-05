@@ -1272,6 +1272,7 @@ namespace Mork
                 outp += string.Format("ord = {0}", playerorders.n.Count) + Environment.NewLine;
                 outp += string.Format("act = {0}", mmap.active.Count) + Environment.NewLine;
                 outp += string.Format("time = {0}", gameTime.TotalGameTime) + Environment.NewLine;
+                outp += string.Format("srg = {0}", globalstorage.n.Count) + Environment.NewLine;
                 spriteBatch.DrawString(Font2, outp, new Vector2(800, 5), Color.White);
             }
 
