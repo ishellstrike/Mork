@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Mork.Local_Map.Dynamic.Actions;
+using Mork.Local_Map.Dynamic.Local_Items;
 using Mork.Local_Map.Dynamic.Units.Actions;
 
 namespace Mork.Local_Map.Dynamic
@@ -14,6 +15,8 @@ namespace Mork.Local_Map.Dynamic
         public int unit_id;
         public Order current_order = new NothingOrder();
         public Order previous_order = new NothingOrder();
+
+        public LocalItems carry;
 
         public Vector3 pre_pos;
         public TimeSpan iddle_time;

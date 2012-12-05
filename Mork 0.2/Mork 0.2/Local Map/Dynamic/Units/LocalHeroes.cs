@@ -12,8 +12,9 @@ namespace Mork.Local_Map.Dynamic.Units
 
         public void Update(GameTime gt)
         {
-            foreach (var lh in n)
+            for (int i = 0; i < n.Count; i++)
             {
+                var lh = n[i];
                 lh.pre_pos = lh.pos;
                 lh.MoveUnit(gt);
                 if (lh.pos == lh.pre_pos) lh.iddle_time += gt.ElapsedGameTime;

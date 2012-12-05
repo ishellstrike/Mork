@@ -18,6 +18,8 @@ namespace Mork
         public const int GrenFranite = 13;
 
         public const int StorageEntrance = 20000;
+
+        public const int water = 888;
     }
 
     public class DB_LMO
@@ -373,7 +375,7 @@ namespace Mork
                
             });
 
-            Data.Add(888, new LMO(34, true, "вода", "ая", "", ""));
+            Data.Add(KnownIDs.water, new LMO(34, true, "вода", "ая", "", ""));
        
             Data.Last().Value.walkable = false;
 
