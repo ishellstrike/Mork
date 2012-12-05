@@ -57,25 +57,30 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
 
                 if (h.current_order is CollectOrder && IsNear(h.pos, h.current_order.dest))
                 {
-                    var temp = Main.localitems.GetNearItem(h.pos);
-                    if (temp.id != 0 && h.carry.id == 0)
+                    //var temp = Main.localitems.GetNearItem(h.pos);
+                    if ((h.current_order as CollectOrder).tocollect.id != 0 && h.carry.id == 0)
                     {
-                        h.carry.id = temp.id;
-                        h.carry.count = temp.count;
+                        //if (Main.localitems.n.Contains((h.current_order as CollectOrder).tocollect))
+                        //{
+                            h.carry.id = (h.current_order as CollectOrder).tocollect.id;
+                            h.carry.count = (h.current_order as CollectOrder).tocollect.count;
 
-                        Main.localitems.n.Remove(temp);
+                            Main.localitems.n.Remove((h.current_order as CollectOrder).tocollect);
 
-                        if(Main.globalstorage.n.Count > 0)
-                        {
-                            Vector3 st = Main.globalstorage.GetFreeStorage();
-                            if(st != new Vector3(-1))
+                            h.current_order.complete = true;
+
+                            if (Main.globalstorage.n.Count > 0)
                             {
-                                h.current_order = new ToStoreOrder() {dest = st};
-                                Main.AddToLog("ToStoreOrder patch find for " + h.pos + " " + h.patch.Count);
-                                h.patch = Main.mmap.FindPatch(h.pos, st);
-                                (h.current_order as ToStoreOrder).storagepos = st;
+                                Vector3 st = Main.globalstorage.GetFreeStorage();
+                                if (st != new Vector3(-1))
+                                {
+                                    h.current_order = new ToStoreOrder() { dest = st };
+                                    Main.AddToLog("ToStoreOrder patch find for " + h.pos + " " + h.patch.Count);
+                                    h.patch = Main.mmap.FindPatch(h.pos, st);
+                                    (h.current_order as ToStoreOrder).storagepos = st;
+                                }
                             }
-                        }
+                        //}
                     }
                 }
 

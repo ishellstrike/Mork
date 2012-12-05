@@ -1648,8 +1648,11 @@ namespace Mork
                         for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
                         //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
                         {
-                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z))
-                                playerorders.n.Add(new CollectOrder { dest = new Vector3(i, j, ramka_2.Z) });
+                            List<LocalItem> t = new List<LocalItem>();
+                            foreach (var a in localitems.n)
+                            {
+                                if (a.pos.X == i && a.pos.Y == j && a.pos.Z == ramka_2.Z) playerorders.n.Add(new CollectOrder { dest = new Vector3(i, j, ramka_2.Z), tocollect = a});
+                            }
                         }
                     break;
 
