@@ -21,7 +21,7 @@ namespace Mork.Local_Map
 
         Dictionary<string, object> tags = new Dictionary<string, object>();
 
-        public void SetMapTag(KeyValuePair<string,object> added_tag)
+        public void SetMapTag(KeyValuePair<string, object> added_tag)
         {
             if (!tags.ContainsKey(added_tag.Key))
                 tags.Add(added_tag.Key, added_tag.Value);
@@ -113,7 +113,7 @@ namespace Mork.Local_Map
         {
             List<string> s = new List<string>();
 
-            s.Add(string.Format("Pos = {0} {1} {2}",x,y,z));
+            s.Add(String.Format("Pos = {0} {1} {2}",x,y,z));
             s.Add("ID = " + n[x, y, z].blockID + " mtex = " + Main.dbobject.Data[n[x, y, z].blockID].metatex_n);
             s.Add("DBName = " + Main.dbobject.Data[n[x, y, z].blockID].I_name);
             foreach (var tag in n[x, y, z].tags)
@@ -430,10 +430,10 @@ namespace Mork.Local_Map
 
         public void Generation_PlaceOnSurface()
         {
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= mx - 1; i++)
+                for (int j = 0; j <= my - 1; j++)
                 {
-                    for (int m = 0; m <= MMap.mz - 1; m++)
+                    for (int m = 0; m <= mz - 1; m++)
                     {
                         if (Main.mmap.n[i, j, m].blockID != 0)
                         {
@@ -550,10 +550,10 @@ namespace Mork.Local_Map
                         n[i, j, m].explored = false;
                     }
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= mx - 1; i++)
+                for (int j = 0; j <= my - 1; j++)
                 {
-                    for (int m = 0; m <= MMap.mz - 1; m++)
+                    for (int m = 0; m <= mz - 1; m++)
                     {
                         if (n[i, j, m].blockID == 0)
                         {
@@ -585,9 +585,9 @@ namespace Mork.Local_Map
                     else whinenapr[i0, i1] = 1;
                 }
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
-                    for (int k = 0; k <= MMap.mz - 1; k += 8)
+            for (int i = 0; i <= mx - 1; i++)
+                for (int j = 0; j <= my - 1; j++)
+                    for (int k = 0; k <= mz - 1; k += 8)
                     {
                         Main.mmap.n[i, j, k].blockID = 0;
                         Main.mmap.n[i, j, k + 1].blockID = 0;
@@ -600,12 +600,12 @@ namespace Mork.Local_Map
                     }
 
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= mx - 1; i++)
+                for (int j = 0; j <= my - 1; j++)
                 {
-                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (MMap.mz - 1) * 0.3 + (MMap.mz - 1) * 0.7 - 5; k++)
+                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (mz - 1) * 0.3 + (mz - 1) * 0.7 - 5; k++)
                     {
-                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k)) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = 12345;
+                        if (GoodVector3(i, j, mz - 1 - k)) Main.mmap.n[i, j, mz - 1 - k].blockID = 12345;
                     }
                 }
 
@@ -651,13 +651,13 @@ namespace Mork.Local_Map
             Main.mmap.Generation_FullLayerGrass(1);
 
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
+            for (int i = 0; i <= mx - 1; i++)
+                for (int j = 0; j <= my - 1; j++)
                 {
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
-                    for (int k = 0; k <= ((0.4)) * (MMap.mz - 1) * 0.3 + (MMap.mz - 1) * 0.7 + 1; k++)
+                    for (int k = 0; k <= ((0.4)) * (mz - 1) * 0.3 + (mz - 1) * 0.7 + 1; k++)
                     {
-                        if (MMap.GoodVector3(i, j, MMap.mz - 1 - k) && Main.mmap.n[i, j, MMap.mz - 1 - k].blockID == 0) Main.mmap.n[i, j, MMap.mz - 1 - k].blockID = KnownIDs.water;//вода
+                        if (GoodVector3(i, j, mz - 1 - k) && Main.mmap.n[i, j, mz - 1 - k].blockID == 0) Main.mmap.n[i, j, mz - 1 - k].blockID = KnownIDs.water;//вода
                     }
                 }
 
@@ -1122,7 +1122,7 @@ namespace Mork.Local_Map
                     }
                 }
 
-            patch_step[(int)loc.X, (int)loc.Y, (int)loc.Z] = short.MaxValue;
+            patch_step[(int)loc.X, (int)loc.Y, (int)loc.Z] = Int16.MaxValue;
 
 
 
@@ -1265,14 +1265,26 @@ namespace Mork.Local_Map
                 Main.globalstorage.n.Remove(new Vector3(x, y, z));
             }
 
-            WorldLife.SubterrainPersonaly(new Vector3(x,y,z), ref Main.mmap);
+            SubterrainPersonaly(new Vector3(x,y,z), ref Main.mmap);
         }
 
+        /// <summary>
+        /// установить блок, внести в список складов если складб активировать, если id блока активное
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="id"></param>
         public void SetBlock(Vector3 p, int id)
         {
             SetBlock((int)p.X, (int)p.Y, (int)p.Z, id);
         }
 
+        /// <summary>
+        /// установить блок, внести в список складов если складб активировать, если id блока активное
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="id"></param>
         public void SetBlock(int x, int y, int z, int id)
         {
             n[x, y, z].blockID = id;
@@ -1287,25 +1299,45 @@ namespace Mork.Local_Map
                 Main.globalstorage.n.Add(new Vector3(x,y,z));
             }
 
-            WorldLife.SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
+            SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
         }
 
+        /// <summary>
+        /// добавить блок в список обновляемых в каждом цикле
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void ActivateBlock(int x, int y, int z)
         {
             active.Add(new Vector3(x,y,z));
         }
 
+        /// <summary>
+        /// добавить блок в список обновляемых в каждом цикле
+        /// </summary>
+        /// <param name="pos"></param>
         public void ActivateBlock(Vector3 pos)
         {
             active.Add(pos);
         }
 
+        /// <summary>
+        /// удалить блок из списка обновляемых в каждом цикле
+        /// </summary>
+        /// <param name="pos"></param>
         public void DeactivateBlock(Vector3 pos)
         {
             if (active.Contains(pos))
                 active.Remove(pos); 
         }
 
+        /// <summary>
+        /// удалить блок из списка обновляемых в каждом цикле
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void DeactivateBlock(int x, int y, int z)
         {
             Vector3 a = new Vector3(x,y,z);
@@ -1313,12 +1345,45 @@ namespace Mork.Local_Map
                 active.Remove(a);
         }
 
+        /// <summary>
+        /// обновить блочную логику для всех активных блоков
+        /// </summary>
+        /// <param name="gt"></param>
         public void UpdateActiveblocks(GameTime gt)
         {
             foreach (var act in active)
             {
                 
             }
+        }
+
+        /// <summary>
+        /// пересчитать локально субтерейн для 1го столбца по Z
+        /// </summary>
+        /// <param name="where"></param>
+        /// <param name="mmap"></param>
+        public static void SubterrainPersonaly(Vector3 where, ref MMap mmap)
+        {
+            var i = @where.X;
+            var j = @where.Y;
+            for (var m = 0; m <= mz - 1; m++)
+            {
+                mmap.n[(int)i, (int)j, m].subterrain = true;
+            }
+
+            for (var m = 0; m <= mz - 1; m++)
+            {
+                if (mmap.n[(int)i, (int)j, m].blockID == 0)
+                {
+                    mmap.n[(int)i, (int)j, m].subterrain = false;
+                }
+                else
+                {
+                    mmap.n[(int)i, (int)j, m].subterrain = false;
+                    goto here;
+                }
+            }
+            here: ;
         }
     }
 }

@@ -21,30 +21,6 @@ namespace Mork
         public static int Year;
         public static string Age = "";
 
-        public static void SubterrainPersonaly(Vector3 where, ref MMap mmap)
-        {
-            var i = where.X;
-            var j = where.Y;
-            for (var m = 0; m <= MMap.mz - 1; m++)
-            {
-                mmap.n[(int)i, (int)j, m].subterrain = true;
-            }
-
-            for (var m = 0; m <= MMap.mz - 1; m++)
-            {
-                if (mmap.n[(int)i, (int)j, m].blockID == 0)
-                {
-                    mmap.n[(int)i, (int)j, m].subterrain = false;
-                }
-                else
-                {
-                    mmap.n[(int)i, (int)j, m].subterrain = false;
-                    goto here;
-                }
-            }
-            here: ;
-        }
-
         public static void WorldTick(ref MMap mmap)
         {
             var rnd = new Random();

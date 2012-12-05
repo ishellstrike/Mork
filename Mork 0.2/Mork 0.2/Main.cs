@@ -280,6 +280,7 @@ namespace Mork
         private ListBox maploadmenulistbox;
         private Button maploadmenuLoad;
         private Button maploadmenuLoadNext;
+
         /// <summary>
         /// Код дизайнера всех базовых окон
         /// </summary>
@@ -977,6 +978,9 @@ namespace Mork
 
         #endregion
 
+        /// <summary>
+        /// сохранить глобальную карту в виде сжатого двоичного файла
+        /// </summary>
         private static void SaveGMapToDisc()
         {
             var k = 0;
@@ -1000,6 +1004,9 @@ namespace Mork
                 }
         }
 
+        /// <summary>
+        /// загрузить глобальную карту из сжатого двоичного файла
+        /// </summary>
         private static void LoadGMapFromDisc(string s)
         {
             var f = File.OpenRead(s);
@@ -1122,6 +1129,10 @@ namespace Mork
         {
         }
 
+        /// <summary>
+        /// базовый тик обновления игры
+        /// </summary>
+        /// <param name="gameTime"></param>
         protected override void Update(GameTime gameTime)
         {
             MousePos.X = Mouse.GetState().X;
@@ -1315,6 +1326,10 @@ namespace Mork
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// показать окно с внутриигровым сообщением
+        /// </summary>
+        /// <param name="s">сообщение</param>
         public void ShowIngameMessage(string s)
         {
             //_messagestring = s;
@@ -1380,13 +1395,17 @@ namespace Mork
 
         #endregion
 
+        /// <summary>
+        /// заменить всем id, которых нет в базе, но есть на карте, на блоки ошибки, которые ничего не делают, но не убивают игру
+        /// </summary>
+        /// <param name="map"></param>
         public static void PrepairMapDeleteWrongIDs(ref MMap map)
         {
             for (int i0 = 0; i0 < map.n.GetUpperBound(0); i0++)
                 for (int i1 = 0; i1 < map.n.GetUpperBound(1); i1++)
                     for (int i2 = 0; i2 < map.n.GetUpperBound(2); i2++)
                     {
-                        if (!dbobject.Data.ContainsKey(map.n[i0, i1, i2].blockID)) map.n[i0, i1, i2].blockID = 666;
+                        if (!dbobject.Data.ContainsKey(map.n[i0, i1, i2].blockID)) map.n[i0, i1, i2].blockID = KnownIDs.error;
                     }
         }
 
@@ -1541,6 +1560,10 @@ namespace Mork
             }
         }
 
+        /// <summary>
+        /// раздача приказов для выделенной рамки, приказ зависит от Main.lclickaction
+        /// </summary>
+        /// <param name="gt"></param>
         private static void Ramka(GameTime gt)
         {
             var ramka_3 = new Vector3();
