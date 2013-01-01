@@ -298,11 +298,6 @@
       <Name>Green</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="teapot.fbx">
-      <Name>teapot</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\Objects\Blocks\Blocks.png">

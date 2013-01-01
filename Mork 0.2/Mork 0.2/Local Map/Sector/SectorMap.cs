@@ -10,8 +10,8 @@ namespace Mork.Local_Map.Sector
 {
     public class SectorMap
     {
-        const int sectn = 1;
-        MapSector[] data = new MapSector[sectn * sectn * sectn];
+        const int sectn = 2;
+        MapSector[] data = new MapSector[sectn * sectn];
         GraphicsDevice gd;
         BasicEffect be;
 
@@ -19,8 +19,7 @@ namespace Mork.Local_Map.Sector
         {
             for (int i = 0; i <= sectn - 1; i++)
                 for (int j = 0; j <= sectn - 1; j++)
-                    for (int k = 0; k <= sectn - 1; k++)
-                        data[i * sectn * sectn + j * sectn + k] = new MapSector(i, j, k);
+                        data[i * sectn + j] = new MapSector(i, j);
 
             gd = _gd;
             be = new BasicEffect(gd);
@@ -39,8 +38,9 @@ namespace Mork.Local_Map.Sector
             be.World = Matrix.CreateScale(10);
             be.View = cam.View;
             be.Projection = cam.Projection;
+            be.AmbientLightColor = new Vector3(0.1F,0.1F,0.1F);
+            be.LightingEnabled = true;
             be.AmbientLightColor = new Vector3(1,1,1);
-            //be.LightingEnabled = true;
 
             gd.RasterizerState = RasterizerState.CullCounterClockwise;
             gd.DepthStencilState = DepthStencilState.Default;

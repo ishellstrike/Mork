@@ -4,56 +4,146 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mork.Bad_Database;
 
 
 namespace Mork.Local_Map.Sector
 {
     public class MapSector
     {
-        const byte dimS = 16;
+        const byte dimS = 16, dimH = 128;
 
-        MNode[] data = new MNode[dimS * dimS * dimS];
+        MNode[] data = new MNode[dimS * dimS * dimH];
+        bool[] buildedrow = new bool[dimS * dimS];
 
-        public int sx, sy, sz;
+        public int sx, sy;
 
-        public bool builded = false;
+        public bool builded;
 
         internal VertexBuffer VertexBuffer;
 
-        public MapSector(int x, int y, int z)
+        public MapSector(int x, int y)
         {
             sx = x;
             sy = y;
-            sz = z;
-            for (int i = 0; i <= dimS*dimS*dimS - 1; i++)
+            for (int i = 0; i <= dimS*dimS*dimH - 1; i++)
                     {
                         data[i] = new MNode();
+                        data[i].blockID = i%3 == 0 ? 1 : 0;
                     }
         }
 
         public void RebuildSectorGeo(GraphicsDevice gd)
         {
-            VertexPositionColor[] VertexArray = new VertexPositionColor[dimS*dimS*dimS*6];
+            VertexPositionNormalTexture[] VertexArray = new VertexPositionNormalTexture[dimS * dimS * dimS * 6];
 
             int index = 0;
 
             for (int i = 0; i <= dimS - 1;i++ )
-                for (int j = 0; j<= dimS - 1; j++)
-                    for (int k = 0; k <= dimS - 1; k++)
-                    {
-                        VertexArray[index] = new VertexPositionColor(new Vector3(i + 1, j + 1, k + 1), Color.Yellow);
-                        VertexArray[index + 1] = new VertexPositionColor(new Vector3(i + 1, j + 1, k), Color.Yellow);
-                        VertexArray[index + 2] = new VertexPositionColor(new Vector3(i + 1, j, k + 1), Color.Yellow);
-                        VertexArray[index + 3] = new VertexPositionColor(new Vector3(i + 1, j, k + 1), Color.Yellow);
-                        VertexArray[index + 4] = new VertexPositionColor(new Vector3(i + 1, j + 1, k), Color.Yellow);
-                        VertexArray[index + 5] = new VertexPositionColor(new Vector3(i + 1, j, k), Color.Yellow);
+                for (int j = 0; j <= dimS - 1; j++)
+                {
+                    for (int k = 0; k <= dimH - 1; k++)
+                        if (data[i*dimS*dimS + j*dimS + k].blockID != 0)
+                        {
+                            //Up face
+                            VertexArray[index] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k), Vector3.Up,
+                                                                new Vector2(0, 1));
+                            VertexArray[index + 1] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k), Vector3.Up,
+                                                                new Vector2(1, 0));
+                            VertexArray[index + 2] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k), Vector3.Up,
+                                                                new Vector2(0, 0));
+                            VertexArray[index + 3] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k), Vector3.Up,
+                                                                new Vector2(0, 1));
+                            VertexArray[index + 4] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k),
+                                                                Vector3.Up, new Vector2(1, 1));
+                            VertexArray[index + 5] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k), Vector3.Up,
+                                                                new Vector2(1, 0));
 
-                        index += 6;
-                    }
+                            index += 6;
+
+                            //left face
+                            VertexArray[index] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, k), Vector3.Left,
+                                                                new Vector2(0, 1));
+                            VertexArray[index + 1] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, k - 1), Vector3.Left,
+                                                                new Vector2(1, 0));
+                            VertexArray[index + 2] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, k - 1), Vector3.Left,
+                                                                new Vector2(0, 0));
+                            VertexArray[index + 3] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, k - 1), Vector3.Left,
+                                                                new Vector2(0, 1));
+                            VertexArray[index + 4] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, k), Vector3.Left, new Vector2(1, 1));
+
+                            VertexArray[index + 5] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, k), Vector3.Left, new Vector2(1, 0));
+
+                            index += 6;
+
+                            //right face
+                            VertexArray[index] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, k), Vector3.Right, new Vector2(0, 1));
+                            VertexArray[index + 1] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + sy * dimS, k), Vector3.Right, new Vector2(1, 0));
+                            VertexArray[index + 2] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + sy * dimS, k - 1), Vector3.Right, new Vector2(0, 0));
+                            VertexArray[index + 3] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + sy * dimS, k - 1), Vector3.Right, new Vector2(0, 1));
+                            VertexArray[index + 4] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, k - 1), Vector3.Right, new Vector2(1, 1));
+                            VertexArray[index + 5] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, k), Vector3.Right, new Vector2(1, 0));
+
+                            index += 6;
+
+                            //Forward face
+                            VertexArray[index] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + sy * dimS, k), Vector3.Forward, new Vector2(0, 1));
+                            VertexArray[index + 1] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, k), Vector3.Forward, new Vector2(1, 0));
+                            VertexArray[index + 2] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, k - 1), Vector3.Forward, new Vector2(0, 0));
+                            VertexArray[index + 3] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, k - 1), Vector3.Forward, new Vector2(0, 1));
+                            VertexArray[index + 4] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + sy * dimS, k - 1), Vector3.Forward, new Vector2(1, 1));
+                            VertexArray[index + 5] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + sy * dimS, k), Vector3.Forward, new Vector2(1, 0));
+
+                            index += 6;
+
+                            //Backward face
+                            VertexArray[index] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, k), Vector3.Forward, new Vector2(0, 1));
+                            VertexArray[index + 1] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, k), Vector3.Forward, new Vector2(1, 0));
+                            VertexArray[index + 2] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, k - 1), Vector3.Forward, new Vector2(0, 0));
+                            VertexArray[index + 3] =
+                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, k - 1), Vector3.Forward, new Vector2(0, 1));
+                            VertexArray[index + 4] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, k - 1), Vector3.Forward, new Vector2(1, 1));
+                            VertexArray[index + 5] =
+                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, k), Vector3.Forward, new Vector2(1, 0));
+                            index += 6;
+
+                            goto nextrow;;
+                        }
+                nextrow:
+                    ;
+                }
 
 
 
-            VertexBuffer = new VertexBuffer(gd, typeof(VertexPositionColor), VertexArray.Length, BufferUsage.WriteOnly);
+            VertexBuffer = new VertexBuffer(gd, typeof(VertexPositionNormalTexture), VertexArray.Length, BufferUsage.WriteOnly);
             VertexBuffer.SetData(VertexArray);
             builded = true;
         }

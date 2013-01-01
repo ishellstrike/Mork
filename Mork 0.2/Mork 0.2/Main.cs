@@ -1487,13 +1487,13 @@ namespace Mork
         private void GameUpdate(GameTime gt)
         {
 
-            //mousepos.X = Mouse.GetState().X;
-            //mousepos.Y = Mouse.GetState().Y;
+            mousepos.X = Mouse.GetState().X;
+            mousepos.Y = Mouse.GetState().Y;
 
-            //float deltaX = (float)resx / 2 - mousepos.X;
-            //float deltaY = (float)resy / 2 - mousepos.Y;
+            float deltaX = (float)resx / 2 - mousepos.X;
+            float deltaY = (float)resy / 2 - mousepos.Y;
 
-            //Mouse.SetPosition(resx / 2, resy / 2);
+            Mouse.SetPosition(resx / 2, resy / 2);
 
             //var currentKeyboardState = Keyboard.GetState();
 
@@ -1578,7 +1578,7 @@ namespace Mork
 
             Camera.translation += moving;
 
-           // Camera.Rotate(deltaX * 0.002f, deltaY * 0.002f, roll * 0.002f);
+            Camera.Rotate(deltaX * 0.002f, deltaY * 0.002f, roll * 0.002f);
 
             Camera.Update();
             {

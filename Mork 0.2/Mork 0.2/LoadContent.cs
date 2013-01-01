@@ -42,8 +42,6 @@ namespace Mork
             base.LoadContent();
             object_tex = ContentLoad(@"Textures\Objects\Blocks\Blocks");
 
-            _teapot = Content.Load<Model>(@"teapot");
-
             var temp = new Texture2D[5];
             for (int i = 0; i <= 4; i++)
                 temp[i] =
