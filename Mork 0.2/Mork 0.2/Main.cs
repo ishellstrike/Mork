@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Mork.Bad_Database;
 using Mork.Generators;
 using Mork.Local_Map;
 using Mork.Local_Map.Dynamic.Actions;
@@ -32,6 +33,8 @@ using ScrollBar = TomShane.Neoforce.Controls.ScrollBar;
 using TextBox = TomShane.Neoforce.Controls.TextBox;
 using ToolTip = TomShane.Neoforce.Controls.ToolTip;
 using TrackBar = TomShane.Neoforce.Controls.TrackBar;
+using Mork.Graphics.MapEngine;
+using Mork.Local_Map.Sector;
 
 
 namespace Mork
@@ -110,6 +113,8 @@ namespace Mork
         public static LocalUnits lunits = new LocalUnits();
         public static LocalHeroes lheroes = new LocalHeroes();
 
+        public static SectorMap smap;
+
         private delegate void GTDelegate(GameTime gt);
         private static GTDelegate asynccore;
         private static IAsyncResult asynccorear;
@@ -142,6 +147,7 @@ namespace Mork
 
         public static Gmapreshim gmapreshim = Gmapreshim.Normal;
 
+        public static FreeCamera Camera;
         public static Vector3 camera = new Vector3(0, 0, 0);
         public static Vector3 Selector;
         public static Vector3 midscreen;
@@ -159,7 +165,7 @@ namespace Mork
         private readonly GraphicsDeviceManager graphics;
         public static LineBatch lineBatch;
 
-        public static Action<GameTime> DrawProc;
+        public static Action<GameTime, SpriteBatch, GraphicsDevice> DrawProc;
         public static Action CalcProc;
 
         public static Vector2 mousepos;
@@ -214,6 +220,11 @@ namespace Mork
             IsFixedTimeStep = false;
             IsMouseVisible = true;
             graphics.ApplyChanges();
+
+            Vector3 a = new Vector3(100,100,500);
+            //a = Vector3.Transform(a, Matrix.CreateLookAt(new Vector3(100, 100, 100), Vector3.Zero, Vector3.Up));
+            Camera = new FreeCamera(a, 0, 0, GraphicsDevice);
+            LRInit();
 
             Directory.CreateDirectory(@"Maps");
             Directory.CreateDirectory(@"Data");
@@ -558,7 +569,7 @@ namespace Mork
             SummaryWindow.SetPosition(100, 100);
             SummaryWindow.Width = resx / 4;
             SummaryWindow.Height = resy / 4;
-            SummaryWindow.Visible = true;
+            SummaryWindow.Visible = false;
             SummaryWindow.BorderVisible = true;
             SummaryWindow.Movable = true;
             SummaryWindow.Resizable = false;
@@ -886,7 +897,7 @@ namespace Mork
             
             if(Savear != null && !Savear.IsCompleted) sp.EndInvoke(Savear);
             Main.Savear = sp.BeginInvoke(string.Format(@"{0}", files[maploadmenulistbox.ItemIndex]), null, null);
-            Main.SetPhase(Main.Gstate.GenerationScreen);
+            SetPhase(Main.Gstate.GenerationScreen);
             generationgenerateB.Hide();
         }
 
@@ -1271,7 +1282,7 @@ namespace Mork
         /// на доработку
         /// </summary>
         /// <param name="gs"></param>
-        public static void SetPhase(Gstate gs)
+        public void SetPhase(Gstate gs)
         {
             switch (gs)
             {
@@ -1311,9 +1322,10 @@ namespace Mork
             Manager.Draw(gameTime);
             GraphicsDevice.Clear(Color.Black);
 
+            DrawProc(gameTime, spriteBatch, GraphicsDevice);
+
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
-            DrawProc(gameTime);
 
             if (debug)
             {
@@ -1435,14 +1447,18 @@ namespace Mork
 
         #region Draws
 
-        private static void GameDraw(GameTime gameTime)
+        private void GameDraw(GameTime gameTime, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
-            BasicAllDraw(gameTime);
+            LocalMapRenderer(gameTime, spriteBatch, GraphicsDevice);
+
+            sb.Begin();
+            //BasicAllDraw(gameTime);
 
             for (int i = 0; i <= Textlogmax - 1; i++) // отрисова лога
             {
                 spriteBatch.DrawString(Font1, textlog[i], new Vector2(8, resy - 192 + i*15), Color.White);
             }
+            sb.End();
         }
 
         private void MapEditorDraw()
@@ -1470,6 +1486,101 @@ namespace Mork
 
         private void GameUpdate(GameTime gt)
         {
+
+            //mousepos.X = Mouse.GetState().X;
+            //mousepos.Y = Mouse.GetState().Y;
+
+            //float deltaX = (float)resx / 2 - mousepos.X;
+            //float deltaY = (float)resy / 2 - mousepos.Y;
+
+            //Mouse.SetPosition(resx / 2, resy / 2);
+
+            //var currentKeyboardState = Keyboard.GetState();
+
+            //// Allows the game to exit
+            //if (currentKeyboardState.IsKeyDown(Keys.Escape))
+            //    Exit();
+
+            //if (!lks.IsKeyDown(Keys.T) && ks.IsKeyDown(Keys.T))
+            //{
+            //    if (_isWire)
+            //    {
+            //        _device.RasterizerState = _rsDefault;
+            //        _isWire = false;
+            //    }
+            //    else
+            //    {
+            //        _device.RasterizerState = _rsWire;
+            //        _isWire = true;
+            //    }
+            //}
+
+            //if (!_lks.IsKeyDown(Keys.C) && ks.IsKeyDown(Keys.C))
+            //{
+            //    _quadTree.Cull = !_quadTree.Cull;
+            //}
+
+            Vector3 moving = Vector3.Zero;
+
+            if (ks[Keys.W] == KeyState.Down)
+            {
+                moving += Vector3.Up * 3;
+            }
+            if (ks[Keys.S] == KeyState.Down)
+            {
+                moving += Vector3.Down * 3;
+            }
+            if (ks[Keys.A] == KeyState.Down)
+            {
+                moving += Vector3.Left * 3;
+            }
+            if (ks[Keys.D] == KeyState.Down)
+            {
+                moving += Vector3.Right * 3;
+            }
+
+            float roll = 0;
+            //if (currentKeyboardState[Keys.Q] == KeyState.Down)
+            //{
+            //    roll += 3;
+            //}
+            //if (currentKeyboardState[Keys.E] == KeyState.Down)
+            //{
+            //    roll -= 3;
+            //}
+
+            //if (!lks.IsKeyDown(Keys.R) && currentKeyboardState.IsKeyDown(Keys.R))
+            //{
+            //    current_RT++;
+            //    if (current_RT > RTS.Count - 1) current_RT = 0;
+            //}
+            //if (!_previousKeyboardState.IsKeyDown(Keys.U) && currentKeyboardState.IsKeyDown(Keys.U))
+            //{
+            //    _quadTree.MinimumDepth++;
+            //    if (_quadTree.MinimumDepth > 6) _quadTree.MinimumDepth = 6;
+            //}
+            //if (!_previousKeyboardState.IsKeyDown(Keys.J) && currentKeyboardState.IsKeyDown(Keys.J))
+            //{
+            //    _quadTree.MinimumDepth--;
+            //    if (_quadTree.MinimumDepth < 0) _quadTree.MinimumDepth = 0;
+            //}
+
+            //if (!_previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyDown(Keys.G))
+            //{
+            //    tex123 = _testBase.GetLandTex1(1024, 1024);
+            //    tex123norm = _testBase.BWtoAB(tex123, Color.Teal, Color.Magenta);
+            //}
+
+            if (ks[Keys.LeftShift] == KeyState.Down)
+            {
+                moving *= 10;
+            }
+
+            Camera.translation += moving;
+
+           // Camera.Rotate(deltaX * 0.002f, deltaY * 0.002f, roll * 0.002f);
+
+            Camera.Update();
             {
                 if (Mouse.GetState().ScrollWheelValue > _wheellast)
                 {
@@ -1513,6 +1624,8 @@ namespace Mork
 
 
                 ingameUIpartLeftlistbox2.Items.Clear();
+
+                LRUpdate(gt);
                 
 
                 if (MMap.GoodVector3(Selector))

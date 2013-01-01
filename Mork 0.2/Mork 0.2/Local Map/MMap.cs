@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Mork.Local_Map.Dynamic.Local_Items;
+using Mork.Bad_Database;
 
 namespace Mork.Local_Map
 {
@@ -10,10 +11,10 @@ namespace Mork.Local_Map
     {
         Random rnd = new Random();
 
-        public static Int32 mx = 128, my = 128, mz = 128;
-        public MNode[,,] n = new MNode[mx, my, mz];
-        public float[,] wshine = new float[mx, my];
-        public short[,] whinenapr = new short[mx, my];
+        public const int mx = Commons.mx, my = Commons.my, mz = Commons.mz;
+        public MNode[, ,] n = new MNode[Commons.mx, Commons.my, Commons.mz];
+        public float[,] wshine = new float[Commons.mx, Commons.my];
+        public short[,] whinenapr = new short[Commons.mx, Commons.my];
 
         public List<Vector3> active = new List<Vector3>(); //active blocks update inner logic every cycle
 

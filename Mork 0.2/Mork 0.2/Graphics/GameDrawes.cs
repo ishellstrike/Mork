@@ -13,8 +13,9 @@ namespace Mork
 {
     public partial class Main
     {
-        private static void DrawGMapGenRects(GameTime gameTime)
+        private static void DrawGMapGenRects(GameTime gameTime, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
+            sb.Begin();
             for (int i = 0; i <= GMap.size - 14; i += 13)
                 for (int j = 0; j <= GMap.size - 14; j += 13)
                 {
@@ -72,19 +73,24 @@ namespace Mork
                 spriteBatch.DrawString(Font2, GMap.data.ElementAt(i).Value.name,
                                        new Vector2(250 + 10, 445 + (i - 5)*12), Color.White);
             }
+            sb.End();
         }
 
-        private static void InGameMessageDraw(GameTime gameTime)
+        private static void InGameMessageDraw(GameTime gameTime, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
+            sb.Begin();
             spriteBatch.DrawString(Font1, _messagestring, new Vector2(50, 50), Color.White);
+            sb.End();
         }
 
-        private static void MainMenuDraw(GameTime gt)
+        private static void MainMenuDraw(GameTime gt, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
+            sb.Begin();
             _titleAnimation += (float)(_titlePhase*gt.ElapsedGameTime.TotalSeconds);
             if (_titleAnimation >= 1 || _titleAnimation <= 0) _titlePhase *= -1;
             spriteBatch.Draw(interface_tex[15], new Vector2(470, 20),
                              new Color(255, _titleAnimation, _titleAnimation));
+            sb.End();
         }
 
         private static void BasicAllDraw(GameTime gt)

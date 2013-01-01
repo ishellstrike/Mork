@@ -276,6 +276,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Effects\SolidBlockEffect.fx">
+      <Name>SolidBlockEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Effects\WaterBlockEffect.fx">
+      <Name>WaterBlockEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <None Include="Skins\Default.skin">
       <Name>Default</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -288,6 +298,11 @@
       <Name>Green</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="teapot.fbx">
+      <Name>teapot</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\Objects\Blocks\Blocks.png">
@@ -304,6 +319,13 @@
     </Compile>
     <Compile Include="Textures\Interface\supply.png">
       <Name>supply</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\tileStrip.png">
+      <Name>tileStrip</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

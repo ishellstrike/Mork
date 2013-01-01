@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork.Generators;
 using Mork.Local_Map;
+using Mork.Local_Map.Sector;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Formu = System.Windows.Forms;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
@@ -31,6 +32,8 @@ namespace Mork
             return temp;
         }
 
+        public static Model _teapot; 
+
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -38,6 +41,8 @@ namespace Mork
 
             base.LoadContent();
             object_tex = ContentLoad(@"Textures\Objects\Blocks\Blocks");
+
+            _teapot = Content.Load<Model>(@"teapot");
 
             var temp = new Texture2D[5];
             for (int i = 0; i <= 4; i++)
@@ -85,6 +90,8 @@ namespace Mork
             gmap = new GMap(); //!!!!
 
             WindowsDesigner();
+
+            smap = new SectorMap(GraphicsDevice);
 
             for (int i = 0; i <= MMap.mx - 1; i++)
                 for (int j = 0; j <= MMap.my - 1; j++)

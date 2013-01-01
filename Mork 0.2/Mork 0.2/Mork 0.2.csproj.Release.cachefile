@@ -38,6 +38,10 @@ Content\Textures\Interface\Building_41x28_16fr.xnb
 Content\Textures\Objects\Blocks\Blocks.xnb
 Content\Textures\Interface\build.xnb
 Content\Textures\Interface\supply.xnb
+Content\Textures\tileStrip.xnb
+Content\Effects\SolidBlockEffect.xnb
+Content\Effects\WaterBlockEffect.xnb
+Content\teapot.xnb
 Content\Skins\Default.skin
 Content\Skins\Extended.skin
 Content\Skins\Green.skin

@@ -142,6 +142,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bad Database\Commons.cs" />
     <Compile Include="Bad Database\Material\DBMaterial.cs" />
     <Compile Include="Bad Database\Local Map Blocks\DB_LMO.cs" />
     <Compile Include="FPSCounter.cs" />
@@ -150,6 +151,8 @@
     <Compile Include="Global Map\GMap.cs" />
     <Compile Include="Graphics\GameDrawes.cs" />
     <Compile Include="Graphics\LineBatch.cs" />
+    <Compile Include="Graphics\MapEngine\Camera.cs" />
+    <Compile Include="Graphics\MapEngine\LocalMapRenderer.cs" />
     <Compile Include="LoadContent.cs" />
     <Compile Include="Local Map\Dynamic\Local Items\ItemStorageSystem.cs" />
     <Compile Include="Local Map\Dynamic\Local Items\Local Item.cs" />
@@ -180,6 +183,13 @@
     <Compile Include="Bad Database\Material\MaterialTypeID.cs" />
     <Compile Include="Bad Database\Material\MaterialID.cs" />
     <Compile Include="Bad Database\Local Map Blocks\LMO.cs" />
+    <Compile Include="Local Map\Sector\MapSector.cs" />
+    <Compile Include="Local Map\Sector\SectorMap.cs" />
+    <Compile Include="usersettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>usersettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Main.cs" />
@@ -226,6 +236,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="usersettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>usersettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup />
