@@ -127,22 +127,6 @@ namespace Mork
 
         }
 
-        private static void DrawSelector(int[,] drawed)
-        {
-            if (MMap.GoodVector3(Selector))
-            {
-                float x_temp2 = ToIsometricX((int) Selector.X, (int) Selector.Y);
-                float y_temp2 = ToIsometricY((int) Selector.X, (int) Selector.Y) - 20;
-                Color col = MMap.IsWalkable(Selector) ? new Color(255, 255, 255) : new Color(255, 0, 50);
-
-                spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2), null, col, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
-                                     1 - (Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
-                for (int sel = 1; sel < drawed[(int) Selector.X, (int) Selector.Y] - Selector.Z; sel++)
-                    spriteBatch.Draw(interface_tex[2], new Vector2(x_temp2, y_temp2 + sel*20), null, col, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None,
-                                     1 - (Selector.X + Selector.Y+2) / (MMap.mx + MMap.my));
-            }
-        }
-
         private static Rectangle GetTexRectFromN(int n)
         {
             return new Rectangle((n%10)*40, (n/10)*40, 40, 40);
