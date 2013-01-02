@@ -14,8 +14,8 @@ namespace Mork.Local_Map.Sector
         public const byte dimS = 16, dimH = 128;
 
         public MNode[] n = new MNode[dimS * dimS * dimH];
-        bool[] buildedrow = new bool[dimS * dimS];
-        VertexPositionNormalTexture[] VertexArray = new VertexPositionNormalTexture[dimS * dimS * dimS * 2];
+        //bool[] buildedrow = new bool[dimS * dimS];
+        VertexPositionNormalTexture[] VertexArray = new VertexPositionNormalTexture[dimS * dimS * dimS * 6];
         public BoundingBox bounding;
 
         private Action<GraphicsDevice, int> GeoCaller;
@@ -34,8 +34,7 @@ namespace Mork.Local_Map.Sector
             sy = y;
             for (int i = 0; i <= dimS*dimS*dimH - 1; i++)
                     {
-                        n[i] = new MNode();
-                        n[i].blockID = i%5 == 0 ? 1 : 0;
+                        n[i] = new MNode(){blockID =  0};
                     }
             bounding = new BoundingBox(new Vector3(0 + sx * dimS, 0 + sy * dimS, -0), new Vector3(15 + sx * dimS, 15 + sy * dimS, -1));
         }
@@ -74,27 +73,41 @@ namespace Mork.Local_Map.Sector
                             float smovx = umovx + tsper;
                             float smovy = umovy;
 
-                            //Up face
-                            VertexArray[index] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + sy * dimS, -k), Vector3.Up,
-                                                                new Vector2(umovx, umovy));
-                            VertexArray[index + 1] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k), Vector3.Up,
-                                                                new Vector2(umovx, umovy + tsperh));
-                            VertexArray[index + 2] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k), Vector3.Up,
-                                                                new Vector2(umovx + tsper, umovy));
-                            VertexArray[index + 3] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                Vector3.Up, new Vector2(umovx + tsper, umovy + tsperh));
-                            VertexArray[index + 4] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k), Vector3.Up,
-                                                                new Vector2(umovx + tsper, umovy));
-                            VertexArray[index + 5] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k), Vector3.Up,
-                                                                new Vector2(umovx, umovy + tsperh));
+                            bool invisible = true;
 
-                            index += 6;
+                            if (k == 0 || n[i * dimS * dimH + j * dimH + k - 1].blockID == 0)
+                            {
+                                //Up face
+                                VertexArray[index] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, -k),
+                                                                    Vector3.Up,
+                                                                    new Vector2(umovx, umovy));
+                                VertexArray[index + 1] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, -k),
+                                                                    Vector3.Up,
+                                                                    new Vector2(umovx, umovy + tsperh));
+                                VertexArray[index + 2] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, -k),
+                                                                    Vector3.Up,
+                                                                    new Vector2(umovx + tsper, umovy));
+                                VertexArray[index + 3] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, -k),
+                                                                    Vector3.Up,
+                                                                    new Vector2(umovx + tsper, umovy + tsperh));
+                                VertexArray[index + 4] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, -k),
+                                                                    Vector3.Up,
+                                                                    new Vector2(umovx + tsper, umovy));
+                                VertexArray[index + 5] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, -k),
+                                                                    Vector3.Up,
+                                                                    new Vector2(umovx, umovy + tsperh));
+
+                                index += 6;
+                                invisible = false;
+                            }
+
+                            
 
                             if (i == dimS - 1 || n[(i + 1) * dimS * dimH + j * dimH + k].blockID == 0)
                             {
@@ -120,6 +133,7 @@ namespace Mork.Local_Map.Sector
                                                                     Vector3.Left, new Vector2(smovx + tsper, smovy));
 
                                 index += 6;
+                                invisible = false;
                             }
 
                             if (i == 0 || n[(i - 1) * dimS * dimH + j * dimH + k].blockID == 0)
@@ -148,6 +162,7 @@ namespace Mork.Local_Map.Sector
                                                                     Vector3.Right, new Vector2(smovx, smovy));
 
                                 index += 6;
+                                invisible = false;
                             }
 
                             if (j == 0 || n[i * dimS * dimH + (j - 1) * dimH + k].blockID == 0)
@@ -175,6 +190,7 @@ namespace Mork.Local_Map.Sector
                                                                     Vector3.Forward, new Vector2(smovx, smovy));
 
                                 index += 6;
+                                invisible = false;
                             }
 
                             if (j == dimS - 1 || n[i * dimS * dimH + (j + 1) * dimH + k].blockID == 0)
@@ -202,12 +218,13 @@ namespace Mork.Local_Map.Sector
                                     new VertexPositionNormalTexture(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k),
                                                                     Vector3.Forward, new Vector2(smovx, smovy));
                                 index += 6;
+                                invisible = false;
                             }
 
                             if (k < top) top = k;
                             if (k > low) low = k;
 
-                            goto nextrow;
+                            if(invisible) goto nextrow;
                             ;
                         }
                     }

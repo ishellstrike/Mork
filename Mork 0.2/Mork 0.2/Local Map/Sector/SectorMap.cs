@@ -69,11 +69,12 @@ namespace Mork.Local_Map.Sector
             be.World = Matrix.CreateScale(10);
             be.View = cam.View;
             be.Projection = cam.Projection;
-            be.AmbientLightColor = new Vector3(0.1F,0.1F,0.1F);
+            be.AmbientLightColor = new Vector3(0.5F,0.5F,0.5F);
             be.LightingEnabled = true;
-            be.AmbientLightColor = new Vector3(1,1,1);
+            be.DiffuseColor = new Vector3(0.8f,0.8f,0.8f);
             be.TextureEnabled = true;
             be.Texture = Main.texatlas;
+            //be.EnableDefaultLighting();
 
             gd.RasterizerState = RasterizerState.CullCounterClockwise;
             gd.DepthStencilState = DepthStencilState.Default;
@@ -92,7 +93,7 @@ namespace Mork.Local_Map.Sector
                 pass.Apply();
                 foreach (var a in n)
                 {
-                    if (cam.BoundingVolumeIsInView(a.bounding))
+                    //if (cam.Frustum.Contains(new BoundingBox(a.bounding.Min*10,a.bounding.Max*10)) != ContainmentType.Disjoint)
                     {
                         if (!a.builded) a.RebuildSectorGeo(gd, Main.z_cam);
                         if (!a.empty)
@@ -432,8 +433,8 @@ namespace Mork.Local_Map.Sector
         /// <param name="id">заполнить базовый слой указанным блоком</param>
         public void Generation_BasicLayer(int id)
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn*MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
                     for (k = 128 - 1; k >= 0; k--)
@@ -457,8 +458,8 @@ namespace Mork.Local_Map.Sector
         /// <param name="count">толщина слоя</param>
         public void Generation_FullLayer(int id, int count)
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
                     for (k = 128 - 1; k >= 0; k--)
@@ -489,11 +490,11 @@ namespace Mork.Local_Map.Sector
         /// <param name="length">протяженность жил</param>
         public void GenerationFullLayerCluster(int id, int count, int[] clust, int c_freq, int[] jila, int j_freq, int length)
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = 128 - 1; k >= 0; k--)
+                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
                     {
                         if (At(i, j, k).blockID == 12345)
                             goto here1;
@@ -594,10 +595,10 @@ namespace Mork.Local_Map.Sector
 
         public void Generation_PlaceOnSurface()
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
-                    for (int m = 0; m <= 128 - 1; m++)
+                    for (int m = 0; m <= sectn * MapSector.dimS - 1; m++)
                     {
                         if (At(i, j, m).blockID != 0)
                         {
@@ -617,11 +618,11 @@ namespace Mork.Local_Map.Sector
         /// <param name="count"></param>
         public void Generation_FullLayer_under(int count)
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = 128 - 1; k >= 0; k--)
+                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
                     {
                         if (At(i, j, k).blockID == 0)
                             goto here1;
@@ -643,11 +644,11 @@ namespace Mork.Local_Map.Sector
         /// <param name="count"></param>
         public void Generation_FullLayer_under_under(int count)
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = 128 - 1; k >= 0; k--)
+                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
                     {
                         if (At(i, j, k).blockID == 0)
                             goto here1;
@@ -669,11 +670,11 @@ namespace Mork.Local_Map.Sector
         /// <param name="count"></param>
         public void Generation_FullLayerGrass(int count)
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = 128 - 1; k >= 0; k--)
+                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
                     {
                         if (At(i, j, k).blockID == 0)
                             goto here1;
@@ -706,18 +707,18 @@ namespace Mork.Local_Map.Sector
         /// </summary>
         public void RecalcExploredSubterrain()
         {
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
-                    for (int m = 0; m <= 128 - 1; m++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+                    for (int m = 0; m <= sectn * MapSector.dimS - 1; m++)
                     {
                         At(i, j, m).subterrain = true;
                         At(i, j, m).explored = false;
                     }
 
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
-                    for (int m = 0; m <= 128 - 1; m++)
+                    for (int m = 0; m <= sectn * MapSector.dimS - 1; m++)
                     {
                         if (At(i, j, m).blockID == 0)
                         {
@@ -735,23 +736,22 @@ namespace Mork.Local_Map.Sector
                 }
         }
 
-        public float[,] wshine = new float[Commons.mx, Commons.my];
-        public short[,] whinenapr = new short[Commons.mx, Commons.my];
+        public float[] wshine = new float[sectn * MapSector.dimS * sectn * MapSector.dimS];
+        public short[] whinenapr = new short[sectn * MapSector.dimS * sectn * MapSector.dimS];
         /// <summary>
         /// простая генерация локальный карты по данным глобальной карты (базовая версия)
         /// </summary>
         public void SimpleGeneration_bygmap()
         {
             for (int i0 = 0; i0 < wshine.GetUpperBound(0); i0++)
-                for (int i1 = 0; i1 < wshine.GetUpperBound(1); i1++)
                 {
-                    wshine[i0, i1] = (float)rnd.NextDouble();
-                    whinenapr[i0, i1] = rnd.Next(0, 1) == 0 ? (short)-1 : (short)1;
+                    wshine[i0] = (float)rnd.NextDouble();
+                    whinenapr[i0] = rnd.Next(0, 1) == 0 ? (short)-1 : (short)1;
                 }
 
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
-                    for (int k = 0; k <= 128 - 1; k += 8)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+                    for (int k = 0; k <= sectn * MapSector.dimS - 1; k += 8)
                     {
                         At(i, j, k).blockID = 0;
                         At(i, j, k + 1).blockID = 0;
@@ -764,12 +764,12 @@ namespace Mork.Local_Map.Sector
                     }
 
 
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
-                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (128 - 1) * 0.3 + (128 - 1) * 0.7 - 5; k++)
+                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (sectn * MapSector.dimS - 1) * 0.3 + (sectn * MapSector.dimS - 1) * 0.7 - 5; k++)
                     {
-                        if (GoodVector3(i, j, 128 - 1 - k)) At(i, j, 128 - 1 - k).blockID = 12345;
+                        if (GoodVector3(i, j, sectn * MapSector.dimS - 1 - k)) At(i, j, sectn * MapSector.dimS - 1 - k).blockID = 12345;
                     }
                 }
 
@@ -815,13 +815,13 @@ namespace Mork.Local_Map.Sector
             Generation_FullLayerGrass(1);
 
 
-            for (int i = 0; i <= 128 - 1; i++)
-                for (int j = 0; j <= 128 - 1; j++)
+            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
                 {
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
-                    for (int k = 0; k <= ((0.4)) * (128 - 1) * 0.3 + (128 - 1) * 0.7 + 1; k++)
+                    for (int k = 0; k <= ((0.4)) * (sectn * MapSector.dimS - 1) * 0.3 + (sectn * MapSector.dimS - 1) * 0.7 + 1; k++)
                     {
-                        if (GoodVector3(i, j, 128 - 1 - k) && At(i, j, 128 - 1 - k).blockID == 0) At(i, j, 128 - 1 - k).blockID = KnownIDs.water;//вода
+                        if (GoodVector3(i, j, 128 - 1 - k) && At(i, j, 128 - 1 - k).blockID == 0) At(i, j, sectn * MapSector.dimS - 1 - k).blockID = KnownIDs.water;//вода
                     }
                 }
 
