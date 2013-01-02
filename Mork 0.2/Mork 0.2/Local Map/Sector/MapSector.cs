@@ -15,6 +15,7 @@ namespace Mork.Local_Map.Sector
 
         public MNode[] n = new MNode[dimS * dimS * dimH];
         bool[] buildedrow = new bool[dimS * dimS];
+        VertexPositionNormalTexture[] VertexArray = new VertexPositionNormalTexture[dimS * dimS * dimS * 2];
 
         public int sx, sy;
 
@@ -33,24 +34,23 @@ namespace Mork.Local_Map.Sector
                     }
         }
 
-        public void RebuildSectorGeo(GraphicsDevice gd)
+        public void RebuildSectorGeo(GraphicsDevice gd, int z_cam)
         {
-            VertexPositionNormalTexture[] VertexArray = new VertexPositionNormalTexture[dimS * dimS * dimS * 6];
-
             int index = 0;
 
             float tsper = 1/(Commons.TextureAtlas.X/Commons.TextureAtlasTexSize);
+            float tsperh = 1/(Commons.TextureAtlas.Y/Commons.TextureAtlasTexSize);
 
             for (int i = 0; i <= dimS - 1;i++ )
                 for (int j = 0; j <= dimS - 1; j++)
                 {
-                    for (int k = 0; k <= dimH - 1; k++)
+                    for (int k = 0; k <= dimH - 1 - z_cam; k++)
                     {
-                        int bid = n[i*dimS*dimS + j*dimS + k].blockID;
-                        if (bid != 0)
+                        var b = n[i*dimS*dimH + j*dimH + k];
+                        if (b.blockID != 0 && b.explored == true )
                         {
-                            float umovx = (Main.dbobject.Data[bid].metatex_n%Commons.TextureAtlasWCount) * tsper * 2;
-                            float umovy = (Main.dbobject.Data[bid].metatex_n/(Commons.TextureAtlas.Y/Commons.TextureAtlasTexSize)) * tsper;
+                            float umovx = (Main.dbobject.Data[b.blockID].metatex_n%Commons.TextureAtlasWCount) * tsper * 2;
+                            float umovy = (Main.dbobject.Data[b.blockID].metatex_n/Commons.TextureAtlasWCount) * tsperh;
 
                             float smovx = umovx + tsper;
                             float smovy = umovy;
@@ -61,19 +61,19 @@ namespace Mork.Local_Map.Sector
                                                                 new Vector2(umovx, umovy));
                             VertexArray[index + 1] =
                                 new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k), Vector3.Up,
-                                                                new Vector2(umovx, umovy + tsper));
+                                                                new Vector2(umovx, umovy + tsperh));
                             VertexArray[index + 2] =
                                 new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k), Vector3.Up,
                                                                 new Vector2(umovx + tsper, umovy));
                             VertexArray[index + 3] =
                                 new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Up, new Vector2(umovx + tsper, umovy + tsper));
+                                                                Vector3.Up, new Vector2(umovx + tsper, umovy + tsperh));
                             VertexArray[index + 4] =
                                 new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k), Vector3.Up,
                                                                 new Vector2(umovx + tsper, umovy));
                             VertexArray[index + 5] =
                                 new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k), Vector3.Up,
-                                                                new Vector2(umovx, umovy + tsper));
+                                                                new Vector2(umovx, umovy + tsperh));
 
                             index += 6;
 
@@ -86,13 +86,13 @@ namespace Mork.Local_Map.Sector
                                 VertexArray[index + 1] =
                                     new VertexPositionNormalTexture(
                                         new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                        Vector3.Left, new Vector2(smovx + tsper, smovy + tsper));
+                                        Vector3.Left, new Vector2(smovx + tsper, smovy + tsperh));
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
-                                                                    Vector3.Left, new Vector2(smovx, smovy + tsper));
+                                                                    Vector3.Left, new Vector2(smovx, smovy + tsperh));
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
-                                                                    Vector3.Left, new Vector2(smovx, smovy + tsper));
+                                                                    Vector3.Left, new Vector2(smovx, smovy + tsperh));
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k),
                                                                     Vector3.Left, new Vector2(smovx, smovy));
@@ -116,14 +116,14 @@ namespace Mork.Local_Map.Sector
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
                                                                     Vector3.Right,
-                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                                                    new Vector2(smovx + tsper, smovy + tsperh));
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
                                                                     Vector3.Right,
-                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                                                    new Vector2(smovx + tsper, smovy + tsperh));
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                                                    Vector3.Right, new Vector2(smovx, smovy + tsper));
+                                                                    Vector3.Right, new Vector2(smovx, smovy + tsperh));
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k),
                                                                     Vector3.Right, new Vector2(smovx, smovy));
@@ -143,14 +143,14 @@ namespace Mork.Local_Map.Sector
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                                                    new Vector2(smovx + tsper, smovy + tsperh));
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                                                    new Vector2(smovx + tsper, smovy + tsperh));
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
-                                                                    Vector3.Forward, new Vector2(smovx, smovy + tsper));
+                                                                    Vector3.Forward, new Vector2(smovx, smovy + tsperh));
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k),
                                                                     Vector3.Forward, new Vector2(smovx, smovy));
@@ -170,15 +170,15 @@ namespace Mork.Local_Map.Sector
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                                                    new Vector2(smovx + tsper, smovy + tsperh));
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                                                    new Vector2(smovx + tsper, smovy + tsperh));
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTexture(
                                         new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                        Vector3.Forward, new Vector2(smovx, smovy + tsper));
+                                        Vector3.Forward, new Vector2(smovx, smovy + tsperh));
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
                                                                     Vector3.Forward, new Vector2(smovx, smovy));

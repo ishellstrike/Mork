@@ -1219,7 +1219,7 @@ namespace Mork
 
             if (ks.IsKeyDown(Keys.F5) && !lks.IsKeyDown(Keys.F5))
             {
-                smap.RebuildAllMapGeo();
+                smap.RebuildAllMapGeo(z_cam);
             }
 
             //mbut.ActButtons();
@@ -1451,9 +1451,12 @@ namespace Mork
 
         #region Updates
 
-        private float camerarotation;
+        private float camerarotation = 0.7f;
         public static int drawed_verts;
         public static int drawed_sects;
+        private float cameradistance = 300;
+        public static int z_cam;
+        private int notfastcam = 0;
 
         private void GameUpdate(GameTime gt)
         {
@@ -1522,6 +1525,23 @@ namespace Mork
                 if (camerarotation < 0) camerarotation += 360;
             }
 
+            if (notfastcam > 0) notfastcam--;
+
+            if (ks[Keys.OemComma] == KeyState.Down && notfastcam == 0/* && lks[Keys.OemComma]==KeyState.Up*/)
+            {
+                z_cam++;
+                if (z_cam > 127) z_cam = 127;
+                smap.RebuildAllMapGeo(z_cam);
+                notfastcam = 10;
+            }
+            if (ks[Keys.OemPeriod] == KeyState.Down && notfastcam == 0 /*&& lks[Keys.OemPeriod] == KeyState.Up*/)
+            {
+                z_cam--;
+                if (z_cam < 0) z_cam = 0;
+                smap.RebuildAllMapGeo(z_cam);
+                notfastcam = 10;
+            }
+
             //if (!lks.IsKeyDown(Keys.R) && currentKeyboardState.IsKeyDown(Keys.R))
             //{
             //    current_RT++;
@@ -1552,18 +1572,20 @@ namespace Mork
             moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
 
             Camera.Target += moving;
-            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0.7071f, 0, MathHelper.ToRadians(camerarotation), 300);
+            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0.7071f, 0, MathHelper.ToRadians(camerarotation), cameradistance);
 
             //Camera.Update();
             {
                 if (Mouse.GetState().ScrollWheelValue > _wheellast)
                 {
                     if (Selector.Z > 0) Selector.Z--;
+                    cameradistance *=1.05f;//-= (float)gt.ElapsedGameTime.TotalSeconds * 500;
                 }
 
                 if (Mouse.GetState().ScrollWheelValue < _wheellast)
                 {
                     if (Selector.Z < MMap.mz - 2) Selector.Z++;
+                    cameradistance /= 1.05f;//+= (float)gt.ElapsedGameTime.TotalSeconds * 500;
                 }
 
                 Selector.X = Convert.ToInt16(((MousePos.X - camera.X)/2 + (MousePos.Y - camera.Y)/1)/20) - 1;

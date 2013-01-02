@@ -29,11 +29,11 @@ namespace Mork.Local_Map.Sector
             be = new BasicEffect(gd);
         }
 
-        public void RebuildAllMapGeo()
+        public void RebuildAllMapGeo(int z_cam)
         {
             foreach(var a in n)
             {
-                a.RebuildSectorGeo(gd);
+                a.RebuildSectorGeo(gd, z_cam);
             }
         }
 
@@ -41,19 +41,19 @@ namespace Mork.Local_Map.Sector
         {
             return
                 n[x/MapSector.dimS*sectn + y/MapSector.dimS].n[
-                    x%MapSector.dimS*MapSector.dimS*MapSector.dimS + y%MapSector.dimS*MapSector.dimS + z];
+                    x%MapSector.dimS*MapSector.dimS*MapSector.dimH + y%MapSector.dimS*MapSector.dimH + z];
         }
 
         public MNode At(float x, float y, float z)
         {
             return n[(int)x / MapSector.dimS * sectn + (int)y / MapSector.dimS].n[
-                    (int)x % MapSector.dimS * MapSector.dimS * MapSector.dimS + (int)y % MapSector.dimS * MapSector.dimS + (int)z];
+                    (int)x % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)y % MapSector.dimS * MapSector.dimH + (int)z];
         }
 
         public MNode At(Vector3 ve)
         {
             return n[(int)ve.X / MapSector.dimS * sectn + (int)ve.Y / MapSector.dimS].n[
-                    (int)ve.X % MapSector.dimS * MapSector.dimS * MapSector.dimS + (int)ve.Y % MapSector.dimS * MapSector.dimS + (int)ve.Z];
+                    (int)ve.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve.Y % MapSector.dimS * MapSector.dimH + (int)ve.Z];
         }
 
         public void DrawAllMap(GameTime gt, Camera cam)
@@ -79,7 +79,7 @@ namespace Mork.Local_Map.Sector
                 pass.Apply();
                 foreach (var a in n)
                 {
-                    if (!a.builded) a.RebuildSectorGeo(gd);
+                    if (!a.builded) a.RebuildSectorGeo(gd, Main.z_cam);
                     if (a.builded && a.VertexBuffer.VertexCount != 0)
                     {
                        Main.drawed_sects++;
@@ -691,11 +691,11 @@ namespace Mork.Local_Map.Sector
             int[] metamorf_clust = { 800, 801, 802, 803, 804, 805, 806 };
             int[] matamorf_jila = { 810, 811, 812 };
 
-            //Generation_FullLayer(18, 5);
-            //Generation_FullLayer(17, 2);
-            //Generation_FullLayer(16, 2);
-            //Generation_FullLayer(15, 2);
-            //Generation_FullLayer(14, 18);
+            Generation_FullLayer(18, 5);
+            Generation_FullLayer(17, 2);
+            Generation_FullLayer(16, 2);
+            Generation_FullLayer(15, 2);
+            Generation_FullLayer(14, 18);
 
             Generation_BasicLayer(KnownIDs.Gabro);
             Generation_FullLayer(KnownIDs.Gabro, 7);
