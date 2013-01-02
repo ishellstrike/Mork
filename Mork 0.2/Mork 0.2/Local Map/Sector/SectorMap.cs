@@ -41,19 +41,19 @@ namespace Mork.Local_Map.Sector
         {
             return
                 n[x/MapSector.dimS*sectn + y/MapSector.dimS].n[
-                    x%MapSector.dimS*MapSector.dimS*MapSector.dimS + y%MapSector.dimS*MapSector.dimS + z%MapSector.dimH];
+                    x%MapSector.dimS*MapSector.dimS*MapSector.dimS + y%MapSector.dimS*MapSector.dimS + z];
         }
 
         public MNode At(float x, float y, float z)
         {
             return n[(int)x / MapSector.dimS * sectn + (int)y / MapSector.dimS].n[
-                    (int)x % MapSector.dimS * MapSector.dimS * MapSector.dimS + (int)y % MapSector.dimS * MapSector.dimS + (int)z % MapSector.dimH];
+                    (int)x % MapSector.dimS * MapSector.dimS * MapSector.dimS + (int)y % MapSector.dimS * MapSector.dimS + (int)z];
         }
 
         public MNode At(Vector3 ve)
         {
             return n[(int)ve.X / MapSector.dimS * sectn + (int)ve.Y / MapSector.dimS].n[
-                    (int)ve.X % MapSector.dimS * MapSector.dimS * MapSector.dimS + (int)ve.Y % MapSector.dimS * MapSector.dimS + (int)ve.Z % MapSector.dimH];
+                    (int)ve.X % MapSector.dimS * MapSector.dimS * MapSector.dimS + (int)ve.Y % MapSector.dimS * MapSector.dimS + (int)ve.Z];
         }
 
         public void DrawAllMap(GameTime gt, Camera cam)
@@ -80,7 +80,7 @@ namespace Mork.Local_Map.Sector
                 foreach (var a in n)
                 {
                     if (!a.builded) a.RebuildSectorGeo(gd);
-                    if (a.VertexBuffer.VertexCount != 0)
+                    if (a.builded && a.VertexBuffer.VertexCount != 0)
                     {
                        Main.drawed_sects++;
                        gd.SetVertexBuffer(a.VertexBuffer);
@@ -661,9 +661,7 @@ namespace Mork.Local_Map.Sector
                 for (int i1 = 0; i1 < wshine.GetUpperBound(1); i1++)
                 {
                     wshine[i0, i1] = (float)rnd.NextDouble();
-                    if (rnd.Next(0, 1) == 0)
-                        whinenapr[i0, i1] = -1;
-                    else whinenapr[i0, i1] = 1;
+                    whinenapr[i0, i1] = rnd.Next(0, 1) == 0 ? (short)-1 : (short)1;
                 }
 
             for (int i = 0; i <= 128 - 1; i++)
@@ -693,16 +691,16 @@ namespace Mork.Local_Map.Sector
             int[] metamorf_clust = { 800, 801, 802, 803, 804, 805, 806 };
             int[] matamorf_jila = { 810, 811, 812 };
 
-            Generation_FullLayer(18, 5);
-            Generation_FullLayer(17, 2);
-            Generation_FullLayer(16, 2);
-            Generation_FullLayer(15, 2);
-            Generation_FullLayer(14, 18);
+            //Generation_FullLayer(18, 5);
+            //Generation_FullLayer(17, 2);
+            //Generation_FullLayer(16, 2);
+            //Generation_FullLayer(15, 2);
+            //Generation_FullLayer(14, 18);
 
-            Generation_BasicLayer((int)KnownIDs.Gabro);
-            Generation_FullLayer((int)KnownIDs.Gabro, 7);
-            Generation_FullLayer((int)KnownIDs.GabroToGranete, 1);
-            Generation_FullLayer((int)KnownIDs.GrenFranite, 6);
+            Generation_BasicLayer(KnownIDs.Gabro);
+            Generation_FullLayer(KnownIDs.Gabro, 7);
+            Generation_FullLayer(KnownIDs.GabroToGranete, 1);
+            Generation_FullLayer(KnownIDs.GrenFranite, 6);
 
             int[] granite_clust = metamorf_clust;
             int[] granite_jila = { 55, 55 };

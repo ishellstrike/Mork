@@ -50,7 +50,7 @@ namespace Mork.Local_Map.Sector
                         if (bid != 0)
                         {
                             float umovx = (Main.dbobject.Data[bid].metatex_n%Commons.TextureAtlasWCount) * tsper * 2;
-                            float umovy = (Main.dbobject.Data[bid].metatex_n /Commons.TextureAtlasWCount) * tsper;
+                            float umovy = (Main.dbobject.Data[bid].metatex_n/(Commons.TextureAtlas.Y/Commons.TextureAtlasTexSize)) * tsper;
 
                             float smovx = umovx + tsper;
                             float smovy = umovy;
@@ -77,92 +77,113 @@ namespace Mork.Local_Map.Sector
 
                             index += 6;
 
-                            //left face
-                            VertexArray[index] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Left, new Vector2(smovx + tsper, smovy));
-                            VertexArray[index + 1] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                                                Vector3.Left, new Vector2(smovx + tsper, smovy + tsper));
-                            VertexArray[index + 2] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
-                                                                Vector3.Left, new Vector2(smovx, smovy + tsper));
-                            VertexArray[index + 3] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
-                                                                Vector3.Left, new Vector2(smovx, smovy + tsper));
-                            VertexArray[index + 4] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k),
-                                                                Vector3.Left, new Vector2(smovx, smovy));
-                            VertexArray[index + 5] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Left, new Vector2(smovx + tsper, smovy));
+                            if (i == dimS - 1 || n[(i + 1) * dimS + j].blockID == 0)
+                            {
+                                //left face
+                                VertexArray[index] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
+                                                                    Vector3.Left, new Vector2(smovx + tsper, smovy));
+                                VertexArray[index + 1] =
+                                    new VertexPositionNormalTexture(
+                                        new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k - 1),
+                                        Vector3.Left, new Vector2(smovx + tsper, smovy + tsper));
+                                VertexArray[index + 2] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
+                                                                    Vector3.Left, new Vector2(smovx, smovy + tsper));
+                                VertexArray[index + 3] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
+                                                                    Vector3.Left, new Vector2(smovx, smovy + tsper));
+                                VertexArray[index + 4] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k),
+                                                                    Vector3.Left, new Vector2(smovx, smovy));
+                                VertexArray[index + 5] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
+                                                                    Vector3.Left, new Vector2(smovx + tsper, smovy));
 
-                            index += 6;
+                                index += 6;
+                            }
 
-                            //right face
-                            VertexArray[index] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Right, new Vector2(smovx, smovy));
-                            VertexArray[index + 1] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k), Vector3.Right,
-                                                                new Vector2(smovx + tsper, smovy));
-                            VertexArray[index + 2] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
-                                                                Vector3.Right, new Vector2(smovx + tsper, smovy + tsper));
-                            VertexArray[index + 3] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
-                                                                Vector3.Right, new Vector2(smovx + tsper, smovy + tsper));
-                            VertexArray[index + 4] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                                                Vector3.Right, new Vector2(smovx, smovy + tsper));
-                            VertexArray[index + 5] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Right, new Vector2(smovx, smovy));
+                            if (i == 0 || n[(i - 1) * dimS + j].blockID == 0)
+                            {
+                                //right face
+                                VertexArray[index] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k),
+                                                                    Vector3.Right, new Vector2(smovx, smovy));
+                                VertexArray[index + 1] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k),
+                                                                    Vector3.Right,
+                                                                    new Vector2(smovx + tsper, smovy));
+                                VertexArray[index + 2] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
+                                                                    Vector3.Right,
+                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                VertexArray[index + 3] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
+                                                                    Vector3.Right,
+                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                VertexArray[index + 4] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
+                                                                    Vector3.Right, new Vector2(smovx, smovy + tsper));
+                                VertexArray[index + 5] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k),
+                                                                    Vector3.Right, new Vector2(smovx, smovy));
 
-                            index += 6;
+                                index += 6;
+                            }
 
-                            //Forward face
-                            VertexArray[index] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k),
-                                                                Vector3.Forward, new Vector2(smovx, smovy));
-                            VertexArray[index + 1] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k),
-                                                                Vector3.Forward, new Vector2(smovx + tsper, smovy));
-                            VertexArray[index + 2] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
-                                                                Vector3.Forward, new Vector2(smovx + tsper, smovy + tsper));
-                            VertexArray[index + 3] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
-                                                                Vector3.Forward, new Vector2(smovx + tsper, smovy + tsper));
-                            VertexArray[index + 4] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
-                                                                Vector3.Forward, new Vector2(smovx, smovy + tsper));
-                            VertexArray[index + 5] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k),
-                                                                Vector3.Forward, new Vector2(smovx, smovy));
+                            if (j == 0 || n[i  * dimS + (j- 1)].blockID == 0)
+                            {
+                                //Forward face
+                                VertexArray[index] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k),
+                                                                    Vector3.Forward, new Vector2(smovx, smovy));
+                                VertexArray[index + 1] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k),
+                                                                    Vector3.Forward, new Vector2(smovx + tsper, smovy));
+                                VertexArray[index + 2] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
+                                                                    Vector3.Forward,
+                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                VertexArray[index + 3] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + sy*dimS, k - 1),
+                                                                    Vector3.Forward,
+                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                VertexArray[index + 4] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k - 1),
+                                                                    Vector3.Forward, new Vector2(smovx, smovy + tsper));
+                                VertexArray[index + 5] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + sy*dimS, k),
+                                                                    Vector3.Forward, new Vector2(smovx, smovy));
 
-                            index += 6;
+                                index += 6;
+                            }
 
-                            //Backward face
-                            VertexArray[index] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Forward, new Vector2(smovx, smovy));
-                            VertexArray[index + 1] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Forward, new Vector2(smovx + tsper, smovy));
-                            VertexArray[index + 2] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                                                Vector3.Forward, new Vector2(smovx + tsper, smovy + tsper));
-                            VertexArray[index + 3] =
-                                new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                                                Vector3.Forward, new Vector2(smovx + tsper, smovy + tsper));
-                            VertexArray[index + 4] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k - 1),
-                                                                Vector3.Forward, new Vector2(smovx, smovy + tsper));
-                            VertexArray[index + 5] =
-                                new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
-                                                                Vector3.Forward, new Vector2(smovx, smovy));
-                            index += 6;
+                            if (j == dimS-1 || n[i * dimS + (j + 1)].blockID == 0)
+                            {
+                                //Backward face
+                                VertexArray[index] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
+                                                                    Vector3.Forward, new Vector2(smovx, smovy));
+                                VertexArray[index + 1] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k),
+                                                                    Vector3.Forward, new Vector2(smovx + tsper, smovy));
+                                VertexArray[index + 2] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
+                                                                    Vector3.Forward,
+                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                VertexArray[index + 3] =
+                                    new VertexPositionNormalTexture(new Vector3(i + sx*dimS, j + 1 + sy*dimS, k - 1),
+                                                                    Vector3.Forward,
+                                                                    new Vector2(smovx + tsper, smovy + tsper));
+                                VertexArray[index + 4] =
+                                    new VertexPositionNormalTexture(
+                                        new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k - 1),
+                                        Vector3.Forward, new Vector2(smovx, smovy + tsper));
+                                VertexArray[index + 5] =
+                                    new VertexPositionNormalTexture(new Vector3(i + 1 + sx*dimS, j + 1 + sy*dimS, k),
+                                                                    Vector3.Forward, new Vector2(smovx, smovy));
+                                index += 6;
+                            }
 
                             goto nextrow;
                             ;
@@ -174,9 +195,12 @@ namespace Mork.Local_Map.Sector
 
 
 
-            VertexBuffer = new VertexBuffer(gd, typeof(VertexPositionNormalTexture), VertexArray.Length, BufferUsage.WriteOnly);
-            VertexBuffer.SetData(VertexArray);
-            builded = true;
+            if (index != 0)
+            {
+                VertexBuffer = new VertexBuffer(gd, typeof (VertexPositionNormalTexture), index, BufferUsage.WriteOnly);
+                VertexBuffer.SetData(VertexArray, 0, index);
+                builded = true;
+            }
         }
     }
 }

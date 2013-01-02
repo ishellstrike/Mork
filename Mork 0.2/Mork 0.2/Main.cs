@@ -1217,6 +1217,11 @@ namespace Mork
                 debug = !debug;
             }
 
+            if (ks.IsKeyDown(Keys.F5) && !lks.IsKeyDown(Keys.F5))
+            {
+                smap.RebuildAllMapGeo();
+            }
+
             //mbut.ActButtons();
 
             Manager.Update(gameTime);

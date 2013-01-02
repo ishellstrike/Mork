@@ -96,6 +96,8 @@ namespace Mork
 
             smap = new SectorMap(GraphicsDevice);
 
+            MNode a = smap.At(17, 17, 17);
+
             //for (int i = 0; i <= MMap.mx - 1; i++)
             //    for (int j = 0; j <= MMap.my - 1; j++)
             //        for (int k = 0; k <= MMap.mz - 1; k += 16)
