@@ -16,6 +16,7 @@ namespace Mork.Local_Map.Sector
         public MapSector[] n = new MapSector[sectn * sectn];
         GraphicsDevice gd;
         BasicEffect be;
+        private int passn = 0;
 
         public List<Vector3> active = new List<Vector3>();
 
@@ -29,12 +30,16 @@ namespace Mork.Local_Map.Sector
             be = new BasicEffect(gd);
         }
 
-        public void RebuildAllMapGeo(int z_cam)
+        public void RebuildAllMapGeo(int z_cam, FreeCamera Camera)
         {
-            foreach(var a in n)
+            foreach (var a in n)
             {
-                a.RebuildSectorGeo(gd, z_cam);
+                a.builded = false;
             }
+        }
+
+        public void AsyRAMG(int z_cam, FreeCamera Camera)
+        {
         }
 
         public MNode At(int x, int y, int z)
@@ -58,6 +63,9 @@ namespace Mork.Local_Map.Sector
 
         public void DrawAllMap(GameTime gt, Camera cam)
         {
+            passn++;
+            if (passn > sectn*sectn - 1) passn = 0;
+
             be.World = Matrix.CreateScale(10);
             be.View = cam.View;
             be.Projection = cam.Projection;
@@ -74,23 +82,100 @@ namespace Mork.Local_Map.Sector
             Main.drawed_sects = 0;
             Main.drawed_verts = 0;
 
+            //if (!n[passn].builded)
+            //{
+            //    n[passn].RebuildSectorGeo(gd, Main.z_cam);
+            //}
+
             foreach (var pass in be.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 foreach (var a in n)
                 {
-                    if (!a.builded) a.RebuildSectorGeo(gd, Main.z_cam);
-                    if (a.builded && a.VertexBuffer.VertexCount != 0)
+                    if (cam.BoundingVolumeIsInView(a.bounding))
                     {
-                       Main.drawed_sects++;
-                       gd.SetVertexBuffer(a.VertexBuffer);
-                       gd.DrawPrimitives(PrimitiveType.TriangleList, 0, a.VertexBuffer.VertexCount / 3);
-                        Main.drawed_verts += a.VertexBuffer.VertexCount;
+                        if (!a.builded) a.RebuildSectorGeo(gd, Main.z_cam);
+                        if (!a.empty)
+                        {
+                            Main.drawed_sects++;
+                            gd.SetVertexBuffer(a.VertexBuffer);
+                            gd.DrawPrimitives(PrimitiveType.TriangleList, 0, a.VertexBuffer.VertexCount/3);
+                            Main.drawed_verts += a.VertexBuffer.VertexCount;
+                        }
                     }
                 }
 
                 //Matrix aa = Matrix.CreateScale(10);
                 //Main._teapot.Draw(aa, cam.View, cam.Projection);
+            }
+
+            be.TextureEnabled = false;
+            be.LightingEnabled = false;
+
+            if (Main.debug)
+            {
+                foreach (var pass in be.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    List<VertexPositionColor> vl = new List<VertexPositionColor>();
+                    foreach (var a in n)
+                    {
+                        Vector3[] vv = new Vector3[24];
+                        vv[0] = a.bounding.Min;
+                        vv[11] = a.bounding.Max;
+                        vv[1] = new Vector3(vv[11].X, vv[0].Y, vv[0].Z);
+
+
+                        vv[2] = new Vector3(vv[11].X, vv[0].Y, vv[0].Z);
+                        vv[3] = new Vector3(vv[11].X, vv[11].Y, vv[0].Z);
+
+
+                        vv[4] = new Vector3(vv[11].X, vv[11].Y, vv[0].Z);
+                        vv[5] = new Vector3(vv[0].X, vv[11].Y, vv[0].Z);
+
+
+
+                        vv[6] = new Vector3(vv[0].X, vv[11].Y, vv[0].Z);
+                        vv[7] = new Vector3(vv[0].X, vv[0].Y, vv[0].Z);
+
+
+                        vv[8] = new Vector3(vv[0].X, vv[0].Y, vv[11].Z);
+                        vv[9] = new Vector3(vv[11].X, vv[0].Y, vv[11].Z);
+
+
+                        vv[10] = new Vector3(vv[11].X, vv[0].Y, vv[11].Z);
+
+
+                        vv[12] = a.bounding.Max;
+                        vv[13] = new Vector3(vv[0].X, vv[11].Y, vv[11].Z);
+
+
+                        vv[14] = new Vector3(vv[0].X, vv[11].Y, vv[11].Z);
+                        vv[15] = new Vector3(vv[0].X, vv[0].Y, vv[11].Z);
+
+                        vv[16] = vv[0];
+                        vv[17] = vv[8];
+                        vv[18] = vv[1];
+                        vv[19] = vv[9];
+                        vv[20] = vv[3];
+                        vv[21] = vv[11];
+                        vv[22] = vv[5];
+                        vv[23] = vv[13];
+                        foreach (var vector3 in vv)
+                        {
+                            vl.Add(new VertexPositionColor(vector3, Color.Red));
+                        }
+                    }
+                    if (vl.Count > 0)
+                    {
+                        VertexBuffer vb = new VertexBuffer(gd, typeof (VertexPositionColor), vl.Count,
+                                                           BufferUsage.WriteOnly);
+                        vb.SetData(vl.ToArray());
+
+                        gd.SetVertexBuffer(vb);
+                        gd.DrawPrimitives(PrimitiveType.LineList, 0, vb.VertexCount);
+                    }
+                }
             }
         }
 

@@ -85,7 +85,7 @@ namespace Mork
         public const int ssizex = 50, ssizey = 35;
         public const int resx = 1280, resy = 768;
 
-        private bool debug;
+        public static bool debug;
 
         public static string OurName = "";
         public static string OurVer = "";
@@ -1219,7 +1219,7 @@ namespace Mork
 
             if (ks.IsKeyDown(Keys.F5) && !lks.IsKeyDown(Keys.F5))
             {
-                smap.RebuildAllMapGeo(z_cam);
+                smap.RebuildAllMapGeo(z_cam, Camera);
             }
 
             //mbut.ActButtons();
@@ -1527,18 +1527,18 @@ namespace Mork
 
             if (notfastcam > 0) notfastcam--;
 
-            if (ks[Keys.OemComma] == KeyState.Down && notfastcam == 0/* && lks[Keys.OemComma]==KeyState.Up*/)
+            if (ks[Keys.OemComma] == KeyState.Down&& lks[Keys.OemComma]==KeyState.Up)
             {
                 z_cam++;
                 if (z_cam > 127) z_cam = 127;
-                smap.RebuildAllMapGeo(z_cam);
+                smap.RebuildAllMapGeo(z_cam, Camera);
                 notfastcam = 10;
             }
-            if (ks[Keys.OemPeriod] == KeyState.Down && notfastcam == 0 /*&& lks[Keys.OemPeriod] == KeyState.Up*/)
+            if (ks[Keys.OemPeriod] == KeyState.Down&& lks[Keys.OemPeriod] == KeyState.Up)
             {
                 z_cam--;
                 if (z_cam < 0) z_cam = 0;
-                smap.RebuildAllMapGeo(z_cam);
+                smap.RebuildAllMapGeo(z_cam, Camera);
                 notfastcam = 10;
             }
 
@@ -1573,6 +1573,7 @@ namespace Mork
 
             Camera.Target += moving;
             Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0.7071f, 0, MathHelper.ToRadians(camerarotation), cameradistance);
+            Camera.generateFrustum();
 
             //Camera.Update();
             {
