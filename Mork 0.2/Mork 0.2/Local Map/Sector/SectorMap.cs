@@ -10,7 +10,7 @@ namespace Mork.Local_Map.Sector
 {
     public class SectorMap
     {
-        const int sectn = 2;
+        const int sectn = 8;
         MapSector[] data = new MapSector[sectn * sectn];
         GraphicsDevice gd;
         BasicEffect be;
@@ -41,6 +41,8 @@ namespace Mork.Local_Map.Sector
             be.AmbientLightColor = new Vector3(0.1F,0.1F,0.1F);
             be.LightingEnabled = true;
             be.AmbientLightColor = new Vector3(1,1,1);
+            be.TextureEnabled = true;
+            be.Texture = Main.texatlas;
 
             gd.RasterizerState = RasterizerState.CullCounterClockwise;
             gd.DepthStencilState = DepthStencilState.Default;
@@ -56,9 +58,6 @@ namespace Mork.Local_Map.Sector
                     {
                        gd.SetVertexBuffer(a.VertexBuffer);
                        gd.DrawPrimitives(PrimitiveType.TriangleList, 0, a.VertexBuffer.VertexCount / 3);
-                    }
-                    {
-
                     }
                 }
 

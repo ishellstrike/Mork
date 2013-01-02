@@ -32,7 +32,7 @@ namespace Mork.Graphics.MapEngine
         public Matrix View
         {
             get { return view; }
-            protected set
+            set
             {
                 view = value;
                 generateFrustum();
@@ -90,7 +90,7 @@ namespace Mork.Graphics.MapEngine
         public float Roll { get; set; }
 
         public Vector3 Position { get; set; }
-        public Vector3 Target { get; private set; }
+        public Vector3 Target { get; set; }
 
         public Vector3 Up { get; private set; }
         public Vector3 Right { get; private set; }
@@ -144,5 +144,37 @@ namespace Mork.Graphics.MapEngine
             this.Up = up;
             this.Right = Vector3.Cross(forward, up);
         }
+
+        /// <summary>
+        /// Вращение камеры вокруг объекта
+        /// </summary>
+        /// <param name="cameraTarget">Координаты объекта</param>
+        /// <param name="cameraRotationX">Вращение вокруг X</param>
+        /// <param name="cameraRotationY">Вращение вокруг Y</param>
+        /// <param name="cameraTargetDistance">Расстояние от камеры до объекта</param>
+        /// <returns></returns>
+        public static Matrix BuildViewMatrix(Vector3 cameraTarget, float cameraRotationX, float cameraRotationY, float cameraRotationZ, float cameraTargetDistance)
+        {
+            //матрица вращений
+            Matrix cameraRot = Matrix.CreateRotationX(cameraRotationX)
+              * Matrix.CreateRotationY(cameraRotationY) * Matrix.CreateRotationZ(cameraRotationZ);
+
+            //вычисляем куда смотреть
+            Vector3 cameraOriginalTarget = new Vector3(0, 0, -1);
+            Vector3 cameraOriginalUpVector = new Vector3(0, 1, 0);
+
+            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, cameraRot);
+            Vector3 cameraFinalTarget = cameraTarget + cameraRotatedTarget;
+            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRot);
+            Vector3 cameraFinalUpVector = cameraTarget + cameraRotatedUpVector;
+
+            //смотрим на объект
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraTarget, cameraFinalTarget, cameraRotatedUpVector);
+
+            //отдаляем камеру на нужное расстояние от объекта
+            viewMatrix.Translation += new Vector3(0, 0, -cameraTargetDistance);
+
+            return viewMatrix;
+        } 
     }
 }

@@ -223,7 +223,7 @@ namespace Mork
 
             Vector3 a = new Vector3(100,100,500);
             //a = Vector3.Transform(a, Matrix.CreateLookAt(new Vector3(100, 100, 100), Vector3.Zero, Vector3.Up));
-            Camera = new FreeCamera(a, 0, 0, GraphicsDevice);
+            Camera = new FreeCamera(a, MathHelper.ToRadians(45), MathHelper.ToRadians(45), GraphicsDevice);
             LRInit();
 
             Directory.CreateDirectory(@"Maps");
@@ -1484,16 +1484,17 @@ namespace Mork
 
         #region Updates
 
+        private float camerarotation;
         private void GameUpdate(GameTime gt)
         {
 
-            mousepos.X = Mouse.GetState().X;
-            mousepos.Y = Mouse.GetState().Y;
+            //mousepos.X = Mouse.GetState().X;
+            //mousepos.Y = Mouse.GetState().Y;
 
-            float deltaX = (float)resx / 2 - mousepos.X;
-            float deltaY = (float)resy / 2 - mousepos.Y;
+            //float deltaX = (float)resx / 2 - mousepos.X;
+            //float deltaY = (float)resy / 2 - mousepos.Y;
 
-            Mouse.SetPosition(resx / 2, resy / 2);
+            //Mouse.SetPosition(resx / 2, resy / 2);
 
             //var currentKeyboardState = Keyboard.GetState();
 
@@ -1524,30 +1525,32 @@ namespace Mork
 
             if (ks[Keys.W] == KeyState.Down)
             {
-                moving += Vector3.Up * 3;
+                moving += Vector3.Up *(float)gt.ElapsedGameTime.TotalSeconds * 80;
             }
             if (ks[Keys.S] == KeyState.Down)
             {
-                moving += Vector3.Down * 3;
+                moving += Vector3.Down * (float)gt.ElapsedGameTime.TotalSeconds * 80;
             }
             if (ks[Keys.A] == KeyState.Down)
             {
-                moving += Vector3.Left * 3;
+                moving += Vector3.Left * (float)gt.ElapsedGameTime.TotalSeconds * 80;
             }
             if (ks[Keys.D] == KeyState.Down)
             {
-                moving += Vector3.Right * 3;
+                moving += Vector3.Right * (float)gt.ElapsedGameTime.TotalSeconds * 80;
             }
 
             float roll = 0;
-            //if (currentKeyboardState[Keys.Q] == KeyState.Down)
-            //{
-            //    roll += 3;
-            //}
-            //if (currentKeyboardState[Keys.E] == KeyState.Down)
-            //{
-            //    roll -= 3;
-            //}
+            if (ks[Keys.Q] == KeyState.Down)
+            {
+                camerarotation += 1 * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                if (camerarotation > 360) camerarotation -= 360;
+            }
+            if (ks[Keys.E] == KeyState.Down)
+            {
+                camerarotation -= 1 * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                if (camerarotation < 0) camerarotation += 360;
+            }
 
             //if (!lks.IsKeyDown(Keys.R) && currentKeyboardState.IsKeyDown(Keys.R))
             //{
@@ -1573,14 +1576,15 @@ namespace Mork
 
             if (ks[Keys.LeftShift] == KeyState.Down)
             {
-                moving *= 10;
+                moving *= 3;
             }
 
             Camera.translation += moving;
 
-            Camera.Rotate(deltaX * 0.002f, deltaY * 0.002f, roll * 0.002f);
+            Camera.Target += moving;
+            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0, 0, MathHelper.ToRadians(camerarotation), 300);
 
-            Camera.Update();
+            //Camera.Update();
             {
                 if (Mouse.GetState().ScrollWheelValue > _wheellast)
                 {

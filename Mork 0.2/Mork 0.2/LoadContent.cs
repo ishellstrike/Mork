@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Mork.Bad_Database;
 using Mork.Generators;
 using Mork.Local_Map;
 using Mork.Local_Map.Sector;
@@ -32,7 +33,7 @@ namespace Mork
             return temp;
         }
 
-        public static Model _teapot; 
+        public static Texture2D texatlas;
 
         protected override void LoadContent()
         {
@@ -41,6 +42,10 @@ namespace Mork
 
             base.LoadContent();
             object_tex = ContentLoad(@"Textures\Objects\Blocks\Blocks");
+
+            texatlas = Content.Load<Texture2D>(@"Textures\BlocktexAtlas");
+            Commons.TextureAtlas.Y = texatlas.Height;
+            Commons.TextureAtlas.X = texatlas.Width;
 
             var temp = new Texture2D[5];
             for (int i = 0; i <= 4; i++)
