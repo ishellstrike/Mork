@@ -109,7 +109,7 @@ namespace Mork
 
         public static Vector3 gmap_region = new Vector3();
 
-        public static MMap mmap = new MMap();
+        //public static MMap mmap = new MMap();
         public static LocalUnits lunits = new LocalUnits();
         public static LocalHeroes lheroes = new LocalHeroes();
 
@@ -140,7 +140,7 @@ namespace Mork
         public static DB_LMO dbobject;
         //public static Stores buildings;
         public static GMap gmap;
-        public static PlayerOrders playerorders = new PlayerOrders();
+        //public static PlayerOrders playerorders = new PlayerOrders();
         public static LocalItems localitems = new LocalItems();
         public static ItemStorageSystem iss = new ItemStorageSystem();
         public static Storages globalstorage = new Storages();
@@ -224,6 +224,7 @@ namespace Mork
             Vector3 a = new Vector3(100,100,500);
             //a = Vector3.Transform(a, Matrix.CreateLookAt(new Vector3(100, 100, 100), Vector3.Zero, Vector3.Up));
             Camera = new FreeCamera(a, MathHelper.ToRadians(45), MathHelper.ToRadians(45), GraphicsDevice);
+            Camera.Target = new Vector3(1000,1000,0);
             LRInit();
 
             Directory.CreateDirectory(@"Maps");
@@ -1213,34 +1214,6 @@ namespace Mork
                 _fpsN = 0;
             }
 
-            click_L = false;
-            click_M = false;
-            click_R = false;
-
-            if (buttonhelper_L && mousestate.LeftButton == ButtonState.Released)
-            {
-                buttonhelper_L = false;
-                click_L = true;
-            }
-            if (buttonhelper_R && mousestate.RightButton == ButtonState.Released)
-            {
-                buttonhelper_R = false;
-                click_R = true;
-            }
-
-            if (buttonhelper_M && mousestate.MiddleButton == ButtonState.Released)
-            {
-                buttonhelper_M = false;
-                click_M = true;
-            }
-
-            if (mousestate.LeftButton == ButtonState.Pressed)
-                buttonhelper_L = true;
-            if (mousestate.RightButton == ButtonState.Pressed)
-                buttonhelper_R = true;
-            if (mousestate.MiddleButton == ButtonState.Pressed)
-                buttonhelper_M = true;
-
             switch (gstate)
             {
                 case Gstate.CloseGame:
@@ -1257,6 +1230,11 @@ namespace Mork
             }
 
             _wheellast = mousestate.ScrollWheelValue;
+
+            if (ks.IsKeyDown(Keys.F4) && !lks.IsKeyDown(Keys.F4))
+            {
+                debug = !debug;
+            }
 
             //mbut.ActButtons();
 
@@ -1314,9 +1292,9 @@ namespace Mork
         /// <param name="gameTime"></param>
         protected override void Draw(GameTime gameTime)
         {
-            _fpsN++;
-            tick_of_5++;
-            tick_of_5 = tick_of_5 > 5 ? 1 : tick_of_5;
+            //_fpsN++;
+            //tick_of_5++;
+            //tick_of_5 = tick_of_5 > 5 ? 1 : tick_of_5;
 
             Manager.BeginDraw(gameTime);
             Manager.Draw(gameTime);
@@ -1335,6 +1313,9 @@ namespace Mork
                 outp += string.Format("act = {0}", mmap.active.Count) + Environment.NewLine;
                 outp += string.Format("time = {0}", gameTime.TotalGameTime) + Environment.NewLine;
                 outp += string.Format("srg = {0}", globalstorage.n.Count) + Environment.NewLine;
+                outp += string.Format("cam = {0}\nrot = {1}", Camera.Target, camerarotation) + Environment.NewLine;
+                outp += string.Format("verts = {0}, sect = {1}", drawed_verts, drawed_sects) + Environment.NewLine;
+
                 spriteBatch.DrawString(Font2, outp, new Vector2(800, 5), Color.White);
             }
 
@@ -1361,7 +1342,7 @@ namespace Mork
             {
                 spriteBatch.Draw(interface_tex[16], new Vector2(60, 40), null, Color.White, SavingDeg,
                                  new Vector2(32, 32), Vector2.One, SpriteEffects.None, 0);
-                SavingDeg += (float) Math.PI/10 * (float)gameTime.ElapsedGameTime.TotalSeconds*50;
+                SavingDeg += (float) Math.PI * (float)gameTime.ElapsedGameTime.TotalSeconds*5;
                 if (SavingDeg >= Math.PI*2) SavingDeg = 0;
             }
 
@@ -1485,6 +1466,9 @@ namespace Mork
         #region Updates
 
         private float camerarotation;
+        public static int drawed_verts;
+        public static int drawed_sects;
+
         private void GameUpdate(GameTime gt)
         {
 
@@ -1579,10 +1563,10 @@ namespace Mork
                 moving *= 3;
             }
 
-            Camera.translation += moving;
+            moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
 
             Camera.Target += moving;
-            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0, 0, MathHelper.ToRadians(camerarotation), 300);
+            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0.7071f, 0, MathHelper.ToRadians(camerarotation), 300);
 
             //Camera.Update();
             {
@@ -1726,11 +1710,6 @@ namespace Mork
             if (ks.IsKeyDown(Keys.Space) && !lks.IsKeyDown(Keys.Space))
             {
                 PAUSE = !PAUSE;
-            }
-
-            if(ks.IsKeyDown(Keys.F4) && !lks.IsKeyDown(Keys.F4))
-            {
-                debug = !debug;
             }
         }
 

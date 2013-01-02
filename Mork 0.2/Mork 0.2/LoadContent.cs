@@ -96,42 +96,42 @@ namespace Mork
 
             smap = new SectorMap(GraphicsDevice);
 
-            for (int i = 0; i <= MMap.mx - 1; i++)
-                for (int j = 0; j <= MMap.my - 1; j++)
-                    for (int k = 0; k <= MMap.mz - 1; k += 16)
-                    {
-                        mmap.n[i, j, k] = new MNode {blockID = 0};
+            //for (int i = 0; i <= MMap.mx - 1; i++)
+            //    for (int j = 0; j <= MMap.my - 1; j++)
+            //        for (int k = 0; k <= MMap.mz - 1; k += 16)
+            //        {
+            //            mmap.n[i, j, k] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 1] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 1] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 2] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 2] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 3] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 3] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 4] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 4] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 5] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 5] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 6] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 6] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 7] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 7] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 8] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 8] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 9] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 9] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 10] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 10] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 11] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 11] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 12] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 12] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 13] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 13] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 14] = new MNode {blockID = 0};
+            //            mmap.n[i, j, k + 14] = new MNode { blockID = 0 };
 
-                        mmap.n[i, j, k + 15] = new MNode {blockID = 0};
-                    }
+            //            mmap.n[i, j, k + 15] = new MNode { blockID = 0 };
+            //        }
 
             MeTexoncurA = 1;
             MeTexoncurB = 5;

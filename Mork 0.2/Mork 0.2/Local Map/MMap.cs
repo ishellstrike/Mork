@@ -436,15 +436,15 @@ namespace Mork.Local_Map
                 {
                     for (int m = 0; m <= mz - 1; m++)
                     {
-                        if (Main.mmap.n[i, j, m].blockID != 0)
+                        if (n[i, j, m].blockID != 0)
                         {
                             if (rnd.Next(1, Convert.ToInt32(101 - GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree_freq)) == 1 && m > 0)
                                 if (GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count > 0)
-                                    Main.mmap.n[i, j, m - 1].blockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree[rnd.Next(0, GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count)];
+                                    n[i, j, m - 1].blockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree[rnd.Next(0, GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count)];
                             goto here2;
                         }
                     }
-                    here2: ;
+                here2: ;
                 }
         }
 
@@ -590,14 +590,14 @@ namespace Mork.Local_Map
                 for (int j = 0; j <= my - 1; j++)
                     for (int k = 0; k <= mz - 1; k += 8)
                     {
-                        Main.mmap.n[i, j, k].blockID = 0;
-                        Main.mmap.n[i, j, k + 1].blockID = 0;
-                        Main.mmap.n[i, j, k + 2].blockID = 0;
-                        Main.mmap.n[i, j, k + 3].blockID = 0;
-                        Main.mmap.n[i, j, k + 4].blockID = 0;
-                        Main.mmap.n[i, j, k + 5].blockID = 0;
-                        Main.mmap.n[i, j, k + 6].blockID = 0;
-                        Main.mmap.n[i, j, k + 7].blockID = 0;
+                        n[i, j, k].blockID = 0;
+                        n[i, j, k + 1].blockID = 0;
+                        n[i, j, k + 2].blockID = 0;
+                        n[i, j, k + 3].blockID = 0;
+                        n[i, j, k + 4].blockID = 0;
+                        n[i, j, k + 5].blockID = 0;
+                        n[i, j, k + 6].blockID = 0;
+                        n[i, j, k + 7].blockID = 0;
                     }
 
 
@@ -613,43 +613,43 @@ namespace Mork.Local_Map
             int[] metamorf_clust = { 800,801,802,803,804,805,806};
             int[] matamorf_jila = { 810,811,812 };
 
-            Main.mmap.Generation_FullLayer(18, 5);
-            Main.mmap.Generation_FullLayer(17, 2);
-            Main.mmap.Generation_FullLayer(16, 2);
-            Main.mmap.Generation_FullLayer(15, 2);
-            Main.mmap.Generation_FullLayer(14, 18);
+            Generation_FullLayer(18, 5);
+            Generation_FullLayer(17, 2);
+            Generation_FullLayer(16, 2);
+            Generation_FullLayer(15, 2);
+            Generation_FullLayer(14, 18);
 
-            Main.mmap.Generation_BasicLayer((int)KnownIDs.Gabro);
-            Main.mmap.Generation_FullLayer((int)KnownIDs.Gabro, 7);
-            Main.mmap.Generation_FullLayer((int)KnownIDs.GabroToGranete, 1);
-            Main.mmap.Generation_FullLayer((int)KnownIDs.GrenFranite, 6);
+            Generation_BasicLayer((int)KnownIDs.Gabro);
+            Generation_FullLayer((int)KnownIDs.Gabro, 7);
+            Generation_FullLayer((int)KnownIDs.GabroToGranete, 1);
+            Generation_FullLayer((int)KnownIDs.GrenFranite, 6);
 
             int[] granite_clust = metamorf_clust;
             int[] granite_jila = { 55, 55 };
-            Main.mmap.GenerationFullLayerCluster(11, 12, granite_clust, 10, granite_jila, 5, 20);
+            GenerationFullLayerCluster(11, 12, granite_clust, 10, granite_jila, 5, 20);
 
-            Main.mmap.Generation_FullLayer(33, 10);
+            Generation_FullLayer(33, 10);
 
             int[] marble_clust = metamorf_clust;
             int[] marble_jila = matamorf_jila;
-            Main.mmap.GenerationFullLayerCluster(22, 10, marble_clust, 10, marble_jila, 5, 20);
+            GenerationFullLayerCluster(22, 10, marble_clust, 10, marble_jila, 5, 20);
 
-            Main.mmap.GenerationFullLayerCluster(44, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
+            GenerationFullLayerCluster(44, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
 
-            Main.mmap.GenerationFullLayerCluster(22, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
+            GenerationFullLayerCluster(22, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
 
             for (int i = 0; i <= 20; i++ )
             {
-                Main.mmap.Generation_FullLayer(824, 2);
-                Main.mmap.Generation_FullLayer(828, 2);
+                Generation_FullLayer(824, 2);
+                Generation_FullLayer(828, 2);
             }
 
 
-            Main.mmap.Generation_FullLayer_under(1);
-            Main.mmap.Generation_FullLayer_under_under(2);
+            Generation_FullLayer_under(1);
+            Generation_FullLayer_under_under(2);
             //Main.mmap.Generation_FullLayerTOP(ObjectID.DirtWall_Grass2, 1);
 
-            Main.mmap.Generation_FullLayerGrass(1);
+            Generation_FullLayerGrass(1);
 
 
             for (int i = 0; i <= mx - 1; i++)
@@ -662,274 +662,12 @@ namespace Mork.Local_Map
                     }
                 }
 
-            Main.mmap.RecalcExploredSubterrain();
+            RecalcExploredSubterrain();
 
-            Main.mmap.Generation_PlaceOnSurface();
+            Generation_PlaceOnSurface();
 
             Main.PrepairMapDeleteWrongIDs(ref Main.mmap);
         }
-
-        //public void RandomRoom(int type)
-        //{
-        //    switch (type)
-        //    {
-        //        case 0: _REmpty();
-        //            break;
-        //        case 1: _RR1();
-        //            break;
-        //        case 2: _RR2();
-        //            break;
-        //        case 3: _RNew();
-        //            break;
-        //        case 4: _RMy();
-        //            break;
-        //        case 5:
-        //            break;
-        //        case 255: _RTest();
-        //            break;
-        //    }
-
-        //}
-        //public void _RTest()
-        //{
-        //    if (Main.me_texoncur_a > Main.me_texoncur_b)
-        //    {
-        //        int a = Main.me_texoncur_a;
-        //        Main.me_texoncur_a = Main.me_texoncur_b;
-        //        Main.me_texoncur_b = a;
-        //    }
-
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //            for (int k = 0; k <= MMap.mz - 1; k++)
-        //        {
-        //            if (i == 1 || j == 1 || i == mx - 1 || j == my - 1) n[i, j,k].obj = FloarID.Sandwall;
-        //            n[i, j, k].obj = (ObjID) rnd.Next(Main.me_texoncur_a, Main.me_texoncur_b);
-        //            n[i, j, k].explored = false;
-        //        }
-        //}
-        //public void _REmpty()
-        //{
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //            for (int k = 0; k <= MMap.mz - 1; k++)
-        //        {
-        //            n[i, j,k].floar = FloarID.Sandwall;
-        //            n[i, j,k].explored = false;
-        //            n[i, j,k].room_id = (byte)Room_ids.SolidRock;
-        //        }
-        //}
-        //public void _RR1()
-        //{
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //            for (int k = 0; k <= MMap.mz - 1; k++)
-        //        {
-        //            n[i, j,k].floar = FloarID.Grass1;
-        //            if (i == 1 || j == 1 || i == mx - 1 || j == my - 1) n[i, j,k].floar = FloarID.Sandwall;
-        //            n[i, j,k].explored = false;
-        //        }
-
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int i = rnd.Next(3, mx - 2);
-        //        for (int j = 3; j <= my - 2; j++)
-        //        {
-        //            n[i, j,0].floar = FloarID.Sandwall;
-        //        }
-        //    }
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int j = rnd.Next(3, my - 2);
-        //        for (int i = 3; i <= mx - 2; i++)
-        //        {
-        //            n[i, j,0].floar = FloarID.Sandwall;
-        //        }
-        //    }
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int i = rnd.Next(3, mx - 2);
-        //        for (int j = 3; j <= my - 2; j++)
-        //        {
-        //            if (rnd.Next(1, 5) == 1) n[i, j,0].floar = FloarID.Dirt;
-        //        }
-        //    }
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int j = rnd.Next(3, my - 2);
-        //        for (int i = 3; i <= mx - 2; i++)
-        //        {
-        //            if (rnd.Next(1, 2) == 1) n[i, j,0].floar = FloarID.Dirt;
-        //        }
-        //    }
-        //}
-        //public void _RR2()
-        //{
-        //    _REmpty();
-
-        //    int a = rnd.Next(5000, 20000);
-        //    Vector3 cur = new Vector3(mx / 2, my / 2, 0);
-        //    for (int i = 0; i <= a - 1; i++)
-        //    {
-        //        if (GoodXY(cur)) n[cur.X, cur.Y,0].floar = FloarID.Grass1;
-        //        if (!GoodXY(cur)) cur = new Vector3(mx / 2, my / 2, 0);
-        //        int aa = rnd.Next(1, 6);
-        //        switch (aa)
-        //        {
-        //            case 1:
-        //                cur.X++;
-        //                break;
-        //            case 2:
-        //                cur.Y--;
-        //                break;
-        //            case 3:
-        //                cur.Y++;
-        //                break;
-        //            case 4:
-        //                cur.X--;
-        //                break;
-        //        }
-        //    }
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //        {
-        //            if (i == 2 || j == 2 || i == mx - 1 || j == my - 1) n[i, j,0].floar = FloarID.Sandwall;
-        //        }
-        //}
-        //public void _RNew()
-        //{
-        //    _REmpty();
-
-        //    int room_num = 50;
-        //    int room_max = 5, room_min = 13;
-
-        //    for (int i = 0; i <= room_num - 1; i++)
-        //    {
-        //        int no_unlimit = 0;
-        //    retry:
-        //        no_unlimit++;
-        //        if (no_unlimit >= 10000) goto unlimit;
-
-        //        Vector3 aa = new Vector3(rnd.Next(0, mx - 1), rnd.Next(0, my),0);
-        //        Vector3 bb = new Vector3(aa.X + rnd.Next(room_min, room_min + room_max), aa.Y + rnd.Next(room_min, room_min + room_max),0);
-
-        //        if (!GoodXY(aa) || !GoodXY(bb)) goto retry;
-        //        for (int u = aa.X; u <= bb.X; u++)
-        //            for (int v = aa.Y; v <= bb.Y; v++)
-        //            {
-        //                if (n[u, v,0].floar != FloarID.Sandwall)
-        //                { goto retry; }
-        //            }
-
-
-        //        MakeRoom(aa, bb, Convert.ToByte(i + 1));
-        //    }
-        //unlimit:
-
-        //    int a = 5000;
-        //    Vector3 cur = new Vector3(mx / 2, my / 2,0);
-        //    Vector3 mover = new Vector3();
-        //    for (int i = 0; i <= a - 1; i++)
-        //    {
-        //        if (GoodXY(cur) && n[cur.X, cur.Y,0].room_id != (byte)Room_ids.RoomWall && n[cur.X, cur.Y,0].room_id > 50)
-        //        {
-        //            n[cur.X, cur.Y,0].floar = FloarID.Grass1;
-        //            if (cur.X < mx - 1 && n[cur.X + 1, cur.Y,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X + 1, cur.Y,0].room_id = (byte)Room_ids.Coridor;
-        //            if (cur.Y < my - 1 && n[cur.X, cur.Y + 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X, cur.Y + 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X < mx - 1 && cur.Y < my - 1 && n[cur.X + 1, cur.Y + 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X + 1, cur.Y + 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X < mx - 1 && cur.Y > 0 && n[cur.X + 1, cur.Y - 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X + 1, cur.Y - 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X > 0 && cur.Y < my - 1 && n[cur.X - 1, cur.Y + 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X - 1, cur.Y + 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X > 0 && n[cur.X - 1, cur.Y,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X - 1, cur.Y,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.Y > 0 && n[cur.X, cur.Y - 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X, cur.Y - 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X > 0 && cur.Y > 0 && n[cur.X - 1, cur.Y - 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X - 1, cur.Y - 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //        }
-        //        int aa = rnd.Next(1, 18);
-        //        if (cur.X % 2 == 0 || cur.Y % 2 == 0)
-        //            switch (aa)
-        //            {
-        //                case 1:
-        //                    mover.X = 1;
-        //                    mover.Y = 0;
-        //                    break;
-        //                case 2:
-        //                    mover.X = -1;
-        //                    mover.Y = 0;
-        //                    break;
-        //                case 3:
-        //                    mover.X = 0;
-        //                    mover.Y = 1;
-        //                    break;
-        //                case 4:
-        //                    mover.X = 0;
-        //                    mover.Y = -1;
-        //                    break;
-        //            }
-        //        cur += mover;
-
-        //        if (!GoodXY(cur)) cur = new Vector3(mx / 2, my / 2,0);
-        //    }
-        //}
-        //public void _RMy()
-        //{
-        //    _REmpty();
-        //}
-
-        //public void MakeRoom(Vector3 a, Vector3 b, byte id)
-        //{
-        //    FillRect(a.X + 1, a.Y + 1, b.X - 1, b.Y - 1, FloarID.Grass1);
-        //    //FillRoomID(a, b, id);
-        //    n[a.X, rnd.Next(a.Y, b.Y),0].floar = FloarID.Grass1;
-        //    n[b.X, rnd.Next(a.Y, b.Y),0].floar = FloarID.Grass1;
-        //    n[rnd.Next(a.X, b.X), a.Y,0].floar = FloarID.Grass1;
-        //    n[rnd.Next(b.X, b.X), b.Y,0].floar = FloarID.Grass1;
-        //}
-
-        //public void FillRect(int x1, int y1, int x2, int y2, FloarID flid)
-        //{
-        //    for (int i = x1; i <= x2; i++)
-        //        for (int j = y1; j <= y2; j++)
-        //        {
-        //            n[i, j,0].floar = flid;
-        //        }
-        //}
-        //public void FillRect(Vector3 a, Vector3 b, FloarID flid)
-        //{
-        //    for (int i = a.X; i <= b.X; i++)
-        //        for (int j = a.Y; j <= b.Y; j++)
-        //            for (int k = a.Z; k <= b.Z; k++)
-        //        {
-        //            n[i, j, k].floar = flid;
-        //        }
-        //}
-
-        //public void FillRoomID(int x1, int y1, int x2, int y2, byte id)
-        //{
-        //    for (int i = x1; i <= x2; i++)
-        //        for (int j = y1; j <= y2; j++)
-        //        {
-        //            n[i, j,0].room_id = id;
-        //            if (i == x1 || j == y1 || i == x2 || j == y2) n[i, j,0].room_id = (byte)Room_ids.RoomWall;
-        //            if ((i == x1 || j == y1 || i == x2 || j == y2) && n[i, j,0].floar != FloarID.Sandwall) n[i, j,0].room_id = (byte)Room_ids.RoomDoor;
-        //        }
-        //}
-        //public void FillRoomID(XY a, XY b, byte id)
-        //{
-        //    for (int i = a.X; i <= b.X; i++)
-        //        for (int j = a.Y; j <= b.Y; j++)
-        //        {
-        //            n[i, j,0].room_id = id;
-        //            if (i == a.X || j == a.Y || i == b.X || j == b.Y) n[i, j,0].room_id = (byte)Room_ids.RoomWall;
-        //            if ((i == a.X || j == a.Y || i == b.X || j == b.Y) && n[i, j,0].floar != FloarID.Sandwall) n[i, j,0].room_id = (byte)Room_ids.RoomDoor;
-        //        }
-        //}
 
         /// <summary>
         /// Проверка, входит ли вектор в границы карты

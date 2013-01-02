@@ -11,9 +11,9 @@ namespace Mork.Local_Map.Sector
 {
     public class MapSector
     {
-        const byte dimS = 16, dimH = 128;
+        public const byte dimS = 16, dimH = 128;
 
-        MNode[] data = new MNode[dimS * dimS * dimH];
+        public MNode[] n = new MNode[dimS * dimS * dimH];
         bool[] buildedrow = new bool[dimS * dimS];
 
         public int sx, sy;
@@ -28,8 +28,8 @@ namespace Mork.Local_Map.Sector
             sy = y;
             for (int i = 0; i <= dimS*dimS*dimH - 1; i++)
                     {
-                        data[i] = new MNode();
-                        data[i].blockID = i%3 == 0 ? 1 : 0;
+                        n[i] = new MNode();
+                        n[i].blockID = i%5 == 0 ? 1 : 0;
                     }
         }
 
@@ -46,7 +46,7 @@ namespace Mork.Local_Map.Sector
                 {
                     for (int k = 0; k <= dimH - 1; k++)
                     {
-                        int bid = data[i*dimS*dimS + j*dimS + k].blockID;
+                        int bid = n[i*dimS*dimS + j*dimS + k].blockID;
                         if (bid != 0)
                         {
                             float umovx = (Main.dbobject.Data[bid].metatex_n%Commons.TextureAtlasWCount) * tsper * 2;
