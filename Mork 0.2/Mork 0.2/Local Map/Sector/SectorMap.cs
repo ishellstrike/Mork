@@ -66,7 +66,7 @@ namespace Mork.Local_Map.Sector
             passn++;
             if (passn > sectn*sectn - 1) passn = 0;
 
-            be.World = Matrix.CreateScale(10);
+            be.World = Matrix.CreateScale(1);
             be.View = cam.View;
             be.Projection = cam.Projection;
             be.AmbientLightColor = new Vector3(0.5F,0.5F,0.5F);
@@ -93,9 +93,13 @@ namespace Mork.Local_Map.Sector
                 pass.Apply();
                 foreach (var a in n)
                 {
-                    //if (cam.Frustum.Contains(new BoundingBox(a.bounding.Min*10,a.bounding.Max*10)) != ContainmentType.Disjoint)
+                    if (cam.Frustum.Contains(new BoundingBox(a.bounding.Min,a.bounding.Max)) != ContainmentType.Disjoint)
                     {
-                        if (!a.builded) a.RebuildSectorGeo(gd, Main.z_cam);
+                        if (!a.builded)
+                        {
+                            a.RebuildSectorGeo(gd, Main.z_cam);
+                            Main.sectrebuild++;
+                        }
                         if (!a.empty)
                         {
                             Main.drawed_sects++;
@@ -162,10 +166,7 @@ namespace Mork.Local_Map.Sector
                         vv[21] = vv[11];
                         vv[22] = vv[5];
                         vv[23] = vv[13];
-                        foreach (var vector3 in vv)
-                        {
-                            vl.Add(new VertexPositionColor(vector3, Color.Red));
-                        }
+                        vl.AddRange(vv.Select(vector3 => new VertexPositionColor(vector3, Color.Red)));
                     }
                     if (vl.Count > 0)
                     {
@@ -271,150 +272,6 @@ namespace Mork.Local_Map.Sector
             if (X >= 0 && Y >= 0 && X <= sectn * MapSector.dimS - 1 && Y <= sectn * MapSector.dimS - 1 && Z >= 0 && Z <= MapSector.dimH - 1) return true;
             return false;
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// Map tags
-        /// </summary>
-        Dictionary<string, object> tags = new Dictionary<string, object>();
-
-        public void SetMapTag(KeyValuePair<string, object> added_tag)
-        {
-            if (!tags.ContainsKey(added_tag.Key))
-                tags.Add(added_tag.Key, added_tag.Value);
-            else tags[added_tag.Key] = added_tag.Value;
-        }
-
-        public void SetMapTag(string s, object o)
-        {
-            if (!tags.ContainsKey(s))
-                tags.Add(s, o);
-            else tags[s] = o;
-        }
-
-        public object GetMapTagData(string s)
-        {
-            if (tags.ContainsKey(s)) return tags[s];
-            return 0;
-        }
-
-        public List<string> GetMapTagsInText()
-        {
-            List<string> s = new List<string>();
-
-            foreach (var tag in tags)
-            {
-                s.Add(tag.Key + " = " + tag.Value);
-            }
-
-            return s;
-        }
-
-
-        public void SetNodeTag(int x, int y, int z, KeyValuePair<string, object> added_tag)
-        {
-            if (!At(x, y, z).tags.ContainsKey(added_tag.Key))
-                At(x, y, z).tags.Add(added_tag.Key, added_tag.Value);
-            else At(x, y, z).tags[added_tag.Key] = added_tag.Value;
-        }
-
-        /// <summary>
-        /// Установить новый таг карты
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <param name="o">значение тага</param>
-        public void SetNodeTag(int x, int y, int z, string s, object o)
-        {
-            if (!At(x, y, z).tags.ContainsKey(s))
-                At(x, y, z).tags.Add(s, o);
-            else At(x, y, z).tags[s] = o;
-        }
-
-        /// <summary>
-        /// Получить значение тага карты
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <returns>значение тага</returns>
-        public object GetNodeTagData(int x, int y, int z, string s)
-        {
-            if (At(x, y, z).tags.ContainsKey(s)) return At(x, y, z).tags[s];
-            return 0;
-        }
-
-        /// <summary>
-        /// Получить значение тага карты
-        /// </summary>
-        /// <param name="d"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <returns>значение тага</returns>
-        public object GetNodeTagData(Vector3 d, string s)
-        {
-            if (At(d).tags.ContainsKey(s)) return At(d).tags[s];
-            return 0;
-        }
-
-        /// <summary>
-        /// Получить все таги нода карты в текстовом виде
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <returns>массив строк тагов</returns>
-        public List<string> GetNodeTagsInText(int x, int y, int z)
-        {
-            List<string> s = new List<string>();
-
-            MNode with = At(x, y, z);
-
-            s.Add(String.Format("Pos = {0} {1} {2}", x, y, z));
-            s.Add("ID = " + with.blockID + " mtex = " + Main.dbobject.Data[with.blockID].metatex_n);
-            s.Add("DBName = " + Main.dbobject.Data[with.blockID].I_name);
-            foreach (var tag in with.tags)
-            {
-                if (tag.Value is LocalItems)
-                {
-                    s.Add("Storage =");
-                    foreach (var o in (tag.Value as LocalItems).n)
-                    {
-                        s.Add("id " + o.id + " " + o.count);
-                    }
-                    s.Add("----------------");
-
-                }
-                else
-                    s.Add(tag.Key + " = " + tag.Value);
-            }
-
-            return s;
-        }
-
-        /// <summary>
-        /// Получить все таги нода карты в текстовом виде
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <returns>массив строк тагов</returns>
-        public List<string> GetNodeTagsInText(Vector3 pos)
-        {
-            return GetNodeTagsInText((int)pos.X, (int)pos.Y, (int)pos.Z);
-        }
-
 
 
 
@@ -715,8 +572,8 @@ namespace Mork.Local_Map.Sector
                         At(i, j, m).explored = false;
                     }
 
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 1; i <= sectn * MapSector.dimS - 2; i++)
+                for (int j = 1; j <= sectn * MapSector.dimS - 2; j++)
                 {
                     for (int m = 0; m <= sectn * MapSector.dimS - 1; m++)
                     {
@@ -724,6 +581,15 @@ namespace Mork.Local_Map.Sector
                         {
                             At(i, j, m).subterrain = false;
                             At(i, j, m).explored = true;
+
+                            At(i + 1, j, m).subterrain = false;
+                            At(i + 1, j, m).explored = true;
+                            At(i, j + 1, m).subterrain = false;
+                            At(i, j + 1, m).explored = true;
+                            At(i - 1, j, m).subterrain = false;
+                            At(i - 1, j, m).explored = true;
+                            At(i, j - 1, m).subterrain = false;
+                            At(i, j - 1, m).explored = true;
                         }
                         else
                         {
@@ -830,6 +696,7 @@ namespace Mork.Local_Map.Sector
             Generation_PlaceOnSurface();
 
             Main.PrepairMapDeleteWrongIDs(ref Main.smap);
+            Main.smap.RebuildAllMapGeo(0, Main.Camera);
         }
     }
 }

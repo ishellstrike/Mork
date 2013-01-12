@@ -15,8 +15,8 @@ namespace Mork.Local_Map.Dynamic.Local_Items
         {
             foreach (var v in n)
             {
-                LocalItems tempstor = Main.smap.At(v.X,v.Y,v.Z).tags["storage"] as LocalItems;
-                if (tempstor.n.Count < tempstor.carp) return v;
+                //LocalItems tempstor = Main.smap.At(v.X,v.Y,v.Z).tags["storage"] as LocalItems;
+                //if (tempstor.n.Count < tempstor.carp) return v;
             }
 
             return new Vector3(-1);

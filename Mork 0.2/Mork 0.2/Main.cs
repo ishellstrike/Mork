@@ -224,7 +224,7 @@ namespace Mork
             Vector3 a = new Vector3(100,100,500);
             //a = Vector3.Transform(a, Matrix.CreateLookAt(new Vector3(100, 100, 100), Vector3.Zero, Vector3.Up));
             Camera = new FreeCamera(a, MathHelper.ToRadians(45), MathHelper.ToRadians(45), GraphicsDevice);
-            Camera.Target = new Vector3(1000,1000,0);
+            Camera.Target = new Vector3(100,100,0);
             LRInit();
 
             Directory.CreateDirectory(@"Maps");
@@ -1301,6 +1301,7 @@ namespace Mork
                 outp += string.Format("srg = {0}", globalstorage.n.Count) + Environment.NewLine;
                 outp += string.Format("cam = {0}\nrot = {1}", Camera.Target, camerarotation) + Environment.NewLine;
                 outp += string.Format("verts = {0}, sect = {1}", drawed_verts, drawed_sects) + Environment.NewLine;
+                outp += string.Format("total rebuild = {0}", sectrebuild) + Environment.NewLine;
 
                 spriteBatch.DrawString(Font2, outp, new Vector2(800, 5), Color.White);
             }
@@ -1454,9 +1455,10 @@ namespace Mork
         private float camerarotation = 0.7f;
         public static int drawed_verts;
         public static int drawed_sects;
-        private float cameradistance = 300;
+        private float cameradistance = 30;
         public static int z_cam;
         private int notfastcam = 0;
+        public static int sectrebuild = 0;
 
         private void GameUpdate(GameTime gt)
         {
@@ -1498,19 +1500,19 @@ namespace Mork
 
             if (ks[Keys.W] == KeyState.Down)
             {
-                moving += Vector3.Up *(float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Up *(float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
             if (ks[Keys.S] == KeyState.Down)
             {
-                moving += Vector3.Down * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Down * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
             if (ks[Keys.A] == KeyState.Down)
             {
-                moving += Vector3.Left * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Left * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
             if (ks[Keys.D] == KeyState.Down)
             {
-                moving += Vector3.Right * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Right * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
 
             float roll = 0;
@@ -1532,14 +1534,12 @@ namespace Mork
                 z_cam++;
                 if (z_cam > 127) z_cam = 127;
                 smap.RebuildAllMapGeo(z_cam, Camera);
-                notfastcam = 10;
             }
             if (ks[Keys.OemPeriod] == KeyState.Down&& lks[Keys.OemPeriod] == KeyState.Up)
             {
                 z_cam--;
                 if (z_cam < 0) z_cam = 0;
                 smap.RebuildAllMapGeo(z_cam, Camera);
-                notfastcam = 10;
             }
 
             //if (!lks.IsKeyDown(Keys.R) && currentKeyboardState.IsKeyDown(Keys.R))
@@ -1572,7 +1572,7 @@ namespace Mork
             moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
 
             Camera.Target += moving;
-            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0.7071f, 0, MathHelper.ToRadians(camerarotation), cameradistance);
+            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, (float)Math.PI/5, 0, MathHelper.ToRadians(camerarotation), cameradistance);
             Camera.generateFrustum();
 
             //Camera.Update();
@@ -1615,7 +1615,7 @@ namespace Mork
                 }
 
                 ingameUIpartLeftlistbox.Items.Clear();
-                ingameUIpartLeftlistbox.Items.AddRange(smap.GetMapTagsInText());
+                //ingameUIpartLeftlistbox.Items.AddRange(smap.GetMapTagsInText());
 
 
                 ingameUIpartLeftlistbox2.Items.Clear();
@@ -1632,7 +1632,7 @@ namespace Mork
                     ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
                                                        smap.At(Selector.X,Selector.Y, Selector.Z).subterrain);
                 }
-                if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
+                //if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
 
                 ingameUIpartLeftlistbox2.Refresh();
 

@@ -20,132 +20,6 @@ namespace Mork.Local_Map
 
         public string Name = "test map 1";
 
-        Dictionary<string, object> tags = new Dictionary<string, object>();
-
-        public void SetMapTag(KeyValuePair<string, object> added_tag)
-        {
-            if (!tags.ContainsKey(added_tag.Key))
-                tags.Add(added_tag.Key, added_tag.Value);
-            else tags[added_tag.Key] = added_tag.Value;
-        }
-
-        public void SetMapTag(string s, object o)
-        {
-            if (!tags.ContainsKey(s))
-                tags.Add(s, o);
-            else tags[s] = o;
-        }
-
-        public object GetMapTagData(string s)
-        {
-            if (tags.ContainsKey(s)) return tags[s];
-            return 0;
-        }
-
-        public List<string> GetMapTagsInText()
-        {
-            List<string> s = new List<string>();
-
-            foreach (var tag in tags)
-            {
-                s.Add(tag.Key + " = " + tag.Value);
-            }
-
-            return s;
-        }
-
-
-        public void SetNodeTag(int x, int y, int z, KeyValuePair<string, object> added_tag)
-        {
-            if (!n[x,y,z].tags.ContainsKey(added_tag.Key))
-                n[x, y, z].tags.Add(added_tag.Key, added_tag.Value);
-            else n[x, y, z].tags[added_tag.Key] = added_tag.Value;
-        }
-
-        /// <summary>
-        /// ”становить новый таг карты
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <param name="o">значение тага</param>
-        public void SetNodeTag(int x, int y, int z, string s, object o)
-        {
-            if (!n[x, y, z].tags.ContainsKey(s))
-                n[x, y, z].tags.Add(s, o);
-            else n[x, y, z].tags[s] = o;
-        }
-
-        /// <summary>
-        /// ѕолучить значение тага карты
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <returns>значение тага</returns>
-        public object GetNodeTagData(int x, int y, int z, string s)
-        {
-            if (n[x, y, z].tags.ContainsKey(s)) return n[x, y, z].tags[s];
-            return 0;
-        }
-
-        /// <summary>
-        /// ѕолучить значение тага карты
-        /// </summary>
-        /// <param name="d"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <returns>значение тага</returns>
-        public object GetNodeTagData(Vector3 d, string s)
-        {
-            if (n[(int)d.X, (int)d.Y, (int)d.Z].tags.ContainsKey(s)) return n[(int)d.X, (int)d.Y, (int)d.Z].tags[s];
-            return 0;
-        }
-
-        /// <summary>
-        /// ѕолучить все таги нода карты в текстовом виде
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <returns>массив строк тагов</returns>
-        public List<string> GetNodeTagsInText(int x, int y, int z)
-        {
-            List<string> s = new List<string>();
-
-            s.Add(String.Format("Pos = {0} {1} {2}",x,y,z));
-            s.Add("ID = " + n[x, y, z].blockID + " mtex = " + Main.dbobject.Data[n[x, y, z].blockID].metatex_n);
-            s.Add("DBName = " + Main.dbobject.Data[n[x, y, z].blockID].I_name);
-            foreach (var tag in n[x, y, z].tags)
-            {
-                if (tag.Value is LocalItems)
-                {
-                    s.Add("Storage =");
-                    foreach (var o in (tag.Value as LocalItems).n)
-                    {
-                        s.Add("id " + o.id + " " + o.count);
-                    }
-                    s.Add("----------------");
-
-                }
-                else
-                s.Add(tag.Key + " = " + tag.Value);
-            }
-
-            return s;
-        }
-
-        /// <summary>
-        /// ѕолучить все таги нода карты в текстовом виде
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <returns>массив строк тагов</returns>
-        public List<string> GetNodeTagsInText(Vector3 pos)
-        {
-            return GetNodeTagsInText((int)pos.X, (int)pos.Y, (int)pos.Z);
-        }
-
         //public void CalcWision()
         //{
         //    int x_top;
@@ -1032,11 +906,11 @@ namespace Mork.Local_Map
             if(Main.dbobject.Data[id].activeblock)
                 active.Add(new Vector3(x,y,z));
 
-            if(id == KnownIDs.StorageEntrance)
-            {
-                n[x, y, z].tags.Add("storage", new LocalItems());
-                Main.globalstorage.n.Add(new Vector3(x,y,z));
-            }
+            //if(id == KnownIDs.StorageEntrance)
+            //{
+            //    n[x, y, z].tags.Add("storage", new LocalItems());
+            //    Main.globalstorage.n.Add(new Vector3(x,y,z));
+            //}
 
             //SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
         }
