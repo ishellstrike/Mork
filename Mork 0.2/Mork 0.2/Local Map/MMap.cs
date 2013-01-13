@@ -20,132 +20,6 @@ namespace Mork.Local_Map
 
         public string Name = "test map 1";
 
-        Dictionary<string, object> tags = new Dictionary<string, object>();
-
-        public void SetMapTag(KeyValuePair<string, object> added_tag)
-        {
-            if (!tags.ContainsKey(added_tag.Key))
-                tags.Add(added_tag.Key, added_tag.Value);
-            else tags[added_tag.Key] = added_tag.Value;
-        }
-
-        public void SetMapTag(string s, object o)
-        {
-            if (!tags.ContainsKey(s))
-                tags.Add(s, o);
-            else tags[s] = o;
-        }
-
-        public object GetMapTagData(string s)
-        {
-            if (tags.ContainsKey(s)) return tags[s];
-            return 0;
-        }
-
-        public List<string> GetMapTagsInText()
-        {
-            List<string> s = new List<string>();
-
-            foreach (var tag in tags)
-            {
-                s.Add(tag.Key + " = " + tag.Value);
-            }
-
-            return s;
-        }
-
-
-        public void SetNodeTag(int x, int y, int z, KeyValuePair<string, object> added_tag)
-        {
-            if (!n[x,y,z].tags.ContainsKey(added_tag.Key))
-                n[x, y, z].tags.Add(added_tag.Key, added_tag.Value);
-            else n[x, y, z].tags[added_tag.Key] = added_tag.Value;
-        }
-
-        /// <summary>
-        /// ”становить новый таг карты
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <param name="o">значение тага</param>
-        public void SetNodeTag(int x, int y, int z, string s, object o)
-        {
-            if (!n[x, y, z].tags.ContainsKey(s))
-                n[x, y, z].tags.Add(s, o);
-            else n[x, y, z].tags[s] = o;
-        }
-
-        /// <summary>
-        /// ѕолучить значение тага карты
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <returns>значение тага</returns>
-        public object GetNodeTagData(int x, int y, int z, string s)
-        {
-            if (n[x, y, z].tags.ContainsKey(s)) return n[x, y, z].tags[s];
-            return 0;
-        }
-
-        /// <summary>
-        /// ѕолучить значение тага карты
-        /// </summary>
-        /// <param name="d"></param>
-        /// <param name="s">строковый идентификатор</param>
-        /// <returns>значение тага</returns>
-        public object GetNodeTagData(Vector3 d, string s)
-        {
-            if (n[(int)d.X, (int)d.Y, (int)d.Z].tags.ContainsKey(s)) return n[(int)d.X, (int)d.Y, (int)d.Z].tags[s];
-            return 0;
-        }
-
-        /// <summary>
-        /// ѕолучить все таги нода карты в текстовом виде
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <returns>массив строк тагов</returns>
-        public List<string> GetNodeTagsInText(int x, int y, int z)
-        {
-            List<string> s = new List<string>();
-
-            s.Add(String.Format("Pos = {0} {1} {2}",x,y,z));
-            s.Add("ID = " + n[x, y, z].blockID + " mtex = " + Main.dbobject.Data[n[x, y, z].blockID].metatex_n);
-            s.Add("DBName = " + Main.dbobject.Data[n[x, y, z].blockID].I_name);
-            foreach (var tag in n[x, y, z].tags)
-            {
-                if (tag.Value is LocalItems)
-                {
-                    s.Add("Storage =");
-                    foreach (var o in (tag.Value as LocalItems).n)
-                    {
-                        s.Add("id " + o.id + " " + o.count);
-                    }
-                    s.Add("----------------");
-
-                }
-                else
-                s.Add(tag.Key + " = " + tag.Value);
-            }
-
-            return s;
-        }
-
-        /// <summary>
-        /// ѕолучить все таги нода карты в текстовом виде
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <returns>массив строк тагов</returns>
-        public List<string> GetNodeTagsInText(Vector3 pos)
-        {
-            return GetNodeTagsInText((int)pos.X, (int)pos.Y, (int)pos.Z);
-        }
-
         //public void CalcWision()
         //{
         //    int x_top;
@@ -436,15 +310,15 @@ namespace Mork.Local_Map
                 {
                     for (int m = 0; m <= mz - 1; m++)
                     {
-                        if (Main.mmap.n[i, j, m].blockID != 0)
+                        if (n[i, j, m].blockID != 0)
                         {
                             if (rnd.Next(1, Convert.ToInt32(101 - GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree_freq)) == 1 && m > 0)
                                 if (GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count > 0)
-                                    Main.mmap.n[i, j, m - 1].blockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree[rnd.Next(0, GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count)];
+                                    n[i, j, m - 1].blockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree[rnd.Next(0, GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count)];
                             goto here2;
                         }
                     }
-                    here2: ;
+                here2: ;
                 }
         }
 
@@ -590,14 +464,14 @@ namespace Mork.Local_Map
                 for (int j = 0; j <= my - 1; j++)
                     for (int k = 0; k <= mz - 1; k += 8)
                     {
-                        Main.mmap.n[i, j, k].blockID = 0;
-                        Main.mmap.n[i, j, k + 1].blockID = 0;
-                        Main.mmap.n[i, j, k + 2].blockID = 0;
-                        Main.mmap.n[i, j, k + 3].blockID = 0;
-                        Main.mmap.n[i, j, k + 4].blockID = 0;
-                        Main.mmap.n[i, j, k + 5].blockID = 0;
-                        Main.mmap.n[i, j, k + 6].blockID = 0;
-                        Main.mmap.n[i, j, k + 7].blockID = 0;
+                        n[i, j, k].blockID = 0;
+                        n[i, j, k + 1].blockID = 0;
+                        n[i, j, k + 2].blockID = 0;
+                        n[i, j, k + 3].blockID = 0;
+                        n[i, j, k + 4].blockID = 0;
+                        n[i, j, k + 5].blockID = 0;
+                        n[i, j, k + 6].blockID = 0;
+                        n[i, j, k + 7].blockID = 0;
                     }
 
 
@@ -606,50 +480,50 @@ namespace Mork.Local_Map
                 {
                     for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (mz - 1) * 0.3 + (mz - 1) * 0.7 - 5; k++)
                     {
-                        if (GoodVector3(i, j, mz - 1 - k)) Main.mmap.n[i, j, mz - 1 - k].blockID = 12345;
+                        if (GoodVector3(i, j, mz - 1 - k)) n[i, j, mz - 1 - k].blockID = 12345;
                     }
                 }
 
             int[] metamorf_clust = { 800,801,802,803,804,805,806};
             int[] matamorf_jila = { 810,811,812 };
 
-            Main.mmap.Generation_FullLayer(18, 5);
-            Main.mmap.Generation_FullLayer(17, 2);
-            Main.mmap.Generation_FullLayer(16, 2);
-            Main.mmap.Generation_FullLayer(15, 2);
-            Main.mmap.Generation_FullLayer(14, 18);
+            Generation_FullLayer(18, 5);
+            Generation_FullLayer(17, 2);
+            Generation_FullLayer(16, 2);
+            Generation_FullLayer(15, 2);
+            Generation_FullLayer(14, 18);
 
-            Main.mmap.Generation_BasicLayer((int)KnownIDs.Gabro);
-            Main.mmap.Generation_FullLayer((int)KnownIDs.Gabro, 7);
-            Main.mmap.Generation_FullLayer((int)KnownIDs.GabroToGranete, 1);
-            Main.mmap.Generation_FullLayer((int)KnownIDs.GrenFranite, 6);
+            Generation_BasicLayer((int)KnownIDs.Gabro);
+            Generation_FullLayer((int)KnownIDs.Gabro, 7);
+            Generation_FullLayer((int)KnownIDs.GabroToGranete, 1);
+            Generation_FullLayer((int)KnownIDs.GrenFranite, 6);
 
             int[] granite_clust = metamorf_clust;
             int[] granite_jila = { 55, 55 };
-            Main.mmap.GenerationFullLayerCluster(11, 12, granite_clust, 10, granite_jila, 5, 20);
+            GenerationFullLayerCluster(11, 12, granite_clust, 10, granite_jila, 5, 20);
 
-            Main.mmap.Generation_FullLayer(33, 10);
+            Generation_FullLayer(33, 10);
 
             int[] marble_clust = metamorf_clust;
             int[] marble_jila = matamorf_jila;
-            Main.mmap.GenerationFullLayerCluster(22, 10, marble_clust, 10, marble_jila, 5, 20);
+            GenerationFullLayerCluster(22, 10, marble_clust, 10, marble_jila, 5, 20);
 
-            Main.mmap.GenerationFullLayerCluster(44, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
+            GenerationFullLayerCluster(44, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
 
-            Main.mmap.GenerationFullLayerCluster(22, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
+            GenerationFullLayerCluster(22, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
 
             for (int i = 0; i <= 20; i++ )
             {
-                Main.mmap.Generation_FullLayer(824, 2);
-                Main.mmap.Generation_FullLayer(828, 2);
+                Generation_FullLayer(824, 2);
+                Generation_FullLayer(828, 2);
             }
 
 
-            Main.mmap.Generation_FullLayer_under(1);
-            Main.mmap.Generation_FullLayer_under_under(2);
+            Generation_FullLayer_under(1);
+            Generation_FullLayer_under_under(2);
             //Main.mmap.Generation_FullLayerTOP(ObjectID.DirtWall_Grass2, 1);
 
-            Main.mmap.Generation_FullLayerGrass(1);
+            Generation_FullLayerGrass(1);
 
 
             for (int i = 0; i <= mx - 1; i++)
@@ -658,278 +532,16 @@ namespace Mork.Local_Map
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
                     for (int k = 0; k <= ((0.4)) * (mz - 1) * 0.3 + (mz - 1) * 0.7 + 1; k++)
                     {
-                        if (GoodVector3(i, j, mz - 1 - k) && Main.mmap.n[i, j, mz - 1 - k].blockID == 0) Main.mmap.n[i, j, mz - 1 - k].blockID = KnownIDs.water;//вода
+                        if (GoodVector3(i, j, mz - 1 - k) && n[i, j, mz - 1 - k].blockID == 0) n[i, j, mz - 1 - k].blockID = KnownIDs.water;//вода
                     }
                 }
 
-            Main.mmap.RecalcExploredSubterrain();
+            RecalcExploredSubterrain();
 
-            Main.mmap.Generation_PlaceOnSurface();
+            Generation_PlaceOnSurface();
 
-            Main.PrepairMapDeleteWrongIDs(ref Main.mmap);
+            Main.PrepairMapDeleteWrongIDs(ref Main.smap);
         }
-
-        //public void RandomRoom(int type)
-        //{
-        //    switch (type)
-        //    {
-        //        case 0: _REmpty();
-        //            break;
-        //        case 1: _RR1();
-        //            break;
-        //        case 2: _RR2();
-        //            break;
-        //        case 3: _RNew();
-        //            break;
-        //        case 4: _RMy();
-        //            break;
-        //        case 5:
-        //            break;
-        //        case 255: _RTest();
-        //            break;
-        //    }
-
-        //}
-        //public void _RTest()
-        //{
-        //    if (Main.me_texoncur_a > Main.me_texoncur_b)
-        //    {
-        //        int a = Main.me_texoncur_a;
-        //        Main.me_texoncur_a = Main.me_texoncur_b;
-        //        Main.me_texoncur_b = a;
-        //    }
-
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //            for (int k = 0; k <= MMap.mz - 1; k++)
-        //        {
-        //            if (i == 1 || j == 1 || i == mx - 1 || j == my - 1) n[i, j,k].obj = FloarID.Sandwall;
-        //            n[i, j, k].obj = (ObjID) rnd.Next(Main.me_texoncur_a, Main.me_texoncur_b);
-        //            n[i, j, k].explored = false;
-        //        }
-        //}
-        //public void _REmpty()
-        //{
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //            for (int k = 0; k <= MMap.mz - 1; k++)
-        //        {
-        //            n[i, j,k].floar = FloarID.Sandwall;
-        //            n[i, j,k].explored = false;
-        //            n[i, j,k].room_id = (byte)Room_ids.SolidRock;
-        //        }
-        //}
-        //public void _RR1()
-        //{
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //            for (int k = 0; k <= MMap.mz - 1; k++)
-        //        {
-        //            n[i, j,k].floar = FloarID.Grass1;
-        //            if (i == 1 || j == 1 || i == mx - 1 || j == my - 1) n[i, j,k].floar = FloarID.Sandwall;
-        //            n[i, j,k].explored = false;
-        //        }
-
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int i = rnd.Next(3, mx - 2);
-        //        for (int j = 3; j <= my - 2; j++)
-        //        {
-        //            n[i, j,0].floar = FloarID.Sandwall;
-        //        }
-        //    }
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int j = rnd.Next(3, my - 2);
-        //        for (int i = 3; i <= mx - 2; i++)
-        //        {
-        //            n[i, j,0].floar = FloarID.Sandwall;
-        //        }
-        //    }
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int i = rnd.Next(3, mx - 2);
-        //        for (int j = 3; j <= my - 2; j++)
-        //        {
-        //            if (rnd.Next(1, 5) == 1) n[i, j,0].floar = FloarID.Dirt;
-        //        }
-        //    }
-        //    for (int a = 0; a <= rnd.Next(5, 20); a++)
-        //    {
-        //        int j = rnd.Next(3, my - 2);
-        //        for (int i = 3; i <= mx - 2; i++)
-        //        {
-        //            if (rnd.Next(1, 2) == 1) n[i, j,0].floar = FloarID.Dirt;
-        //        }
-        //    }
-        //}
-        //public void _RR2()
-        //{
-        //    _REmpty();
-
-        //    int a = rnd.Next(5000, 20000);
-        //    Vector3 cur = new Vector3(mx / 2, my / 2, 0);
-        //    for (int i = 0; i <= a - 1; i++)
-        //    {
-        //        if (GoodXY(cur)) n[cur.X, cur.Y,0].floar = FloarID.Grass1;
-        //        if (!GoodXY(cur)) cur = new Vector3(mx / 2, my / 2, 0);
-        //        int aa = rnd.Next(1, 6);
-        //        switch (aa)
-        //        {
-        //            case 1:
-        //                cur.X++;
-        //                break;
-        //            case 2:
-        //                cur.Y--;
-        //                break;
-        //            case 3:
-        //                cur.Y++;
-        //                break;
-        //            case 4:
-        //                cur.X--;
-        //                break;
-        //        }
-        //    }
-        //    for (int i = 0; i <= mx - 1; i++)
-        //        for (int j = 0; j <= my - 1; j++)
-        //        {
-        //            if (i == 2 || j == 2 || i == mx - 1 || j == my - 1) n[i, j,0].floar = FloarID.Sandwall;
-        //        }
-        //}
-        //public void _RNew()
-        //{
-        //    _REmpty();
-
-        //    int room_num = 50;
-        //    int room_max = 5, room_min = 13;
-
-        //    for (int i = 0; i <= room_num - 1; i++)
-        //    {
-        //        int no_unlimit = 0;
-        //    retry:
-        //        no_unlimit++;
-        //        if (no_unlimit >= 10000) goto unlimit;
-
-        //        Vector3 aa = new Vector3(rnd.Next(0, mx - 1), rnd.Next(0, my),0);
-        //        Vector3 bb = new Vector3(aa.X + rnd.Next(room_min, room_min + room_max), aa.Y + rnd.Next(room_min, room_min + room_max),0);
-
-        //        if (!GoodXY(aa) || !GoodXY(bb)) goto retry;
-        //        for (int u = aa.X; u <= bb.X; u++)
-        //            for (int v = aa.Y; v <= bb.Y; v++)
-        //            {
-        //                if (n[u, v,0].floar != FloarID.Sandwall)
-        //                { goto retry; }
-        //            }
-
-
-        //        MakeRoom(aa, bb, Convert.ToByte(i + 1));
-        //    }
-        //unlimit:
-
-        //    int a = 5000;
-        //    Vector3 cur = new Vector3(mx / 2, my / 2,0);
-        //    Vector3 mover = new Vector3();
-        //    for (int i = 0; i <= a - 1; i++)
-        //    {
-        //        if (GoodXY(cur) && n[cur.X, cur.Y,0].room_id != (byte)Room_ids.RoomWall && n[cur.X, cur.Y,0].room_id > 50)
-        //        {
-        //            n[cur.X, cur.Y,0].floar = FloarID.Grass1;
-        //            if (cur.X < mx - 1 && n[cur.X + 1, cur.Y,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X + 1, cur.Y,0].room_id = (byte)Room_ids.Coridor;
-        //            if (cur.Y < my - 1 && n[cur.X, cur.Y + 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X, cur.Y + 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X < mx - 1 && cur.Y < my - 1 && n[cur.X + 1, cur.Y + 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X + 1, cur.Y + 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X < mx - 1 && cur.Y > 0 && n[cur.X + 1, cur.Y - 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X + 1, cur.Y - 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X > 0 && cur.Y < my - 1 && n[cur.X - 1, cur.Y + 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X - 1, cur.Y + 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X > 0 && n[cur.X - 1, cur.Y,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X - 1, cur.Y,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.Y > 0 && n[cur.X, cur.Y - 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X, cur.Y - 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //            if (cur.X > 0 && cur.Y > 0 && n[cur.X - 1, cur.Y - 1,0].room_id != (byte)Room_ids.RoomWall)
-        //                n[cur.X - 1, cur.Y - 1,0].room_id = (byte)Room_ids.CoridorWall;
-        //        }
-        //        int aa = rnd.Next(1, 18);
-        //        if (cur.X % 2 == 0 || cur.Y % 2 == 0)
-        //            switch (aa)
-        //            {
-        //                case 1:
-        //                    mover.X = 1;
-        //                    mover.Y = 0;
-        //                    break;
-        //                case 2:
-        //                    mover.X = -1;
-        //                    mover.Y = 0;
-        //                    break;
-        //                case 3:
-        //                    mover.X = 0;
-        //                    mover.Y = 1;
-        //                    break;
-        //                case 4:
-        //                    mover.X = 0;
-        //                    mover.Y = -1;
-        //                    break;
-        //            }
-        //        cur += mover;
-
-        //        if (!GoodXY(cur)) cur = new Vector3(mx / 2, my / 2,0);
-        //    }
-        //}
-        //public void _RMy()
-        //{
-        //    _REmpty();
-        //}
-
-        //public void MakeRoom(Vector3 a, Vector3 b, byte id)
-        //{
-        //    FillRect(a.X + 1, a.Y + 1, b.X - 1, b.Y - 1, FloarID.Grass1);
-        //    //FillRoomID(a, b, id);
-        //    n[a.X, rnd.Next(a.Y, b.Y),0].floar = FloarID.Grass1;
-        //    n[b.X, rnd.Next(a.Y, b.Y),0].floar = FloarID.Grass1;
-        //    n[rnd.Next(a.X, b.X), a.Y,0].floar = FloarID.Grass1;
-        //    n[rnd.Next(b.X, b.X), b.Y,0].floar = FloarID.Grass1;
-        //}
-
-        //public void FillRect(int x1, int y1, int x2, int y2, FloarID flid)
-        //{
-        //    for (int i = x1; i <= x2; i++)
-        //        for (int j = y1; j <= y2; j++)
-        //        {
-        //            n[i, j,0].floar = flid;
-        //        }
-        //}
-        //public void FillRect(Vector3 a, Vector3 b, FloarID flid)
-        //{
-        //    for (int i = a.X; i <= b.X; i++)
-        //        for (int j = a.Y; j <= b.Y; j++)
-        //            for (int k = a.Z; k <= b.Z; k++)
-        //        {
-        //            n[i, j, k].floar = flid;
-        //        }
-        //}
-
-        //public void FillRoomID(int x1, int y1, int x2, int y2, byte id)
-        //{
-        //    for (int i = x1; i <= x2; i++)
-        //        for (int j = y1; j <= y2; j++)
-        //        {
-        //            n[i, j,0].room_id = id;
-        //            if (i == x1 || j == y1 || i == x2 || j == y2) n[i, j,0].room_id = (byte)Room_ids.RoomWall;
-        //            if ((i == x1 || j == y1 || i == x2 || j == y2) && n[i, j,0].floar != FloarID.Sandwall) n[i, j,0].room_id = (byte)Room_ids.RoomDoor;
-        //        }
-        //}
-        //public void FillRoomID(XY a, XY b, byte id)
-        //{
-        //    for (int i = a.X; i <= b.X; i++)
-        //        for (int j = a.Y; j <= b.Y; j++)
-        //        {
-        //            n[i, j,0].room_id = id;
-        //            if (i == a.X || j == a.Y || i == b.X || j == b.Y) n[i, j,0].room_id = (byte)Room_ids.RoomWall;
-        //            if ((i == a.X || j == a.Y || i == b.X || j == b.Y) && n[i, j,0].floar != FloarID.Sandwall) n[i, j,0].room_id = (byte)Room_ids.RoomDoor;
-        //        }
-        //}
 
         /// <summary>
         /// ѕроверка, входит ли вектор в границы карты
@@ -973,17 +585,17 @@ namespace Mork.Local_Map
         /// </summary>
         /// <param name="loc"></param>
         /// <returns></returns>
-        public static bool IsWalkable(Vector3 loc)
-        {
-            return Main.dbobject.Data[Main.mmap.n[(int)loc.X, (int)loc.Y, (int)loc.Z].blockID].walkable;
-        }
+        //public static bool IsWalkable(Vector3 loc)
+        //{
+        //    return Main.dbobject.Data[n[(int)loc.X, (int)loc.Y, (int)loc.Z].blockID].walkable;
+        //}
 
-        public static bool IsWalkable(int X, int Y, int Z)
-        {
-            if (GoodVector3(X, Y, Z))
-                return Main.dbobject.Data[Main.mmap.n[X, Y, Z].blockID].walkable;
-            else return false;
-        }
+        //public static bool IsWalkable(int X, int Y, int Z)
+        //{
+        //    if (GoodVector3(X, Y, Z))
+        //        return Main.dbobject.Data[n[X, Y, Z].blockID].walkable;
+        //    else return false;
+        //}
 
         public static bool InScreen(Vector3 loc)
         {
@@ -998,242 +610,242 @@ namespace Mork.Local_Map
             return false;
         }
 
-        public Stack<Vector3> FindPatch(Vector3 loc_ref, Vector3 dest_ref)
-        {
-            short[,,] patch_step = new short[mx + 1, my + 1, mz + 1];
+        //public Stack<Vector3> FindPatch(Vector3 loc_ref, Vector3 dest_ref)
+        //{
+        //    short[,,] patch_step = new short[mx + 1, my + 1, mz + 1];
 
-            Vector3 loc = loc_ref;
-            Vector3 dest = dest_ref;
-            if (loc == dest)
-                return new Stack<Vector3>();
+        //    Vector3 loc = loc_ref;
+        //    Vector3 dest = dest_ref;
+        //    if (loc == dest)
+        //        return new Stack<Vector3>();
 
-            Queue<Vector3> temp_q = new Queue<Vector3>();
-            Vector3 temp = new Vector3();
+        //    Queue<Vector3> temp_q = new Queue<Vector3>();
+        //    Vector3 temp = new Vector3();
 
-            short counter = 1;
+        //    short counter = 1;
 
-            dest.X = dest.X > 127 ? 127 : dest.X;
-            dest.Y = dest.Y > 127 ? 127 : dest.Y;
+        //    dest.X = dest.X > 127 ? 127 : dest.X;
+        //    dest.Y = dest.Y > 127 ? 127 : dest.Y;
 
-            temp_q.Enqueue(loc);
-            patch_step[(int)loc.X, (int)loc.Y, (int)loc.Z] = counter;
+        //    temp_q.Enqueue(loc);
+        //    patch_step[(int)loc.X, (int)loc.Y, (int)loc.Z] = counter;
 
-            if (GoodVector3((int)dest.X, (int)dest.Y, (int)dest.Z))
-                while (patch_step[(int)dest.X, (int)dest.Y, (int)dest.Z] == 0 && temp_q.Count > 0)
-                {
-                    temp = temp_q.Dequeue();
-                    if (counter >= 999)
-                        return new Stack<Vector3>();
+        //    if (GoodVector3((int)dest.X, (int)dest.Y, (int)dest.Z))
+        //        while (patch_step[(int)dest.X, (int)dest.Y, (int)dest.Z] == 0 && temp_q.Count > 0)
+        //        {
+        //            temp = temp_q.Dequeue();
+        //            if (counter >= 999)
+        //                return new Stack<Vector3>();
 
-                    counter = Convert.ToInt16(patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] + 1);
+        //            counter = Convert.ToInt16(patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] + 1);
 
-                    // via z
+        //            // via z
 
-                    if (temp.X != mx - 1 && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] == 0 && IsWalkable((int)temp.X + 1, (int)temp.Y, (int)temp.Z))
-                    {
-                        patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] = counter;
-                        temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z));
-                    }
+        //            if (temp.X != mx - 1 && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] == 0 && IsWalkable((int)temp.X + 1, (int)temp.Y, (int)temp.Z))
+        //            {
+        //                patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] = counter;
+        //                temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z));
+        //            }
 
-                    if (temp.X >=1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z))
-                    {
-                        patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] = counter;
-                        temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z));
-                    }
+        //            if (temp.X >=1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z))
+        //            {
+        //                patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] = counter;
+        //                temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z));
+        //            }
 
-                    if (temp.Y != my - 1 && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] == 0 && IsWalkable((int)temp.X, (int)temp.Y + 1, (int)temp.Z))
-                    {
-                        patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] = counter;
-                        temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z));
-                    }
+        //            if (temp.Y != my - 1 && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] == 0 && IsWalkable((int)temp.X, (int)temp.Y + 1, (int)temp.Z))
+        //            {
+        //                patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] = counter;
+        //                temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z));
+        //            }
 
-                    if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z))
-                    {
-                        patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] = counter;
-                        temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z));
-                    }
+        //            if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z))
+        //            {
+        //                patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] = counter;
+        //                temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z));
+        //            }
                     
-                    // via z+1
+        //            // via z+1
 
-                    if (temp.Z < mz - 1)
-                    {
-                        if (temp.X != mx - 1 && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1))
-                        {
-                            patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z + 1));
-                        }
+        //            if (temp.Z < mz - 1)
+        //            {
+        //                if (temp.X != mx - 1 && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1))
+        //                {
+        //                    patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z + 1));
+        //                }
 
-                        if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1))
-                        {
-                            patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z + 1));
-                        }
+        //                if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1))
+        //                {
+        //                    patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z + 1));
+        //                }
 
-                        if (temp.Y != my - 1 && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1))
-                        {
-                            patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z + 1));
-                        }
+        //                if (temp.Y != my - 1 && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1))
+        //                {
+        //                    patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z + 1));
+        //                }
 
-                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1))
-                        {
-                            patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z + 1));
-                        }
+        //                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1))
+        //                {
+        //                    patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z + 1));
+        //                }
 
-                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z + 1))
-                        {
-                            patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X, temp.Y, temp.Z + 1));
-                        }
-                    }
+        //                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z + 1))
+        //                {
+        //                    patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X, temp.Y, temp.Z + 1));
+        //                }
+        //            }
 
-                    // via z-1
-                    if (temp.Z >= 1)
-                    {
-                        if (temp.X != mx - 1 && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1))
-                        {
-                            patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z - 1));
-                        }
+        //            // via z-1
+        //            if (temp.Z >= 1)
+        //            {
+        //                if (temp.X != mx - 1 && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1))
+        //                {
+        //                    patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X + 1, temp.Y, temp.Z - 1));
+        //                }
 
-                        if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1))
-                        {
-                            patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z - 1));
-                        }
+        //                if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1))
+        //                {
+        //                    patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X - 1, temp.Y, temp.Z - 1));
+        //                }
 
-                        if (temp.Y != my - 1 && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1))
-                        {
-                            patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z - 1));
-                        }
+        //                if (temp.Y != my - 1 && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1))
+        //                {
+        //                    patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X, temp.Y + 1, temp.Z - 1));
+        //                }
 
-                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1))
-                        {
-                            patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z - 1));
-                        }
+        //                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1))
+        //                {
+        //                    patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z - 1));
+        //                }
 
-                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z - 1))
-                        {
-                            patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] = counter;
-                            temp_q.Enqueue(new Vector3(temp.X, temp.Y, temp.Z - 1));
-                        }
-                    }
-                }
+        //                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] == 0 && IsWalkable((int)temp.X, (int)temp.Y, (int)temp.Z - 1))
+        //                {
+        //                    patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] = counter;
+        //                    temp_q.Enqueue(new Vector3(temp.X, temp.Y, temp.Z - 1));
+        //                }
+        //            }
+        //        }
 
-            patch_step[(int)loc.X, (int)loc.Y, (int)loc.Z] = Int16.MaxValue;
+        //    patch_step[(int)loc.X, (int)loc.Y, (int)loc.Z] = Int16.MaxValue;
 
 
 
-            Stack<Vector3> revers_q = new Stack<Vector3>();
-            revers_q.Push(dest);
-            temp = dest;
-            if (GoodVector3(dest))
-                while (patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] != 1 && counter > 0)
-                {
-                    counter--;
-                    // via z
-                    if (patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] != 0)
-                    {
-                        revers_q.Push(new Vector3(temp.X + 1, temp.Y, temp.Z));
-                        temp = new Vector3(temp.X + 1, temp.Y, temp.Z);
-                    }
-                    else
-                        if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] != 0)
-                        {
-                            revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z));
-                            temp = new Vector3(temp.X - 1, temp.Y, temp.Z);
-                        }
-                        else
-                            if (patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] != 0)
-                            {
-                                revers_q.Push(new Vector3(temp.X, temp.Y + 1, temp.Z));
-                                temp = new Vector3(temp.X, temp.Y + 1, temp.Z);
-                            }
-                            else
-                                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] != 0)
-                                {
-                                    revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z));
-                                    temp = new Vector3(temp.X, temp.Y - 1, temp.Z);
-                                }
+        //    Stack<Vector3> revers_q = new Stack<Vector3>();
+        //    revers_q.Push(dest);
+        //    temp = dest;
+        //    if (GoodVector3(dest))
+        //        while (patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] != 1 && counter > 0)
+        //        {
+        //            counter--;
+        //            // via z
+        //            if (patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z] != 0)
+        //            {
+        //                revers_q.Push(new Vector3(temp.X + 1, temp.Y, temp.Z));
+        //                temp = new Vector3(temp.X + 1, temp.Y, temp.Z);
+        //            }
+        //            else
+        //                if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z] != 0)
+        //                {
+        //                    revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z));
+        //                    temp = new Vector3(temp.X - 1, temp.Y, temp.Z);
+        //                }
+        //                else
+        //                    if (patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z] != 0)
+        //                    {
+        //                        revers_q.Push(new Vector3(temp.X, temp.Y + 1, temp.Z));
+        //                        temp = new Vector3(temp.X, temp.Y + 1, temp.Z);
+        //                    }
+        //                    else
+        //                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] != 0)
+        //                        {
+        //                            revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z));
+        //                            temp = new Vector3(temp.X, temp.Y - 1, temp.Z);
+        //                        }
                                 
-                    // via z+1
-                    if (temp.Z < mz - 1)
-                    {
-                        if (patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] != 0)
-                        {
-                            revers_q.Push(new Vector3(temp.X + 1, temp.Y, temp.Z + 1));
-                            temp = new Vector3(temp.X + 1, temp.Y, temp.Z + 1);
-                        }
-                        else
-                            if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] != 0)
-                            {
-                                revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z + 1));
-                                temp = new Vector3(temp.X - 1, temp.Y, temp.Z + 1);
-                            }
-                            else
-                                if (patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] != 0)
-                                {
-                                    revers_q.Push(new Vector3(temp.X, temp.Y + 1, temp.Z + 1));
-                                    temp = new Vector3(temp.X, temp.Y + 1, temp.Z + 1);
-                                }
-                                else
-                                    if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] != 0)
-                                    {
-                                        revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z + 1));
-                                        temp = new Vector3(temp.X, temp.Y - 1, temp.Z + 1);
-                                    }
-                                    else
-                                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] != 0)
-                                        {
-                                            revers_q.Push(new Vector3(temp.X, temp.Y, temp.Z + 1));
-                                            temp = new Vector3(temp.X, temp.Y, temp.Z + 1);
-                                        }
-                    }
+        //            // via z+1
+        //            if (temp.Z < mz - 1)
+        //            {
+        //                if (patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z + 1] != 0)
+        //                {
+        //                    revers_q.Push(new Vector3(temp.X + 1, temp.Y, temp.Z + 1));
+        //                    temp = new Vector3(temp.X + 1, temp.Y, temp.Z + 1);
+        //                }
+        //                else
+        //                    if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z + 1] != 0)
+        //                    {
+        //                        revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z + 1));
+        //                        temp = new Vector3(temp.X - 1, temp.Y, temp.Z + 1);
+        //                    }
+        //                    else
+        //                        if (patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z + 1] != 0)
+        //                        {
+        //                            revers_q.Push(new Vector3(temp.X, temp.Y + 1, temp.Z + 1));
+        //                            temp = new Vector3(temp.X, temp.Y + 1, temp.Z + 1);
+        //                        }
+        //                        else
+        //                            if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z + 1] != 0)
+        //                            {
+        //                                revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z + 1));
+        //                                temp = new Vector3(temp.X, temp.Y - 1, temp.Z + 1);
+        //                            }
+        //                            else
+        //                                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z + 1] != 0)
+        //                                {
+        //                                    revers_q.Push(new Vector3(temp.X, temp.Y, temp.Z + 1));
+        //                                    temp = new Vector3(temp.X, temp.Y, temp.Z + 1);
+        //                                }
+        //            }
                     
-                    // via z-1
-                    if (temp.Z > 0)
-                    {
-                        if (patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] != 0)
-                        {
-                            revers_q.Push(new Vector3(temp.X + 1, temp.Y, temp.Z - 1));
-                            temp = new Vector3(temp.X + 1, temp.Y, temp.Z - 1);
-                        }
-                        else
-                            if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] != 0)
-                            {
-                                revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z - 1));
-                                temp = new Vector3(temp.X - 1, temp.Y, temp.Z - 1);
-                            }
-                            else
-                                if (patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] != 0)
-                                {
-                                    revers_q.Push(new Vector3(temp.X, temp.Y + 1, temp.Z - 1));
-                                    temp = new Vector3(temp.X, temp.Y + 1, temp.Z - 1);
-                                }
-                                else
-                                    if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] != 0)
-                                    {
-                                        revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z - 1));
-                                        temp = new Vector3(temp.X, temp.Y - 1, temp.Z - 1);
-                                    }
-                                    else
-                                        if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] != 0)
-                                        {
-                                            revers_q.Push(new Vector3(temp.X, temp.Y, temp.Z - 1));
-                                            temp = new Vector3(temp.X, temp.Y, temp.Z - 1);
-                                        }
-                    }
+        //            // via z-1
+        //            if (temp.Z > 0)
+        //            {
+        //                if (patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X + 1, (int)temp.Y, (int)temp.Z - 1] != 0)
+        //                {
+        //                    revers_q.Push(new Vector3(temp.X + 1, temp.Y, temp.Z - 1));
+        //                    temp = new Vector3(temp.X + 1, temp.Y, temp.Z - 1);
+        //                }
+        //                else
+        //                    if (temp.X >= 1 && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X - 1, (int)temp.Y, (int)temp.Z - 1] != 0)
+        //                    {
+        //                        revers_q.Push(new Vector3(temp.X - 1, temp.Y, temp.Z - 1));
+        //                        temp = new Vector3(temp.X - 1, temp.Y, temp.Z - 1);
+        //                    }
+        //                    else
+        //                        if (patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y + 1, (int)temp.Z - 1] != 0)
+        //                        {
+        //                            revers_q.Push(new Vector3(temp.X, temp.Y + 1, temp.Z - 1));
+        //                            temp = new Vector3(temp.X, temp.Y + 1, temp.Z - 1);
+        //                        }
+        //                        else
+        //                            if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z - 1] != 0)
+        //                            {
+        //                                revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z - 1));
+        //                                temp = new Vector3(temp.X, temp.Y - 1, temp.Z - 1);
+        //                            }
+        //                            else
+        //                                if (temp.Y >= 1 && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] < patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z] && patch_step[(int)temp.X, (int)temp.Y, (int)temp.Z - 1] != 0)
+        //                                {
+        //                                    revers_q.Push(new Vector3(temp.X, temp.Y, temp.Z - 1));
+        //                                    temp = new Vector3(temp.X, temp.Y, temp.Z - 1);
+        //                                }
+        //            }
 
-                }
+        //        }
 
-            if (revers_q.Count == 1)
-                return new Stack<Vector3>();
+        //    if (revers_q.Count == 1)
+        //        return new Stack<Vector3>();
 
-            return revers_q;
-        }
+        //    return revers_q;
+        //}
 
         public void KillBlock(Vector3 p)
         {
@@ -1266,7 +878,7 @@ namespace Mork.Local_Map
                 Main.globalstorage.n.Remove(new Vector3(x, y, z));
             }
 
-            SubterrainPersonaly(new Vector3(x,y,z), ref Main.mmap);
+            //SubterrainPersonaly(new Vector3(x,y,z));
         }
 
         /// <summary>
@@ -1294,13 +906,13 @@ namespace Mork.Local_Map
             if(Main.dbobject.Data[id].activeblock)
                 active.Add(new Vector3(x,y,z));
 
-            if(id == KnownIDs.StorageEntrance)
-            {
-                n[x, y, z].tags.Add("storage", new LocalItems());
-                Main.globalstorage.n.Add(new Vector3(x,y,z));
-            }
+            //if(id == KnownIDs.StorageEntrance)
+            //{
+            //    n[x, y, z].tags.Add("storage", new LocalItems());
+            //    Main.globalstorage.n.Add(new Vector3(x,y,z));
+            //}
 
-            SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
+            //SubterrainPersonaly(new Vector3(x, y, z + 1), ref Main.mmap);
         }
 
         /// <summary>

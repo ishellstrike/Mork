@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mork.Bad_Database;
 
 namespace Mork.Graphics.MapEngine
 {
@@ -47,28 +48,25 @@ namespace Mork.Graphics.MapEngine
         {
             this.GraphicsDevice = graphicsDevice;
 
-            generatePerspectiveProjectionMatrix(MathHelper.PiOver4);
+            generatePerspectiveProjectionMatrix(MathHelper.ToRadians(45));
         }
 
         private void generatePerspectiveProjectionMatrix(float FieldOfView)
         {
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
+            var pp = GraphicsDevice.PresentationParameters;
 
-            float aspectRatio = (float)pp.BackBufferWidth /
-                (float)pp.BackBufferHeight;
+            var aspectRatio = Main.resx/Main.resy;
 
-            this.Projection = Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.ToRadians(45), aspectRatio, 0.1f, 1000000.0f);
+            Projection = Matrix.CreatePerspectiveFieldOfView(FieldOfView, aspectRatio, 0.1f, 1000000.0f);
         }
 
         public virtual void Update()
         {
         }
 
-        private void generateFrustum()
+        public void generateFrustum()
         {
-            Matrix viewProjection = View * Projection;
-            Frustum = new BoundingFrustum(viewProjection);
+            Frustum = new BoundingFrustum(View * Projection);
         }
 
         public bool BoundingVolumeIsInView(BoundingSphere sphere)

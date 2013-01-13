@@ -12,5 +12,6 @@ namespace Mork.Bad_Database
         public static Vector2 TextureAtlas;
         public const int TextureAtlasTexSize = 32;
         public const int TextureAtlasWCount = 5;
+        public static Color skycolor = Color.Black;
     }
 }

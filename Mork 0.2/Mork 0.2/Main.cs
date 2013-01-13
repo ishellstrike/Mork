@@ -85,7 +85,7 @@ namespace Mork
         public const int ssizex = 50, ssizey = 35;
         public const int resx = 1280, resy = 768;
 
-        private bool debug;
+        public static bool debug;
 
         public static string OurName = "";
         public static string OurVer = "";
@@ -109,11 +109,12 @@ namespace Mork
 
         public static Vector3 gmap_region = new Vector3();
 
-        public static MMap mmap = new MMap();
+        //public static MMap mmap = new MMap();
         public static LocalUnits lunits = new LocalUnits();
         public static LocalHeroes lheroes = new LocalHeroes();
 
         public static SectorMap smap;
+        public static IntersectMap imap;
 
         private delegate void GTDelegate(GameTime gt);
         private static GTDelegate asynccore;
@@ -140,7 +141,7 @@ namespace Mork
         public static DB_LMO dbobject;
         //public static Stores buildings;
         public static GMap gmap;
-        public static PlayerOrders playerorders = new PlayerOrders();
+        //public static PlayerOrders playerorders = new PlayerOrders();
         public static LocalItems localitems = new LocalItems();
         public static ItemStorageSystem iss = new ItemStorageSystem();
         public static Storages globalstorage = new Storages();
@@ -224,7 +225,7 @@ namespace Mork
             Vector3 a = new Vector3(100,100,500);
             //a = Vector3.Transform(a, Matrix.CreateLookAt(new Vector3(100, 100, 100), Vector3.Zero, Vector3.Up));
             Camera = new FreeCamera(a, MathHelper.ToRadians(45), MathHelper.ToRadians(45), GraphicsDevice);
-            LRInit();
+            Camera.Target = new Vector3(100,100,0);
 
             Directory.CreateDirectory(@"Maps");
             Directory.CreateDirectory(@"Data");
@@ -1110,18 +1111,8 @@ namespace Mork
             Action ingamegen = InGameGeneration;
             Generatear = ingamegen.BeginInvoke(null, null);
 
-            WorldLife.Age = NamesGenerator.GetAgeName();
-            WorldLife.Day = rnd.Next(1, 30);
-            WorldLife.Month = 3;
-            WorldLife.Year = rnd.Next(1, 1000);
-
             StringBuilder ss = new StringBuilder();
             ss.Append(string.Format("Добро пожаловать в {0} {1} early alpha!", Main.OurName, Main.OurVer));
-
-            if (WorldLife.Year <= 100) ss.Append(string.Format("\n\n" + "Начало эпохи {0}", WorldLife.Age));
-            else if (WorldLife.Year >= 700) ss.Append(string.Format("\n\n" + "Закат эпохи {0}", WorldLife.Age));
-            else ss.Append(string.Format("\n\n" + "Эпоха {0}", WorldLife.Age));
-            ss.Append(string.Format(", год {0}, {1} {2}", WorldLife.Year, WorldLife.Day, NamesGenerator.MonthNameR(WorldLife.Month)));
 
             ss.Append("\n\nВ вашем отряде: ");
             for (var i = 0; i <= 5; i++)
@@ -1133,15 +1124,6 @@ namespace Mork
 
             ss.Append("\n\nВсе вопросы и предложения просьба отправлять на ishellstrike@gmail.com");
 
-            mmap.SetMapTag("name", "test_name");
-            mmap.SetMapTag("start_age", WorldLife.Age);
-            mmap.SetMapTag("start_year",WorldLife.Year);
-            mmap.SetMapTag("start_month", WorldLife.Month);
-            mmap.SetMapTag("start_day", WorldLife.Day);
-            mmap.SetMapTag("start_hour", WorldLife.Hour);
-            mmap.SetMapTag("start_min", WorldLife.Min);
-            mmap.SetMapTag("start_sec", WorldLife.Sec);
-
             Program.game.ShowIngameMessage(ss.ToString());
         }
 
@@ -1150,7 +1132,7 @@ namespace Mork
         /// </summary>
         private void InGameGeneration()
         {
-            Main.mmap.SimpleGeneration_bygmap();
+            Main.smap.SimpleGeneration_bygmap();
 
             for (var i = 0; i <= 9; i++)
             {
@@ -1160,7 +1142,7 @@ namespace Mork
                 temp.pos = new Vector3(temp.pos.X + rnd.Next(0, 6) - 3, temp.pos.Y + rnd.Next(0, 6) - 3, k);
                 for (k = 0; k <= MMap.mz - 1; k++)
                 {
-                    if (MMap.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.mmap.n[(int)temp.pos.X, (int)temp.pos.Y, k].blockID == 0) continue;
+                    if (MMap.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.smap.At(temp.pos.X, temp.pos.Y, k).blockID == 0) continue;
                     k--;
                     goto here;
                 }
@@ -1213,34 +1195,6 @@ namespace Mork
                 _fpsN = 0;
             }
 
-            click_L = false;
-            click_M = false;
-            click_R = false;
-
-            if (buttonhelper_L && mousestate.LeftButton == ButtonState.Released)
-            {
-                buttonhelper_L = false;
-                click_L = true;
-            }
-            if (buttonhelper_R && mousestate.RightButton == ButtonState.Released)
-            {
-                buttonhelper_R = false;
-                click_R = true;
-            }
-
-            if (buttonhelper_M && mousestate.MiddleButton == ButtonState.Released)
-            {
-                buttonhelper_M = false;
-                click_M = true;
-            }
-
-            if (mousestate.LeftButton == ButtonState.Pressed)
-                buttonhelper_L = true;
-            if (mousestate.RightButton == ButtonState.Pressed)
-                buttonhelper_R = true;
-            if (mousestate.MiddleButton == ButtonState.Pressed)
-                buttonhelper_M = true;
-
             switch (gstate)
             {
                 case Gstate.CloseGame:
@@ -1257,6 +1211,16 @@ namespace Mork
             }
 
             _wheellast = mousestate.ScrollWheelValue;
+
+            if (ks.IsKeyDown(Keys.F4) && !lks.IsKeyDown(Keys.F4))
+            {
+                debug = !debug;
+            }
+
+            if (ks.IsKeyDown(Keys.F5) && !lks.IsKeyDown(Keys.F5))
+            {
+                smap.RebuildAllMapGeo(z_cam, Camera);
+            }
 
             //mbut.ActButtons();
 
@@ -1314,13 +1278,13 @@ namespace Mork
         /// <param name="gameTime"></param>
         protected override void Draw(GameTime gameTime)
         {
-            _fpsN++;
-            tick_of_5++;
-            tick_of_5 = tick_of_5 > 5 ? 1 : tick_of_5;
+            //_fpsN++;
+            //tick_of_5++;
+            //tick_of_5 = tick_of_5 > 5 ? 1 : tick_of_5;
 
             Manager.BeginDraw(gameTime);
             Manager.Draw(gameTime);
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Commons.skycolor);
 
             DrawProc(gameTime, spriteBatch, GraphicsDevice);
 
@@ -1331,10 +1295,15 @@ namespace Mork
             {
                 string outp = "";
                 outp += string.Format("mpos = {0}", mousepos)+Environment.NewLine;
-                outp += string.Format("ord = {0}", playerorders.n.Count) + Environment.NewLine;
-                outp += string.Format("act = {0}", mmap.active.Count) + Environment.NewLine;
+                outp += string.Format("selector = {0}", Selector) + Environment.NewLine;
+                //outp += string.Format("ord = {0}", playerorders.n.Count) + Environment.NewLine;
+                outp += string.Format("act = {0}", smap.active.Count) + Environment.NewLine;
                 outp += string.Format("time = {0}", gameTime.TotalGameTime) + Environment.NewLine;
                 outp += string.Format("srg = {0}", globalstorage.n.Count) + Environment.NewLine;
+                outp += string.Format("cam = {0}\nrot = {1}", Camera.Target, camerarotation) + Environment.NewLine;
+                outp += string.Format("verts = {0}, sect = {1}", drawed_verts, drawed_sects) + Environment.NewLine;
+                outp += string.Format("total rebuild = {0}", sectrebuild) + Environment.NewLine;
+
                 spriteBatch.DrawString(Font2, outp, new Vector2(800, 5), Color.White);
             }
 
@@ -1361,7 +1330,7 @@ namespace Mork
             {
                 spriteBatch.Draw(interface_tex[16], new Vector2(60, 40), null, Color.White, SavingDeg,
                                  new Vector2(32, 32), Vector2.One, SpriteEffects.None, 0);
-                SavingDeg += (float) Math.PI/10 * (float)gameTime.ElapsedGameTime.TotalSeconds*50;
+                SavingDeg += (float) Math.PI * (float)gameTime.ElapsedGameTime.TotalSeconds*5;
                 if (SavingDeg >= Math.PI*2) SavingDeg = 0;
             }
 
@@ -1416,26 +1385,6 @@ namespace Mork
             summarytb.Refresh();
         }
 
-        private static Vector2 ToIsometricPos(int x, int y)
-        {
-            return new Vector2(camera.X + (x - y)*20, camera.Y + (x + y)*10);
-        }
-
-        private static float ToIsometricX(int x, int y)
-        {
-            return camera.X + (x - y)*20;
-        }
-
-        private static float ToIsometricY(int x, int y)
-        {
-            return camera.Y + (x + y)*10;
-        }
-
-        private static Vector2 ToIsometricFloat(float x, float y)
-        {
-            return new Vector2(camera.X + (x - y) * 20f, camera.Y + (x + y)*10f);
-        }
-
         public static void AddToLog(string mess)
         {
             for (int i = 1; i <= Textlogmax - 1; i++)
@@ -1449,10 +1398,9 @@ namespace Mork
 
         private void GameDraw(GameTime gameTime, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
-            LocalMapRenderer(gameTime, spriteBatch, GraphicsDevice);
+            smap.DrawAllMap(gameTime, Camera);
 
             sb.Begin();
-            //BasicAllDraw(gameTime);
 
             for (int i = 0; i <= Textlogmax - 1; i++) // отрисова лога
             {
@@ -1461,83 +1409,169 @@ namespace Mork
             sb.End();
         }
 
-        private void MapEditorDraw()
-        {
-            //MEAllDraw();
-        }
-
         #endregion
 
         /// <summary>
         /// заменить всем id, которых нет в базе, но есть на карте, на блоки ошибки, которые ничего не делают, но не убивают игру
         /// </summary>
         /// <param name="map"></param>
-        public static void PrepairMapDeleteWrongIDs(ref MMap map)
+        public static void PrepairMapDeleteWrongIDs(ref SectorMap map)
         {
-            for (int i0 = 0; i0 < map.n.GetUpperBound(0); i0++)
-                for (int i1 = 0; i1 < map.n.GetUpperBound(1); i1++)
-                    for (int i2 = 0; i2 < map.n.GetUpperBound(2); i2++)
+            for (int i0 = 0; i0 < 127; i0++)
+                for (int i1 = 0; i1 < 127; i1++)
+                    for (int i2 = 0; i2 < 127; i2++)
                     {
-                        if (!dbobject.Data.ContainsKey(map.n[i0, i1, i2].blockID)) map.n[i0, i1, i2].blockID = KnownIDs.error;
+                        if (!dbobject.Data.ContainsKey(map.At(i0, i1, i2).blockID)) map.At(i0, i1, i2).blockID = KnownIDs.error;
                     }
         }
 
         #region Updates
 
-        private float camerarotation;
+        private float camerarotation = 0.7f;
+        public static int drawed_verts;
+        public static int drawed_sects;
+        private float cameradistance = 30;
+        public static int z_cam;
+        private int notfastcam = 0;
+        public static int sectrebuild = 0;
+
+        private Ray MouseRay;
+
         private void GameUpdate(GameTime gt)
         {
-
-            //mousepos.X = Mouse.GetState().X;
-            //mousepos.Y = Mouse.GetState().Y;
-
-            //float deltaX = (float)resx / 2 - mousepos.X;
-            //float deltaY = (float)resy / 2 - mousepos.Y;
-
-            //Mouse.SetPosition(resx / 2, resy / 2);
-
-            //var currentKeyboardState = Keyboard.GetState();
-
-            //// Allows the game to exit
-            //if (currentKeyboardState.IsKeyDown(Keys.Escape))
-            //    Exit();
-
-            //if (!lks.IsKeyDown(Keys.T) && ks.IsKeyDown(Keys.T))
-            //{
-            //    if (_isWire)
-            //    {
-            //        _device.RasterizerState = _rsDefault;
-            //        _isWire = false;
-            //    }
-            //    else
-            //    {
-            //        _device.RasterizerState = _rsWire;
-            //        _isWire = true;
-            //    }
-            //}
-
-            //if (!_lks.IsKeyDown(Keys.C) && ks.IsKeyDown(Keys.C))
-            //{
-            //    _quadTree.Cull = !_quadTree.Cull;
-            //}
-
             Vector3 moving = Vector3.Zero;
+
+            KeyboardUpdate(gt, ref moving);
+
+            moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
+
+            Camera.Target += moving;
+            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, (float)Math.PI/5, 0, MathHelper.ToRadians(camerarotation), cameradistance);
+            Camera.generateFrustum();
+
+            Vector3 near = new Vector3(MousePos.X, MousePos.Y, 0);
+            Vector3 far = new Vector3(MousePos.X, MousePos.Y, 1);
+
+            Vector3 nun = GraphicsDevice.Viewport.Unproject(near, Camera.Projection, Camera.View, Matrix.Identity);
+            Vector3 fun = GraphicsDevice.Viewport.Unproject(far, Camera.Projection, Camera.View, Matrix.Identity);
+
+            Vector3 raydir = fun - nun;
+            raydir.Normalize();
+
+            MouseRay = new Ray(nun, raydir);
+
+            bool tempb = true;
+            for (int i = 0; i < imap.n.Length && tempb; i++)
+            {
+                var nn = imap.n[i];
+                var f = MouseRay.Intersects(nn);
+
+                if (f.HasValue)
+                {
+                    Selector.X = i /(SectorMap.sectn * MapSector.dimS);
+                    Selector.Y = i % (SectorMap.sectn * MapSector.dimS);
+                    Selector.Z = z_cam;
+
+                    tempb = false;
+                }
+            }
+
+            if (Mouse.GetState().ScrollWheelValue > _wheellast)
+            {
+                cameradistance -= (float)gt.ElapsedGameTime.TotalSeconds * 250;
+            }
+
+            if (Mouse.GetState().ScrollWheelValue < _wheellast)
+            {
+                cameradistance += (float)gt.ElapsedGameTime.TotalSeconds * 250;
+            }
+
+            if (Mouse.GetState().RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
+
+
+            if (click_R)
+            {
+                Ramka(gt);
+            }
+
+            if (!PAUSE)
+            {
+                //playerorders.OrdersUpdate(gt, lheroes);
+                lheroes.Update(gt);
+                lunits.Update(gt);
+
+                //asynccorear = asynccore.BeginInvoke(gt, null, null);
+            }
+
+            ingameUIpartLeftlistbox.Items.Clear();
+            //ingameUIpartLeftlistbox.Items.AddRange(smap.GetMapTagsInText());
+
+
+            ingameUIpartLeftlistbox2.Items.Clear();
+                
+
+            if (MMap.GoodVector3(Selector))
+            {
+                ingameUIpartLeftlistbox2.Items.Add("hp = " +
+                                                    smap.At(Selector.X, Selector.Y, Selector.Z).health);
+                ingameUIpartLeftlistbox2.Items.Add("explored = " +
+                                                    smap.At(Selector.X, Selector.Y, Selector.Z).explored);
+                ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
+                                                    smap.At(Selector.X,Selector.Y, Selector.Z).subterrain);
+            }
+            //if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
+
+            ingameUIpartLeftlistbox2.Refresh();
+
+            for (int index = 0; index < buildingsbuttons.Length; index++)
+            {
+                var button = buildingsbuttons[index];
+                button.Visible = iss.n[(button.Tag as int[])[1]].count != 0;
+                buildingsbuttonslabel[index].Text = iss.n[(button.Tag as int[])[1]].count.ToString();
+            }
+            //buildingsbuttons = new Button[iss.n.Count];
+            //for (int i = 0; i < iss.n.Count; i++)
+            //{
+            //        buildingsbuttons[i] = new Button(Manager);
+            //        buildingsbuttons[i].Init();
+            //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].I_name;
+            //        buildingsbuttons[i].Width = 40;
+            //        buildingsbuttons[i].Height = 40;
+            //        buildingsbuttons[i].Left = i%5*42;
+            //        buildingsbuttons[i].Top = i/5*42;
+            //        int[] tg = { buildingsbuttons[i].Top - (int)(buildingssb.Value/50f*42f*iss.n.Count/5), iss.n[i].id };
+            //        buildingsbuttons[i].Tag = tg;
+            //        buildingsbuttons[i].Anchor = Anchors.Bottom;
+            //        buildingsbuttons[i].Parent = buildinsgwindow;
+            //        buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbobject.Data[iss.n[i].id].metatex_n));
+            //        buildingsbuttons[i].ToolTip = new ToolTip(Manager);
+            //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].I_name + " id " + iss.n[i].id;
+            //        buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
+            //}
+            //buildinsgwindow.Refresh();
+           
+        }
+
+        private void KeyboardUpdate(GameTime gt, ref Vector3 moving)
+        {
+            lks = ks;
+            ks = Keyboard.GetState();
 
             if (ks[Keys.W] == KeyState.Down)
             {
-                moving += Vector3.Up *(float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Up * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
             if (ks[Keys.S] == KeyState.Down)
             {
-                moving += Vector3.Down * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Down * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
             if (ks[Keys.A] == KeyState.Down)
             {
-                moving += Vector3.Left * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Left * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
             if (ks[Keys.D] == KeyState.Down)
             {
-                moving += Vector3.Right * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                moving += Vector3.Right * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
 
             float roll = 0;
@@ -1552,134 +1586,44 @@ namespace Mork
                 if (camerarotation < 0) camerarotation += 360;
             }
 
-            //if (!lks.IsKeyDown(Keys.R) && currentKeyboardState.IsKeyDown(Keys.R))
-            //{
-            //    current_RT++;
-            //    if (current_RT > RTS.Count - 1) current_RT = 0;
-            //}
-            //if (!_previousKeyboardState.IsKeyDown(Keys.U) && currentKeyboardState.IsKeyDown(Keys.U))
-            //{
-            //    _quadTree.MinimumDepth++;
-            //    if (_quadTree.MinimumDepth > 6) _quadTree.MinimumDepth = 6;
-            //}
-            //if (!_previousKeyboardState.IsKeyDown(Keys.J) && currentKeyboardState.IsKeyDown(Keys.J))
-            //{
-            //    _quadTree.MinimumDepth--;
-            //    if (_quadTree.MinimumDepth < 0) _quadTree.MinimumDepth = 0;
-            //}
+            if (notfastcam > 0) notfastcam--;
 
-            //if (!_previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyDown(Keys.G))
-            //{
-            //    tex123 = _testBase.GetLandTex1(1024, 1024);
-            //    tex123norm = _testBase.BWtoAB(tex123, Color.Teal, Color.Magenta);
-            //}
+            if (ks[Keys.OemComma] == KeyState.Down && lks[Keys.OemComma] == KeyState.Up)
+            {
+                if (z_cam < 127)
+                {
+                    z_cam++;
+                    imap.MoveIntersectMap(new Vector3(0, 0, 1));
+                    if (z_cam < 127 - 5)
+                        if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
+                        {
+                            z_cam += 4;
+                            imap.MoveIntersectMap(new Vector3(0, 0, 4));
+                        }
+                    smap.RebuildAllMapGeo(z_cam, Camera);
+                }
+            }
+            if (ks[Keys.OemPeriod] == KeyState.Down && lks[Keys.OemPeriod] == KeyState.Up)
+            {
+                if (z_cam > 0)
+                {
+                    z_cam--;
+                    imap.MoveIntersectMap(new Vector3(0, 0, -1));
+                    if(z_cam > 5)
+                        if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
+                        {
+                            z_cam -= 4;
+                            imap.MoveIntersectMap(new Vector3(0, 0, -4));
+                        }
+
+                    smap.RebuildAllMapGeo(z_cam, Camera);
+                }
+            }
 
             if (ks[Keys.LeftShift] == KeyState.Down)
             {
                 moving *= 3;
             }
-
-            Camera.translation += moving;
-
-            Camera.Target += moving;
-            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, 0, 0, MathHelper.ToRadians(camerarotation), 300);
-
-            //Camera.Update();
-            {
-                if (Mouse.GetState().ScrollWheelValue > _wheellast)
-                {
-                    if (Selector.Z > 0) Selector.Z--;
-                }
-
-                if (Mouse.GetState().ScrollWheelValue < _wheellast)
-                {
-                    if (Selector.Z < MMap.mz - 2) Selector.Z++;
-                }
-
-                Selector.X = Convert.ToInt16(((MousePos.X - camera.X)/2 + (MousePos.Y - camera.Y)/1)/20) - 1;
-                Selector.Y = Convert.ToInt16(-((MousePos.X - camera.X)/2 - (MousePos.Y - camera.Y)/1)/20);
-
-                midscreen.X = Convert.ToInt16(((resx/2 - camera.X)/2 + (resy/2 - camera.Y)/1)/20) - 1;
-                midscreen.Y = Convert.ToInt16(-((resx/2 - camera.X)/2 - (resy/2 - camera.Y)/1)/20);
-
-                KeyboardUpdate(gt);
-
-                if (Mouse.GetState().RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
-
-
-                if (click_R)
-                {
-                    Ramka(gt);
-                }
-
-                if (!PAUSE)
-                {
-                    WorldLife.WorldTick(ref mmap);
-
-                    playerorders.OrdersUpdate(gt, lheroes);
-                    lheroes.Update(gt);
-                    lunits.Update(gt);
-
-                    //asynccorear = asynccore.BeginInvoke(gt, null, null);
-                }
-
-                ingameUIpartLeftlistbox.Items.Clear();
-                ingameUIpartLeftlistbox.Items.AddRange(mmap.GetMapTagsInText());
-
-
-                ingameUIpartLeftlistbox2.Items.Clear();
-
-                LRUpdate(gt);
-                
-
-                if (MMap.GoodVector3(Selector))
-                {
-                    ingameUIpartLeftlistbox2.Items.Add("hp = " +
-                                                       mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].
-                                                           health);
-                    ingameUIpartLeftlistbox2.Items.Add("explored = " +
-                                                       mmap.n[(int) Selector.X, (int) Selector.Y, (int) Selector.Z].
-                                                           explored);
-                    ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
-                                                       mmap.n[(int)Selector.X, (int)Selector.Y, (int)Selector.Z].subterrain);
-                }
-                if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(mmap.GetNodeTagsInText(Selector));
-
-                ingameUIpartLeftlistbox2.Refresh();
-
-                for (int index = 0; index < buildingsbuttons.Length; index++)
-                {
-                    var button = buildingsbuttons[index];
-                    button.Visible = iss.n[(button.Tag as int[])[1]].count != 0;
-                    buildingsbuttonslabel[index].Text = iss.n[(button.Tag as int[])[1]].count.ToString();
-                }
-                //buildingsbuttons = new Button[iss.n.Count];
-                //for (int i = 0; i < iss.n.Count; i++)
-                //{
-                //        buildingsbuttons[i] = new Button(Manager);
-                //        buildingsbuttons[i].Init();
-                //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].I_name;
-                //        buildingsbuttons[i].Width = 40;
-                //        buildingsbuttons[i].Height = 40;
-                //        buildingsbuttons[i].Left = i%5*42;
-                //        buildingsbuttons[i].Top = i/5*42;
-                //        int[] tg = { buildingsbuttons[i].Top - (int)(buildingssb.Value/50f*42f*iss.n.Count/5), iss.n[i].id };
-                //        buildingsbuttons[i].Tag = tg;
-                //        buildingsbuttons[i].Anchor = Anchors.Bottom;
-                //        buildingsbuttons[i].Parent = buildinsgwindow;
-                //        buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbobject.Data[iss.n[i].id].metatex_n));
-                //        buildingsbuttons[i].ToolTip = new ToolTip(Manager);
-                //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].I_name + " id " + iss.n[i].id;
-                //        buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
-                //}
-                //buildinsgwindow.Refresh();
-            }
-        }
-
-        private void KeyboardUpdate(GameTime gt)
-        {
-            lks = ks;
-            ks = Keyboard.GetState();
 
             if (ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S))
             {
@@ -1719,18 +1663,13 @@ namespace Mork
                     for (var j = 0; j <= MMap.my - 1; j++)
                         for (var k = 0; k <= MMap.mz - 1; k++)
                         {
-                            Main.mmap.n[i, j, k].explored = true;
+                            smap.At(i, j, k).explored = true;
                         }
             }
 
             if (ks.IsKeyDown(Keys.Space) && !lks.IsKeyDown(Keys.Space))
             {
                 PAUSE = !PAUSE;
-            }
-
-            if(ks.IsKeyDown(Keys.F4) && !lks.IsKeyDown(Keys.F4))
-            {
-                debug = !debug;
             }
         }
 
@@ -1748,83 +1687,83 @@ namespace Mork
             ramka_3 = new Vector3(Math.Min(Selector.X, ramka_1.X), Math.Min(Selector.Y, ramka_1.Y),
                                   Math.Min(Selector.Z, ramka_1.Z));
 
-            switch (lclickaction)
-            {
-                case LClickAction.Dig:
-                    for (int i = (int) ramka_3.X; i <= ramka_2.X; i++)
-                        for (int j = (int) ramka_3.Y; j <= ramka_2.Y; j++)
-                            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                        {
-                            if (MMap.GoodVector3(i, j, (int) ramka_2.Z))
-                                playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, ramka_2.Z)});
-                        }
-                    break;
+            //switch (lclickaction)
+            //{
+            //    case LClickAction.Dig:
+            //        for (int i = (int) ramka_3.X; i <= ramka_2.X; i++)
+            //            for (int j = (int) ramka_3.Y; j <= ramka_2.Y; j++)
+            //                //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+            //            {
+            //                if (MMap.GoodVector3(i, j, (int) ramka_2.Z))
+            //                    playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, ramka_2.Z)});
+            //            }
+            //        break;
 
-                case LClickAction.Collect:
-                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                        {
-                            List<LocalItem> t = new List<LocalItem>();
-                            foreach (var a in localitems.n)
-                            {
-                                if (a.pos.X == i && a.pos.Y == j && a.pos.Z == ramka_2.Z) playerorders.n.Add(new CollectOrder { dest = new Vector3(i, j, ramka_2.Z), tocollect = a});
-                            }
-                        }
-                    break;
+            //    case LClickAction.Collect:
+            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+            //            {
+            //                List<LocalItem> t = new List<LocalItem>();
+            //                foreach (var a in localitems.n)
+            //                {
+            //                    if (a.pos.X == i && a.pos.Y == j && a.pos.Z == ramka_2.Z) playerorders.n.Add(new CollectOrder { dest = new Vector3(i, j, ramka_2.Z), tocollect = a});
+            //                }
+            //            }
+            //        break;
 
-                    case LClickAction.Build:
-                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                        {
-                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z+1].blockID != 0 && iss.n[buildingselect].count >= 1)
-                                playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
-                        }
-                    break;
+            //        case LClickAction.Build:
+            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+            //            {
+            //                if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z+1].blockID != 0 && iss.n[buildingselect].count >= 1)
+            //                    playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
+            //            }
+            //        break;
 
-                    case LClickAction.Supply:
-                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                        {
-                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].tags.ContainsKey("convert"))
-                                playerorders.n.Add(new SupplyOrder { dest = new Vector3(i, j, ramka_2.Z)});
-                        }
-                    break;
+            //        case LClickAction.Supply:
+            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+            //            {
+            //                if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].tags.ContainsKey("convert"))
+            //                    playerorders.n.Add(new SupplyOrder { dest = new Vector3(i, j, ramka_2.Z)});
+            //            }
+            //        break;
 
-                    case LClickAction.Info:
-                    if(MMap.GoodVector3(Selector))
-                        {
-                            string s = "";
-                            var t = mmap.GetNodeTagsInText((int) Selector.X, (int) Selector.Y, (int) Selector.Z);
-                            foreach (var ss in t)
-                            {
-                                s += ss + Environment.NewLine;
-                            }
-                            ShowIngameSummary(s);
-                        }
-                    break;
+            //        case LClickAction.Info:
+            //        if(MMap.GoodVector3(Selector))
+            //            {
+            //                string s = "";
+            //                var t = mmap.GetNodeTagsInText((int) Selector.X, (int) Selector.Y, (int) Selector.Z);
+            //                foreach (var ss in t)
+            //                {
+            //                    s += ss + Environment.NewLine;
+            //                }
+            //                ShowIngameSummary(s);
+            //            }
+            //        break;
 
-                    case LClickAction.Cancel:
-                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-                        {
-                            for (int index = 0; index < playerorders.n.Count; index++)
-                            {
-                                var o = playerorders.n[index];
-                                if (o.dest.X == i && o.dest.Y == j && ramka_2.Z == o.dest.Z)
-                                {
-                                    if(o.unit_owner != null)
-                                    o.unit_owner.current_order = new NothingOrder();
-                                    playerorders.n.Remove(o);
-                                }
-                            }
-                        }
-                    break;
+            //        case LClickAction.Cancel:
+            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+            //            {
+            //                for (int index = 0; index < playerorders.n.Count; index++)
+            //                {
+            //                    var o = playerorders.n[index];
+            //                    if (o.dest.X == i && o.dest.Y == j && ramka_2.Z == o.dest.Z)
+            //                    {
+            //                        if(o.unit_owner != null)
+            //                        o.unit_owner.current_order = new NothingOrder();
+            //                        playerorders.n.Remove(o);
+            //                    }
+            //                }
+            //            }
+            //        break;
 
-            }
+            //}
 
             ramka_1.X = -1;
         }
