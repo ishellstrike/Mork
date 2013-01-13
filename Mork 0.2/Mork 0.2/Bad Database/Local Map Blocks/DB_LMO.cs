@@ -231,6 +231,30 @@ namespace Mork
           
                          });
 
+            Data.Add(44,
+                     new LMO(66, false, "ну уж ладно", "", "", "")
+                     {
+
+                     });
+
+            Data.Add(3,
+                     new LMO(66, false, "ну уж ладно", "", "", "")
+                     {
+
+                     });
+
+            Data.Add(828,
+                     new LMO(66, false, "ну уж ладно", "", "", "")
+                     {
+
+                     });
+
+            Data.Add(55,
+                     new LMO(66, false, "ну уж ладно", "", "", "")
+                     {
+
+                     });
+
             Data.Add(103,
                      new LMO(5, false, "ель", "липы", "липой", "липовый")
                          {
