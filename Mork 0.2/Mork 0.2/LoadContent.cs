@@ -94,7 +94,10 @@ namespace Mork
 
             WindowsDesigner();
 
-            smap = new SectorMap(GraphicsDevice);
+            var blockeffect = Content.Load<Effect>(@"Effects\SolidBlockEffect");
+
+            smap = new SectorMap(GraphicsDevice, blockeffect);
+            imap = new IntersectMap();
 
             MNode a = smap.At(127, 127, 127);
 

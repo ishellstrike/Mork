@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mork.Bad_Database;
 
 namespace Mork.Graphics.MapEngine
 {
@@ -47,14 +48,14 @@ namespace Mork.Graphics.MapEngine
         {
             this.GraphicsDevice = graphicsDevice;
 
-            generatePerspectiveProjectionMatrix(MathHelper.PiOver4);
+            generatePerspectiveProjectionMatrix(MathHelper.ToRadians(45));
         }
 
         private void generatePerspectiveProjectionMatrix(float FieldOfView)
         {
             var pp = GraphicsDevice.PresentationParameters;
 
-            var aspectRatio = pp.BackBufferWidth / pp.BackBufferHeight;
+            var aspectRatio = Main.resx/Main.resy;
 
             Projection = Matrix.CreatePerspectiveFieldOfView(FieldOfView, aspectRatio, 0.1f, 1000000.0f);
         }

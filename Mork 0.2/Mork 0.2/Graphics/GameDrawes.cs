@@ -93,40 +93,6 @@ namespace Mork
             sb.End();
         }
 
-        private static void DrawLocalItems(int[,] drawed)
-        {
-            foreach (var i in localitems.n)
-            {
-                if (MMap.GoodVector3(i.pos) && i.pos.Z >= drawed[(int)i.pos.X, (int)i.pos.Y] - 1)
-                {
-                    Vector2 pos = ToIsometricFloat(i.pos.X, i.pos.Y);
-                    pos.Y = pos.Y + (i.pos.Z - Selector.Z - 1) * 20 + 1;
-
-                    spriteBatch.Draw(object_tex, new Vector2(pos.X, pos.Y),
-                                     GetTexRectFromN(dbobject.Data[i.id].metatex_n), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1 - (i.pos.X + i.pos.Y + 1) / (MMap.mx + MMap.my));
-                }
-            }
-        }
-
-        private static void GameInterface()
-        {
-            //string ssss = String.Format("{0} {1}, год {2} эпохи {3}", WorldLife.Day,
-            //                            NamesGenerator.MonthNameR(WorldLife.Month), WorldLife.Year, WorldLife.Age);
-            //string sss1 = String.Format("{0}:{1}:{2}", WorldLife.Hour, WorldLife.Min.ToString("00"),
-            //                            WorldLife.Sec.ToString("00"));
-
-            if (PAUSE)
-            {
-                spriteBatch.Draw(interface_tex[6], new Vector2(0, 20), null, Color.Red, 0, Vector2.Zero, 1, SpriteEffects.None, 0.03f);
-                spriteBatch.Draw(interface_tex[6], new Vector2(0, 15), null, Color.DarkRed, 0, Vector2.Zero, 1, SpriteEffects.None, 0.02f);
-                for (int i = 0; i <= 10; i++)
-                {
-                    spriteBatch.DrawString(Font2, "PAUSE", new Vector2(i * 100, 42), Color.Red, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-                }
-            }
-
-        }
-
         private static Rectangle GetTexRectFromN(int n)
         {
             return new Rectangle((n%10)*40, (n/10)*40, 40, 40);

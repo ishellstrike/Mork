@@ -10,24 +10,50 @@ using Mork.Local_Map.Dynamic.Local_Items;
 
 namespace Mork.Local_Map.Sector
 {
+    public class IntersectMap
+    {
+        public BoundingBox[] n = new BoundingBox[SectorMap.sectn*SectorMap.sectn*MapSector.dimS*MapSector.dimS];
+
+        public IntersectMap()
+        {
+            for (int i = 0; i < n.Length; i++)
+            {
+                n[i] = new BoundingBox(new Vector3(i / (SectorMap.sectn * MapSector.dimS), i % (SectorMap.sectn * MapSector.dimS), 0), new Vector3(i / (SectorMap.sectn * MapSector.dimS) + 1, i % (SectorMap.sectn * MapSector.dimS) + 1, -1));
+            }
+        }
+
+        public void MoveIntersectMap(Vector3 mover)
+        {
+            for (int index = 0; index < n.Length; index++)
+            {
+                n[index].Max -= mover;
+                n[index].Min -= mover;
+            }
+        }
+    }
+    [Serializable]
     public class SectorMap
     {
         public const int sectn = 8;
         public MapSector[] n = new MapSector[sectn * sectn];
         GraphicsDevice gd;
-        BasicEffect be;
+        Effect be;
+        private BasicEffect basice;
+        private BasicEffect basice2;
         private int passn = 0;
 
         public List<Vector3> active = new List<Vector3>();
 
-        public SectorMap(GraphicsDevice _gd)
+        public SectorMap(GraphicsDevice _gd, Effect mapeffect)
         {
             for (int i = 0; i <= sectn - 1; i++)
                 for (int j = 0; j <= sectn - 1; j++)
                         n[i * sectn + j] = new MapSector(i, j);
 
             gd = _gd;
-            be = new BasicEffect(gd);
+            be = mapeffect;
+            basice = new BasicEffect(_gd);
+            basice2 = new BasicEffect(_gd);
         }
 
         public void RebuildAllMapGeo(int z_cam, FreeCamera Camera)
@@ -66,15 +92,15 @@ namespace Mork.Local_Map.Sector
             passn++;
             if (passn > sectn*sectn - 1) passn = 0;
 
-            be.World = Matrix.CreateScale(1);
-            be.View = cam.View;
-            be.Projection = cam.Projection;
-            be.AmbientLightColor = new Vector3(0.5F,0.5F,0.5F);
-            be.LightingEnabled = true;
-            be.DiffuseColor = new Vector3(0.8f,0.8f,0.8f);
-            be.TextureEnabled = true;
-            be.Texture = Main.texatlas;
-            //be.EnableDefaultLighting();
+            be.Parameters["worldMatrix"].SetValue(Matrix.Identity);
+            be.Parameters["viewMatrix"].SetValue(Main.Camera.View);
+            be.Parameters["projectionMatrix"].SetValue(Main.Camera.Projection);
+            be.Parameters["diffuseColor"].SetValue(Color.White.ToVector4());
+            be.Parameters["ambientColor"].SetValue(Color.DarkGray.ToVector4());
+            var ld = new Vector3(0.5f, -1, 0.5f);
+            ld.Normalize();
+            be.Parameters["lightDirection"].SetValue(ld);
+            be.Parameters["shaderTexture"].SetValue(Main.texatlas);
 
             gd.RasterizerState = RasterizerState.CullCounterClockwise;
             gd.DepthStencilState = DepthStencilState.Default;
@@ -83,17 +109,13 @@ namespace Mork.Local_Map.Sector
             Main.drawed_sects = 0;
             Main.drawed_verts = 0;
 
-            //if (!n[passn].builded)
-            //{
-            //    n[passn].RebuildSectorGeo(gd, Main.z_cam);
-            //}
-
             foreach (var pass in be.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 foreach (var a in n)
                 {
-                    if (cam.Frustum.Contains(new BoundingBox(a.bounding.Min,a.bounding.Max)) != ContainmentType.Disjoint)
+                    if (cam.Frustum.Contains(new BoundingBox(a.bounding.Min, a.bounding.Max)) !=
+                        ContainmentType.Disjoint)
                     {
                         if (!a.builded)
                         {
@@ -103,80 +125,226 @@ namespace Mork.Local_Map.Sector
                         if (!a.empty)
                         {
                             Main.drawed_sects++;
-                            gd.SetVertexBuffer(a.VertexBuffer);
-                            gd.DrawPrimitives(PrimitiveType.TriangleList, 0, a.VertexBuffer.VertexCount/3);
-                            Main.drawed_verts += a.VertexBuffer.VertexCount;
+                            //gd.SetVertexBuffer(a.VertexBuffer);
+                            gd.DrawUserPrimitives(PrimitiveType.TriangleList, a.VertexArray, 0, a.index / 3);
+                            Main.drawed_verts += a.index/3;
                         }
                     }
                 }
-
-                //Matrix aa = Matrix.CreateScale(10);
-                //Main._teapot.Draw(aa, cam.View, cam.Projection);
             }
 
-            be.TextureEnabled = false;
-            be.LightingEnabled = false;
+            basice2.VertexColorEnabled = true;
+            basice2.Alpha = 0.5f;
+            basice2.Projection = cam.Projection;
+            basice2.View = cam.View;
 
-            if (Main.debug)
+            gd.BlendState = BlendState.AlphaBlend;
+
+
+            Color greencube = At(Main.Selector).blockID == 0 ? Color.Red : Color.GreenYellow;
+            greencube.A = 128;
+
+            foreach (var pass in basice2.CurrentTechnique.Passes)
             {
-                foreach (var pass in be.CurrentTechnique.Passes)
+                pass.Apply();
+                VertexPositionColor[] vl1 = new VertexPositionColor[30];
+                vl1[0] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[1] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[2] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[3] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[4] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[5] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+
+                vl1[6] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[7] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[8] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[9] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[10] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[11] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+
+                vl1[12] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[13] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[14] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[15] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[16] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[17] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+
+                vl1[18] =
+                (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[19] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[20] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[21] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[22] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[23] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+
+
+                vl1[24] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[25] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+                vl1[26] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[27] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[28] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
+                        greencube));
+                vl1[29] =
+                    (new VertexPositionColor(
+                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
+                        greencube));
+
+                //VertexBuffer vb1 = new VertexBuffer(gd, typeof (VertexPositionColor), 18, BufferUsage.WriteOnly);
+                //vb1.SetData(vl1,0,18);
+
+                //gd.SetVertexBuffer(vb1);
+                gd.DrawUserPrimitives(PrimitiveType.TriangleList, vl1, 0, vl1.Count()/3);
+            }
+
+
+            basice.VertexColorEnabled = false;
+            basice.Projection = cam.Projection;
+            basice.View = cam.View;
+
+            if(Main.debug)
+            foreach (var pass in basice.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                List<VertexPositionColor> vl = new List<VertexPositionColor>();
+                foreach (var a in n)
                 {
-                    pass.Apply();
-                    List<VertexPositionColor> vl = new List<VertexPositionColor>();
-                    foreach (var a in n)
-                    {
-                        Vector3[] vv = new Vector3[24];
-                        vv[0] = a.bounding.Min;
-                        vv[11] = a.bounding.Max;
-                        vv[1] = new Vector3(vv[11].X, vv[0].Y, vv[0].Z);
+                    Vector3[] vv = new Vector3[24];
+                    vv[0] = a.bounding.Min;
+                    vv[11] = a.bounding.Max;
+                    vv[1] = new Vector3(vv[11].X, vv[0].Y, vv[0].Z);
 
 
-                        vv[2] = new Vector3(vv[11].X, vv[0].Y, vv[0].Z);
-                        vv[3] = new Vector3(vv[11].X, vv[11].Y, vv[0].Z);
+                    vv[2] = new Vector3(vv[11].X, vv[0].Y, vv[0].Z);
+                    vv[3] = new Vector3(vv[11].X, vv[11].Y, vv[0].Z);
 
 
-                        vv[4] = new Vector3(vv[11].X, vv[11].Y, vv[0].Z);
-                        vv[5] = new Vector3(vv[0].X, vv[11].Y, vv[0].Z);
+                    vv[4] = new Vector3(vv[11].X, vv[11].Y, vv[0].Z);
+                    vv[5] = new Vector3(vv[0].X, vv[11].Y, vv[0].Z);
 
 
 
-                        vv[6] = new Vector3(vv[0].X, vv[11].Y, vv[0].Z);
-                        vv[7] = new Vector3(vv[0].X, vv[0].Y, vv[0].Z);
+                    vv[6] = new Vector3(vv[0].X, vv[11].Y, vv[0].Z);
+                    vv[7] = new Vector3(vv[0].X, vv[0].Y, vv[0].Z);
 
 
-                        vv[8] = new Vector3(vv[0].X, vv[0].Y, vv[11].Z);
-                        vv[9] = new Vector3(vv[11].X, vv[0].Y, vv[11].Z);
+                    vv[8] = new Vector3(vv[0].X, vv[0].Y, vv[11].Z);
+                    vv[9] = new Vector3(vv[11].X, vv[0].Y, vv[11].Z);
 
 
-                        vv[10] = new Vector3(vv[11].X, vv[0].Y, vv[11].Z);
+                    vv[10] = new Vector3(vv[11].X, vv[0].Y, vv[11].Z);
 
 
-                        vv[12] = a.bounding.Max;
-                        vv[13] = new Vector3(vv[0].X, vv[11].Y, vv[11].Z);
+                    vv[12] = a.bounding.Max;
+                    vv[13] = new Vector3(vv[0].X, vv[11].Y, vv[11].Z);
 
 
-                        vv[14] = new Vector3(vv[0].X, vv[11].Y, vv[11].Z);
-                        vv[15] = new Vector3(vv[0].X, vv[0].Y, vv[11].Z);
+                    vv[14] = new Vector3(vv[0].X, vv[11].Y, vv[11].Z);
+                    vv[15] = new Vector3(vv[0].X, vv[0].Y, vv[11].Z);
 
-                        vv[16] = vv[0];
-                        vv[17] = vv[8];
-                        vv[18] = vv[1];
-                        vv[19] = vv[9];
-                        vv[20] = vv[3];
-                        vv[21] = vv[11];
-                        vv[22] = vv[5];
-                        vv[23] = vv[13];
-                        vl.AddRange(vv.Select(vector3 => new VertexPositionColor(vector3, Color.Red)));
-                    }
-                    if (vl.Count > 0)
-                    {
-                        VertexBuffer vb = new VertexBuffer(gd, typeof (VertexPositionColor), vl.Count,
-                                                           BufferUsage.WriteOnly);
-                        vb.SetData(vl.ToArray());
+                    vv[16] = vv[0];
+                    vv[17] = vv[8];
+                    vv[18] = vv[1];
+                    vv[19] = vv[9];
+                    vv[20] = vv[3];
+                    vv[21] = vv[11];
+                    vv[22] = vv[5];
+                    vv[23] = vv[13];
+                    vl.AddRange(vv.Select(vector3 => new VertexPositionColor(vector3, Color.Red)));
+                }
 
-                        gd.SetVertexBuffer(vb);
-                        gd.DrawPrimitives(PrimitiveType.LineList, 0, vb.VertexCount);
-                    }
+                if (vl.Count > 0)
+                {
+                    //VertexBuffer vb = new VertexBuffer(gd, typeof (VertexPositionColor), vl.Count,
+                    //                                   BufferUsage.WriteOnly);
+                    //vb.SetData(vl.ToArray());
+
+                    //gd.SetVertexBuffer(vb);
+                    gd.DrawUserPrimitives(PrimitiveType.LineList, vl.ToArray(), 0, vl.Count/2);
                 }
             }
         }

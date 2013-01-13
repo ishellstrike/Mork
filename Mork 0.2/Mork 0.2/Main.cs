@@ -114,6 +114,7 @@ namespace Mork
         public static LocalHeroes lheroes = new LocalHeroes();
 
         public static SectorMap smap;
+        public static IntersectMap imap;
 
         private delegate void GTDelegate(GameTime gt);
         private static GTDelegate asynccore;
@@ -225,7 +226,6 @@ namespace Mork
             //a = Vector3.Transform(a, Matrix.CreateLookAt(new Vector3(100, 100, 100), Vector3.Zero, Vector3.Up));
             Camera = new FreeCamera(a, MathHelper.ToRadians(45), MathHelper.ToRadians(45), GraphicsDevice);
             Camera.Target = new Vector3(100,100,0);
-            LRInit();
 
             Directory.CreateDirectory(@"Maps");
             Directory.CreateDirectory(@"Data");
@@ -1284,7 +1284,7 @@ namespace Mork
 
             Manager.BeginDraw(gameTime);
             Manager.Draw(gameTime);
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Commons.skycolor);
 
             DrawProc(gameTime, spriteBatch, GraphicsDevice);
 
@@ -1295,6 +1295,7 @@ namespace Mork
             {
                 string outp = "";
                 outp += string.Format("mpos = {0}", mousepos)+Environment.NewLine;
+                outp += string.Format("selector = {0}", Selector) + Environment.NewLine;
                 //outp += string.Format("ord = {0}", playerorders.n.Count) + Environment.NewLine;
                 outp += string.Format("act = {0}", smap.active.Count) + Environment.NewLine;
                 outp += string.Format("time = {0}", gameTime.TotalGameTime) + Environment.NewLine;
@@ -1384,26 +1385,6 @@ namespace Mork
             summarytb.Refresh();
         }
 
-        private static Vector2 ToIsometricPos(int x, int y)
-        {
-            return new Vector2(camera.X + (x - y)*20, camera.Y + (x + y)*10);
-        }
-
-        private static float ToIsometricX(int x, int y)
-        {
-            return camera.X + (x - y)*20;
-        }
-
-        private static float ToIsometricY(int x, int y)
-        {
-            return camera.Y + (x + y)*10;
-        }
-
-        private static Vector2 ToIsometricFloat(float x, float y)
-        {
-            return new Vector2(camera.X + (x - y) * 20f, camera.Y + (x + y)*10f);
-        }
-
         public static void AddToLog(string mess)
         {
             for (int i = 1; i <= Textlogmax - 1; i++)
@@ -1417,21 +1398,15 @@ namespace Mork
 
         private void GameDraw(GameTime gameTime, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
-            LocalMapRenderer(gameTime, spriteBatch, GraphicsDevice);
+            smap.DrawAllMap(gameTime, Camera);
 
             sb.Begin();
-            //BasicAllDraw(gameTime);
 
             for (int i = 0; i <= Textlogmax - 1; i++) // отрисова лога
             {
                 spriteBatch.DrawString(Font1, textlog[i], new Vector2(8, resy - 192 + i*15), Color.White);
             }
             sb.End();
-        }
-
-        private void MapEditorDraw()
-        {
-            //MEAllDraw();
         }
 
         #endregion
@@ -1460,47 +1435,131 @@ namespace Mork
         private int notfastcam = 0;
         public static int sectrebuild = 0;
 
+        private Ray MouseRay;
+
         private void GameUpdate(GameTime gt)
         {
-
-            //mousepos.X = Mouse.GetState().X;
-            //mousepos.Y = Mouse.GetState().Y;
-
-            //float deltaX = (float)resx / 2 - mousepos.X;
-            //float deltaY = (float)resy / 2 - mousepos.Y;
-
-            //Mouse.SetPosition(resx / 2, resy / 2);
-
-            //var currentKeyboardState = Keyboard.GetState();
-
-            //// Allows the game to exit
-            //if (currentKeyboardState.IsKeyDown(Keys.Escape))
-            //    Exit();
-
-            //if (!lks.IsKeyDown(Keys.T) && ks.IsKeyDown(Keys.T))
-            //{
-            //    if (_isWire)
-            //    {
-            //        _device.RasterizerState = _rsDefault;
-            //        _isWire = false;
-            //    }
-            //    else
-            //    {
-            //        _device.RasterizerState = _rsWire;
-            //        _isWire = true;
-            //    }
-            //}
-
-            //if (!_lks.IsKeyDown(Keys.C) && ks.IsKeyDown(Keys.C))
-            //{
-            //    _quadTree.Cull = !_quadTree.Cull;
-            //}
-
             Vector3 moving = Vector3.Zero;
+
+            KeyboardUpdate(gt, ref moving);
+
+            moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
+
+            Camera.Target += moving;
+            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, (float)Math.PI/5, 0, MathHelper.ToRadians(camerarotation), cameradistance);
+            Camera.generateFrustum();
+
+            Vector3 near = new Vector3(MousePos.X, MousePos.Y, 0);
+            Vector3 far = new Vector3(MousePos.X, MousePos.Y, 1);
+
+            Vector3 nun = GraphicsDevice.Viewport.Unproject(near, Camera.Projection, Camera.View, Matrix.Identity);
+            Vector3 fun = GraphicsDevice.Viewport.Unproject(far, Camera.Projection, Camera.View, Matrix.Identity);
+
+            Vector3 raydir = fun - nun;
+            raydir.Normalize();
+
+            MouseRay = new Ray(nun, raydir);
+
+            bool tempb = true;
+            for (int i = 0; i < imap.n.Length && tempb; i++)
+            {
+                var nn = imap.n[i];
+                var f = MouseRay.Intersects(nn);
+
+                if (f.HasValue)
+                {
+                    Selector.X = i /(SectorMap.sectn * MapSector.dimS);
+                    Selector.Y = i % (SectorMap.sectn * MapSector.dimS);
+                    Selector.Z = z_cam;
+
+                    tempb = false;
+                }
+            }
+
+            if (Mouse.GetState().ScrollWheelValue > _wheellast)
+            {
+                cameradistance -= (float)gt.ElapsedGameTime.TotalSeconds * 250;
+            }
+
+            if (Mouse.GetState().ScrollWheelValue < _wheellast)
+            {
+                cameradistance += (float)gt.ElapsedGameTime.TotalSeconds * 250;
+            }
+
+            if (Mouse.GetState().RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
+
+
+            if (click_R)
+            {
+                Ramka(gt);
+            }
+
+            if (!PAUSE)
+            {
+                //playerorders.OrdersUpdate(gt, lheroes);
+                lheroes.Update(gt);
+                lunits.Update(gt);
+
+                //asynccorear = asynccore.BeginInvoke(gt, null, null);
+            }
+
+            ingameUIpartLeftlistbox.Items.Clear();
+            //ingameUIpartLeftlistbox.Items.AddRange(smap.GetMapTagsInText());
+
+
+            ingameUIpartLeftlistbox2.Items.Clear();
+                
+
+            if (MMap.GoodVector3(Selector))
+            {
+                ingameUIpartLeftlistbox2.Items.Add("hp = " +
+                                                    smap.At(Selector.X, Selector.Y, Selector.Z).health);
+                ingameUIpartLeftlistbox2.Items.Add("explored = " +
+                                                    smap.At(Selector.X, Selector.Y, Selector.Z).explored);
+                ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
+                                                    smap.At(Selector.X,Selector.Y, Selector.Z).subterrain);
+            }
+            //if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
+
+            ingameUIpartLeftlistbox2.Refresh();
+
+            for (int index = 0; index < buildingsbuttons.Length; index++)
+            {
+                var button = buildingsbuttons[index];
+                button.Visible = iss.n[(button.Tag as int[])[1]].count != 0;
+                buildingsbuttonslabel[index].Text = iss.n[(button.Tag as int[])[1]].count.ToString();
+            }
+            //buildingsbuttons = new Button[iss.n.Count];
+            //for (int i = 0; i < iss.n.Count; i++)
+            //{
+            //        buildingsbuttons[i] = new Button(Manager);
+            //        buildingsbuttons[i].Init();
+            //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].I_name;
+            //        buildingsbuttons[i].Width = 40;
+            //        buildingsbuttons[i].Height = 40;
+            //        buildingsbuttons[i].Left = i%5*42;
+            //        buildingsbuttons[i].Top = i/5*42;
+            //        int[] tg = { buildingsbuttons[i].Top - (int)(buildingssb.Value/50f*42f*iss.n.Count/5), iss.n[i].id };
+            //        buildingsbuttons[i].Tag = tg;
+            //        buildingsbuttons[i].Anchor = Anchors.Bottom;
+            //        buildingsbuttons[i].Parent = buildinsgwindow;
+            //        buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbobject.Data[iss.n[i].id].metatex_n));
+            //        buildingsbuttons[i].ToolTip = new ToolTip(Manager);
+            //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].I_name + " id " + iss.n[i].id;
+            //        buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
+            //}
+            //buildinsgwindow.Refresh();
+           
+        }
+
+        private void KeyboardUpdate(GameTime gt, ref Vector3 moving)
+        {
+            lks = ks;
+            ks = Keyboard.GetState();
 
             if (ks[Keys.W] == KeyState.Down)
             {
-                moving += Vector3.Up *(float)gt.ElapsedGameTime.TotalSeconds * 8;
+                moving += Vector3.Up * (float)gt.ElapsedGameTime.TotalSeconds * 8;
             }
             if (ks[Keys.S] == KeyState.Down)
             {
@@ -1529,146 +1588,42 @@ namespace Mork
 
             if (notfastcam > 0) notfastcam--;
 
-            if (ks[Keys.OemComma] == KeyState.Down&& lks[Keys.OemComma]==KeyState.Up)
+            if (ks[Keys.OemComma] == KeyState.Down && lks[Keys.OemComma] == KeyState.Up)
             {
-                z_cam++;
-                if (z_cam > 127) z_cam = 127;
-                smap.RebuildAllMapGeo(z_cam, Camera);
+                if (z_cam < 127)
+                {
+                    z_cam++;
+                    imap.MoveIntersectMap(new Vector3(0, 0, 1));
+                    if (z_cam < 127 - 5)
+                        if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
+                        {
+                            z_cam += 4;
+                            imap.MoveIntersectMap(new Vector3(0, 0, 4));
+                        }
+                    smap.RebuildAllMapGeo(z_cam, Camera);
+                }
             }
-            if (ks[Keys.OemPeriod] == KeyState.Down&& lks[Keys.OemPeriod] == KeyState.Up)
+            if (ks[Keys.OemPeriod] == KeyState.Down && lks[Keys.OemPeriod] == KeyState.Up)
             {
-                z_cam--;
-                if (z_cam < 0) z_cam = 0;
-                smap.RebuildAllMapGeo(z_cam, Camera);
+                if (z_cam > 0)
+                {
+                    z_cam--;
+                    imap.MoveIntersectMap(new Vector3(0, 0, -1));
+                    if(z_cam > 5)
+                        if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
+                        {
+                            z_cam -= 4;
+                            imap.MoveIntersectMap(new Vector3(0, 0, -4));
+                        }
+
+                    smap.RebuildAllMapGeo(z_cam, Camera);
+                }
             }
-
-            //if (!lks.IsKeyDown(Keys.R) && currentKeyboardState.IsKeyDown(Keys.R))
-            //{
-            //    current_RT++;
-            //    if (current_RT > RTS.Count - 1) current_RT = 0;
-            //}
-            //if (!_previousKeyboardState.IsKeyDown(Keys.U) && currentKeyboardState.IsKeyDown(Keys.U))
-            //{
-            //    _quadTree.MinimumDepth++;
-            //    if (_quadTree.MinimumDepth > 6) _quadTree.MinimumDepth = 6;
-            //}
-            //if (!_previousKeyboardState.IsKeyDown(Keys.J) && currentKeyboardState.IsKeyDown(Keys.J))
-            //{
-            //    _quadTree.MinimumDepth--;
-            //    if (_quadTree.MinimumDepth < 0) _quadTree.MinimumDepth = 0;
-            //}
-
-            //if (!_previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyDown(Keys.G))
-            //{
-            //    tex123 = _testBase.GetLandTex1(1024, 1024);
-            //    tex123norm = _testBase.BWtoAB(tex123, Color.Teal, Color.Magenta);
-            //}
 
             if (ks[Keys.LeftShift] == KeyState.Down)
             {
                 moving *= 3;
             }
-
-            moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
-
-            Camera.Target += moving;
-            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, (float)Math.PI/5, 0, MathHelper.ToRadians(camerarotation), cameradistance);
-            Camera.generateFrustum();
-
-            //Camera.Update();
-            {
-                if (Mouse.GetState().ScrollWheelValue > _wheellast)
-                {
-                    if (Selector.Z > 0) Selector.Z--;
-                    cameradistance *=1.05f;//-= (float)gt.ElapsedGameTime.TotalSeconds * 500;
-                }
-
-                if (Mouse.GetState().ScrollWheelValue < _wheellast)
-                {
-                    if (Selector.Z < MMap.mz - 2) Selector.Z++;
-                    cameradistance /= 1.05f;//+= (float)gt.ElapsedGameTime.TotalSeconds * 500;
-                }
-
-                Selector.X = Convert.ToInt16(((MousePos.X - camera.X)/2 + (MousePos.Y - camera.Y)/1)/20) - 1;
-                Selector.Y = Convert.ToInt16(-((MousePos.X - camera.X)/2 - (MousePos.Y - camera.Y)/1)/20);
-
-                midscreen.X = Convert.ToInt16(((resx/2 - camera.X)/2 + (resy/2 - camera.Y)/1)/20) - 1;
-                midscreen.Y = Convert.ToInt16(-((resx/2 - camera.X)/2 - (resy/2 - camera.Y)/1)/20);
-
-                KeyboardUpdate(gt);
-
-                if (Mouse.GetState().RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
-
-
-                if (click_R)
-                {
-                    Ramka(gt);
-                }
-
-                if (!PAUSE)
-                {
-                    //playerorders.OrdersUpdate(gt, lheroes);
-                    lheroes.Update(gt);
-                    lunits.Update(gt);
-
-                    //asynccorear = asynccore.BeginInvoke(gt, null, null);
-                }
-
-                ingameUIpartLeftlistbox.Items.Clear();
-                //ingameUIpartLeftlistbox.Items.AddRange(smap.GetMapTagsInText());
-
-
-                ingameUIpartLeftlistbox2.Items.Clear();
-
-                LRUpdate(gt);
-                
-
-                if (MMap.GoodVector3(Selector))
-                {
-                    ingameUIpartLeftlistbox2.Items.Add("hp = " +
-                                                       smap.At(Selector.X, Selector.Y, Selector.Z).health);
-                    ingameUIpartLeftlistbox2.Items.Add("explored = " +
-                                                       smap.At(Selector.X, Selector.Y, Selector.Z).explored);
-                    ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
-                                                       smap.At(Selector.X,Selector.Y, Selector.Z).subterrain);
-                }
-                //if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
-
-                ingameUIpartLeftlistbox2.Refresh();
-
-                for (int index = 0; index < buildingsbuttons.Length; index++)
-                {
-                    var button = buildingsbuttons[index];
-                    button.Visible = iss.n[(button.Tag as int[])[1]].count != 0;
-                    buildingsbuttonslabel[index].Text = iss.n[(button.Tag as int[])[1]].count.ToString();
-                }
-                //buildingsbuttons = new Button[iss.n.Count];
-                //for (int i = 0; i < iss.n.Count; i++)
-                //{
-                //        buildingsbuttons[i] = new Button(Manager);
-                //        buildingsbuttons[i].Init();
-                //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].I_name;
-                //        buildingsbuttons[i].Width = 40;
-                //        buildingsbuttons[i].Height = 40;
-                //        buildingsbuttons[i].Left = i%5*42;
-                //        buildingsbuttons[i].Top = i/5*42;
-                //        int[] tg = { buildingsbuttons[i].Top - (int)(buildingssb.Value/50f*42f*iss.n.Count/5), iss.n[i].id };
-                //        buildingsbuttons[i].Tag = tg;
-                //        buildingsbuttons[i].Anchor = Anchors.Bottom;
-                //        buildingsbuttons[i].Parent = buildinsgwindow;
-                //        buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbobject.Data[iss.n[i].id].metatex_n));
-                //        buildingsbuttons[i].ToolTip = new ToolTip(Manager);
-                //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].I_name + " id " + iss.n[i].id;
-                //        buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
-                //}
-                //buildinsgwindow.Refresh();
-            }
-        }
-
-        private void KeyboardUpdate(GameTime gt)
-        {
-            lks = ks;
-            ks = Keyboard.GetState();
 
             if (ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S))
             {

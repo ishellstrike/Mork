@@ -1,77 +1,85 @@
-float4x4 World;
-float4x4 View;
-float4x4 Projection;
+matrix worldMatrix;
+matrix viewMatrix;
+matrix projectionMatrix;
+Texture2D shaderTexture;
 
-float4 AmbientColor;
-float AmbientIntensity;
+float4 diffuseColor;
+float4 ambientColor;
+float3 lightDirection;
 
-float3 CameraPosition;
 
-float FogNear = 250;
-float FogFar = 300;
-float4 FogColor = {0.5,0.5,0.5,1.0};
-
-Texture BlockTexture;
-sampler BlockTextureSampler = sampler_state
+SamplerState SampleType
 {
-	texture = <BlockTexture>;
-	magfilter = POINT;
-	minfilter = POINT;
-	mipfilter = POINT;
-	AddressU = WRAP;
-	AddressV = WRAP;
+    Filter = MIN_MAG_MIP_POINT;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
-struct VertexShaderInput
+struct VertexInputType
 {
-    float4 Position : POSITION0;	
-	float2 TexCoords : TEXCOORD0;
-	float Shade : TEXCOORD1;
+    float4 position : POSITION;
+    float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+	float shade : TEXCOORD1;
 };
 
-struct VertexShaderOutput
+struct PixelInputType
 {
-    float4 Position : POSITION0;
-    float2 TexCoords : TEXCOORD0;
-    float3 CameraView : TEXCOORD1;
-    float Shade : TEXCOORD2;
-    float Distance : TEXCOORD3;
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+	float shade : TEXCOORD1;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+PixelInputType LightVertexShader(VertexInputType input)
 {
-    VertexShaderOutput output;
+    PixelInputType output;
+    
+    input.position.w = 1.0f;
 
-    float4 worldPosition = mul(input.Position, World);
-    float4 viewPosition = mul(worldPosition, View);
-    output.Position = mul(viewPosition, Projection);
+    output.position = mul(input.position, worldMatrix);
+    output.position = mul(output.position, viewMatrix);
+    output.position = mul(output.position, projectionMatrix);
+    
+    output.tex = input.tex;
 
-	//output.Position.x += RippleAmount * sin(RippleTime + (output.Position.y));
+    output.normal = mul(input.normal, (float3x3)worldMatrix);
+	
+    output.normal = normalize(output.normal);
 
-    output.Shade = input.Shade;
-    output.CameraView = normalize(CameraPosition - worldPosition);
-    output.Distance = length(CameraPosition - worldPosition);
-    output.TexCoords = input.TexCoords;
+	output.shade = input.shade;
 
     return output;
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 LightPixelShader(PixelInputType input) : SV_Target
 {
-    float4 texColor = tex2D(BlockTextureSampler, input.TexCoords);
+    float4 textureColor;
+    float3 lightDir;
+    float lightIntensity;
+    float4 color;
 
-	float4 ambient = AmbientIntensity * AmbientColor;	    
-    float fog = saturate((input.Distance - FogNear) / (FogNear-FogFar));    
-    float4 color =  texColor * input.Shade * ambient;
-    
-    return lerp(FogColor, color ,fog);
+    textureColor = shaderTexture.Sample(SampleType, input.tex);
+
+    lightDir = -lightDirection;
+
+    lightIntensity = saturate(dot(input.normal, lightDir));
+
+	lightIntensity = max(lightIntensity,0.2f);
+
+    color = saturate(diffuseColor * lightIntensity);
+
+    color = color * textureColor * input.shade;
+
+    return color;
 }
 
-technique BlockTechnique
+technique LightTechnique
 {
-    pass Pass1
+    pass pass0
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction();
+        SetVertexShader(CompileShader(vs_3_0, LightVertexShader()));
+        SetPixelShader(CompileShader(ps_3_0, LightPixelShader()));
+        //SetGeometryShader(NULL);
     }
 }
