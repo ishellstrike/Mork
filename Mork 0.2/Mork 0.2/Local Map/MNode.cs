@@ -7,15 +7,15 @@ namespace Mork.Local_Map
     [Serializable]////////////////////////////////////////////////////////////////////////
     public class MNode
     {
-        public int blockID;
-        public bool subterrain = true;
-        public bool explored = true;
-        public float health = 10;
+        public int BlockID;
+        public bool Subterrain = true;
+        public bool Explored = true;
+        public float Health = 10;
     }
 
     public class MActive : MNode
     {
-        public Vector3 pos;
+
     }
 
     public class MStorage : MActive
