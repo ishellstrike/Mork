@@ -762,7 +762,7 @@ namespace Mork
             {
                 buildingsbuttons[i] = new Button(Manager);
                 buildingsbuttons[i].Init();
-                buildingsbuttons[i].Text = dbo.Value.I_name;
+                buildingsbuttons[i].Text = dbo.Value.Name;
                 buildingsbuttons[i].Width = 40;
                 buildingsbuttons[i].Height = 40;
                 buildingsbuttons[i].Left = i%5*42;
@@ -773,7 +773,7 @@ namespace Mork
                 buildingsbuttons[i].Parent = buildinsgwindow;
                 buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbo.Value.metatex_n));
                 buildingsbuttons[i].ToolTip = new ToolTip(Manager);
-                buildingsbuttons[i].ToolTip.Text = dbo.Value.I_name + " id " + dbo.Key;
+                buildingsbuttons[i].ToolTip.Text = dbo.Value.Name + " id " + dbo.Key;
                 buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
                 iss.n.Add(dbo.Key, new LocalItem() { id = dbo.Key, count = 0});
 
@@ -1417,12 +1417,13 @@ namespace Mork
         /// <param name="map"></param>
         public static void PrepairMapDeleteWrongIDs(ref SectorMap map)
         {
-            for (int i0 = 0; i0 < 127; i0++)
-                for (int i1 = 0; i1 < 127; i1++)
-                    for (int i2 = 0; i2 < 127; i2++)
-                    {
-                        if (!dbobject.Data.ContainsKey(map.At(i0, i1, i2).BlockID)) map.At(i0, i1, i2).BlockID = KnownIDs.error;
-                    }
+            for (int i = 0; i < map.N.Length; i++)
+            {
+                for (int j = 0; j < map.N[i].N.Length; j++)
+                {
+                    if (!dbobject.Data.ContainsKey(map.N[i].N[j].BlockID)) map.N[i].N[j].BlockID = KnownIDs.error;
+                }
+            }
         }
 
         #region Updates
@@ -1534,7 +1535,7 @@ namespace Mork
             //{
             //        buildingsbuttons[i] = new Button(Manager);
             //        buildingsbuttons[i].Init();
-            //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].I_name;
+            //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].Name;
             //        buildingsbuttons[i].Width = 40;
             //        buildingsbuttons[i].Height = 40;
             //        buildingsbuttons[i].Left = i%5*42;
@@ -1545,7 +1546,7 @@ namespace Mork
             //        buildingsbuttons[i].Parent = buildinsgwindow;
             //        buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbobject.Data[iss.n[i].id].metatex_n));
             //        buildingsbuttons[i].ToolTip = new ToolTip(Manager);
-            //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].I_name + " id " + iss.n[i].id;
+            //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].Name + " id " + iss.n[i].id;
             //        buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
             //}
             //buildinsgwindow.Refresh();

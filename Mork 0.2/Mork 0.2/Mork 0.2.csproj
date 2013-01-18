@@ -145,6 +145,7 @@
     <Compile Include="Bad Database\Commons.cs" />
     <Compile Include="Bad Database\Material\DBMaterial.cs" />
     <Compile Include="Bad Database\Local Map Blocks\DB_LMO.cs" />
+    <Compile Include="Data Parser\LMO_Parser.cs" />
     <Compile Include="FPSCounter.cs" />
     <Compile Include="Generators\Civilizations.cs" />
     <Compile Include="Global Map\GObj.cs" />

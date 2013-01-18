@@ -901,10 +901,10 @@ namespace Mork.Local_Map
         public void SetBlock(int x, int y, int z, int id)
         {
             n[x, y, z].BlockID = id;
-            n[x, y, z].Health = Main.dbobject.Data[id].basic_hp;
+            n[x, y, z].Health = Main.dbobject.Data[id].max_hp;
 
-            if(Main.dbobject.Data[id].activeblock)
-                active.Add(new Vector3(x,y,z));
+            //if(Main.dbobject.Data[id].activeblock)
+            //    active.Add(new Vector3(x,y,z));
 
             //if(id == KnownIDs.StorageEntrance)
             //{

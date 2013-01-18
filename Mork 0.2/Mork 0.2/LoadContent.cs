@@ -1,20 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Mork.Bad_Database;
-using Mork.Generators;
-using Mork.Local_Map;
 using Mork.Local_Map.Sector;
-using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
-using Formu = System.Windows.Forms;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace Mork
 {
@@ -50,7 +38,7 @@ namespace Mork
             var temp = new Texture2D[5];
             for (int i = 0; i <= 4; i++)
                 temp[i] =
-                    ContentLoad(@"Textures\Objects\OnStore\wood_log" + (i + 1).ToString(CultureInfo.InvariantCulture));
+                    ContentLoad(@"Textures\Objects\OnStore\wood_log" + (i + 1));
             onstore_tex.Add(OnStoreTexes.Wood_log, temp);
 
             temp = new Texture2D[5];
@@ -98,45 +86,6 @@ namespace Mork
 
             smap = new SectorMap(GraphicsDevice, blockeffect);
             imap = new IntersectMap();
-
-            MNode a = smap.At(127, 127, 127);
-
-            //for (int i = 0; i <= MMap.mx - 1; i++)
-            //    for (int j = 0; j <= MMap.my - 1; j++)
-            //        for (int k = 0; k <= MMap.mz - 1; k += 16)
-            //        {
-            //            mmap.n[i, j, k] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 1] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 2] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 3] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 4] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 5] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 6] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 7] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 8] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 9] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 10] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 11] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 12] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 13] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 14] = new MNode { blockID = 0 };
-
-            //            mmap.n[i, j, k + 15] = new MNode { blockID = 0 };
-            //        }
 
             MeTexoncurA = 1;
             MeTexoncurB = 5;

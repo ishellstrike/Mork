@@ -71,19 +71,19 @@ namespace Mork.Local_Map.Sector
         public MNode At(int x, int y, int z)
         {
             return
-                N[x/MapSector.dimS*Sectn + y/MapSector.dimS].n[
+                N[x/MapSector.dimS*Sectn + y/MapSector.dimS].N[
                     x%MapSector.dimS*MapSector.dimS*MapSector.dimH + y%MapSector.dimS*MapSector.dimH + z];
         }
 
         public MNode At(float x, float y, float z)
         {
-            return N[(int)x / MapSector.dimS * Sectn + (int)y / MapSector.dimS].n[
+            return N[(int)x / MapSector.dimS * Sectn + (int)y / MapSector.dimS].N[
                     (int)x % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)y % MapSector.dimS * MapSector.dimH + (int)z];
         }
 
         public MNode At(Vector3 ve)
         {
-            return N[(int)ve.X / MapSector.dimS * Sectn + (int)ve.Y / MapSector.dimS].n[
+            return N[(int)ve.X / MapSector.dimS * Sectn + (int)ve.Y / MapSector.dimS].N[
                     (int)ve.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve.Y % MapSector.dimS * MapSector.dimH + (int)ve.Z];
         }
 
