@@ -32,7 +32,7 @@ namespace Mork.Data_Parser
                     switch (header[0])
                     {
                         default:
-                            cur.Value.mnode_prototype = typeof(MNode);
+                            cur.Value.MnodePrototype = typeof(MNode);
                             break;
                     }
 
@@ -43,10 +43,14 @@ namespace Mork.Data_Parser
                             string extractedstring = stringextractor.Match(lines[i]).ToString();
                             cur.Value.Name = extractedstring.Substring(1, extractedstring.Length - 1);
                         }
+                        if (lines[i].StartsWith("transparent"))
+                        {
+                            cur.Value.Transparent = true;
+                        }
                         if (lines[i].StartsWith("max_hp="))
                         {
                             string extracterint = intextractor.Match(lines[i]).ToString(); 
-                            cur.Value.max_hp = Convert.ToInt32(extracterint);
+                            cur.Value.MaxHp = Convert.ToInt32(extracterint);
                         }
                     }
                 }

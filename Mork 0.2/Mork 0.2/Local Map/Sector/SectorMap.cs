@@ -356,8 +356,8 @@ namespace Mork.Local_Map.Sector
         {
             MNode with = At(x, y, z);
 
-            if (Main.dbobject.Data[with.BlockID].dropafterdeath != (int)KnownIDs.error)
-                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[At(x, y, z).BlockID].dropafterdeath_num, id = Main.dbobject.Data[with.BlockID].dropafterdeath, pos = new Vector3(x, y, z) });
+            if (Main.dbobject.Data[with.BlockID].Dropafterdeath != (int)KnownIDs.error)
+                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[At(x, y, z).BlockID].DropafterdeathNum, id = Main.dbobject.Data[with.BlockID].Dropafterdeath, pos = new Vector3(x, y, z) });
             //Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
             //                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
 
@@ -742,7 +742,7 @@ namespace Mork.Local_Map.Sector
                 {
                     for (int m = 0; m <= MapSector.dimH - 1; m++)
                     {
-                        if (At(i, j, m).BlockID == 0)
+                        if (Main.dbobject.Data[At(i, j, m).BlockID].Transparent)
                         {
                             At(i, j, m).Subterrain = false;
                             At(i, j, m).Explored = true;
@@ -850,11 +850,12 @@ namespace Mork.Local_Map.Sector
                     }
                 }
 
-            RecalcExploredSubterrain();
-
             Generation_PlaceOnSurface();
 
             Main.PrepairMapDeleteWrongIDs(ref Main.smap);
+
+            RecalcExploredSubterrain();
+
             Main.smap.RebuildAllMapGeo();
         }
     }

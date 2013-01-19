@@ -9,20 +9,22 @@ namespace Mork
 
         //public bool placeble = true;
 
-        public int dropafterdeath = 666;
-        public byte dropafterdeath_num = 1;
-        public float drop_chanse = 1;
+        public int Dropafterdeath = 666;
+        public byte DropafterdeathNum = 1;
+        public float DropChanse = 1;
+
+        public bool Transparent;
 
         public string Name = "";
 
-        public int max_hp = 10;
+        public int MaxHp = 10;
 
-        public Type mnode_prototype = typeof(MNode);
+        public Type MnodePrototype = typeof(MNode);
 
         public LMO() { }
-        public LMO(int _metatex)
+        public LMO(int metatex)
         {
-            metatex_n = _metatex;
+            metatex_n = metatex;
         }
     }
 }

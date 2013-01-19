@@ -854,8 +854,8 @@ namespace Mork.Local_Map
 
         public void KillBlock(int x, int y, int z)
         {
-            if (Main.dbobject.Data[n[x, y, z].BlockID].dropafterdeath != (int)KnownIDs.error)
-                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].BlockID].dropafterdeath_num, id = Main.dbobject.Data[n[x, y, z].BlockID].dropafterdeath, pos = new Vector3(x, y, z) });
+            if (Main.dbobject.Data[n[x, y, z].BlockID].Dropafterdeath != (int)KnownIDs.error)
+                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].BlockID].DropafterdeathNum, id = Main.dbobject.Data[n[x, y, z].BlockID].Dropafterdeath, pos = new Vector3(x, y, z) });
                 //Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
                 //                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
                 
@@ -901,7 +901,7 @@ namespace Mork.Local_Map
         public void SetBlock(int x, int y, int z, int id)
         {
             n[x, y, z].BlockID = id;
-            n[x, y, z].Health = Main.dbobject.Data[id].max_hp;
+            n[x, y, z].Health = Main.dbobject.Data[id].MaxHp;
 
             //if(Main.dbobject.Data[id].activeblock)
             //    active.Add(new Vector3(x,y,z));

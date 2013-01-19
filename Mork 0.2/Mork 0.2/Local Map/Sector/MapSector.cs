@@ -97,7 +97,7 @@ namespace Mork.Local_Map.Sector
 
                         bool invisible = true;
 
-                        if(k==z_cam && k!= 0 && N[i * dimS * dimH + j * dimH + k - 1].BlockID != 0)
+                        if (k == z_cam && k != 0 && b.BlockID != 0 && !Main.dbobject.Data[N[i * dimS * dimH + j * dimH + k - 1].BlockID].Transparent) // верхняя черная грань, если сверху непрозрачный блок
                         {
                             float umovx = 0;
                             float umovy = 0;

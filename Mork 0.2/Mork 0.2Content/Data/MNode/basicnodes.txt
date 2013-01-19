@@ -1,11 +1,76 @@
-//comment
 ~mnode,1,2
 name="tree"
-//comment
+
 ~mnode,100,3
 name="birch"
 max_hp=100
+
 ~mnode,666,1
 name="error block"
+
 ~mnode,0,0
 name="air"
+transparent
+
+~mnode,888,34
+name="water"
+transparent
+
+~mnode,12345,0
+name="generation blank"
+
+~mnode,10,32
+name="dirt"
+
+~mnode,22,20
+name="argilit"
+
+~mnode,11,29
+name="green granite"
+~mnode,20,30
+name="white granite"
+
+~mnode,14,28
+name="basalt"
+
+~mnode,15,25
+name ="warm basalt"
+
+~mnode,16,24
+name ="hot basalt"
+
+~mnode,17,23
+name="scorchy basalt"
+
+~mnode,18,22
+name="magma"
+
+~mnode,19,27
+name="ryolit"
+
+~mnode,807,30
+name="marble"
+
+~mnode,808,2
+name="galenit"
+
+~mnode,809,3
+name="sphalerit"
+
+~mnode,810,5
+name="silver ore"
+
+~mnode,811,6
+name="tin ore"
+
+~mnode,812,7
+name="bismutin ore"
+
+~mnode,813,5
+name="cryolite"
+
+~mnode,824,3
+name="orthoclase"
+
+~mnode,825,5
+name="microcline"
