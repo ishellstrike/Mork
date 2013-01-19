@@ -762,7 +762,7 @@ namespace Mork
             {
                 buildingsbuttons[i] = new Button(Manager);
                 buildingsbuttons[i].Init();
-                buildingsbuttons[i].Text = dbo.Value.I_name;
+                buildingsbuttons[i].Text = dbo.Value.Name;
                 buildingsbuttons[i].Width = 40;
                 buildingsbuttons[i].Height = 40;
                 buildingsbuttons[i].Left = i%5*42;
@@ -773,7 +773,7 @@ namespace Mork
                 buildingsbuttons[i].Parent = buildinsgwindow;
                 buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbo.Value.metatex_n));
                 buildingsbuttons[i].ToolTip = new ToolTip(Manager);
-                buildingsbuttons[i].ToolTip.Text = dbo.Value.I_name + " id " + dbo.Key;
+                buildingsbuttons[i].ToolTip.Text = dbo.Value.Name + " id " + dbo.Key;
                 buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
                 iss.n.Add(dbo.Key, new LocalItem() { id = dbo.Key, count = 0});
 
@@ -1142,7 +1142,7 @@ namespace Mork
                 temp.pos = new Vector3(temp.pos.X + rnd.Next(0, 6) - 3, temp.pos.Y + rnd.Next(0, 6) - 3, k);
                 for (k = 0; k <= MMap.mz - 1; k++)
                 {
-                    if (MMap.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.smap.At(temp.pos.X, temp.pos.Y, k).blockID == 0) continue;
+                    if (MMap.GoodVector3(temp.pos.X, temp.pos.Y, k) && Main.smap.At(temp.pos.X, temp.pos.Y, k).BlockID == 0) continue;
                     k--;
                     goto here;
                 }
@@ -1219,7 +1219,7 @@ namespace Mork
 
             if (ks.IsKeyDown(Keys.F5) && !lks.IsKeyDown(Keys.F5))
             {
-                smap.RebuildAllMapGeo(z_cam, Camera);
+                smap.RebuildAllMapGeo();
             }
 
             //mbut.ActButtons();
@@ -1297,7 +1297,7 @@ namespace Mork
                 outp += string.Format("mpos = {0}", mousepos)+Environment.NewLine;
                 outp += string.Format("selector = {0}", Selector) + Environment.NewLine;
                 //outp += string.Format("ord = {0}", playerorders.n.Count) + Environment.NewLine;
-                outp += string.Format("act = {0}", smap.active.Count) + Environment.NewLine;
+                outp += string.Format("act = {0}", smap.Active.Count) + Environment.NewLine;
                 outp += string.Format("time = {0}", gameTime.TotalGameTime) + Environment.NewLine;
                 outp += string.Format("srg = {0}", globalstorage.n.Count) + Environment.NewLine;
                 outp += string.Format("cam = {0}\nrot = {1}", Camera.Target, camerarotation) + Environment.NewLine;
@@ -1417,12 +1417,13 @@ namespace Mork
         /// <param name="map"></param>
         public static void PrepairMapDeleteWrongIDs(ref SectorMap map)
         {
-            for (int i0 = 0; i0 < 127; i0++)
-                for (int i1 = 0; i1 < 127; i1++)
-                    for (int i2 = 0; i2 < 127; i2++)
-                    {
-                        if (!dbobject.Data.ContainsKey(map.At(i0, i1, i2).blockID)) map.At(i0, i1, i2).blockID = KnownIDs.error;
-                    }
+            for (int i = 0; i < map.N.Length; i++)
+            {
+                for (int j = 0; j < map.N[i].N.Length; j++)
+                {
+                    if (!dbobject.Data.ContainsKey(map.N[i].N[j].BlockID)) map.N[i].N[j].BlockID = KnownIDs.error;
+                }
+            }
         }
 
         #region Updates
@@ -1461,15 +1462,15 @@ namespace Mork
             MouseRay = new Ray(nun, raydir);
 
             bool tempb = true;
-            for (int i = 0; i < imap.n.Length && tempb; i++)
+            for (int i = 0; i < imap.N.Length && tempb; i++)
             {
-                var nn = imap.n[i];
+                var nn = imap.N[i];
                 var f = MouseRay.Intersects(nn);
 
                 if (f.HasValue)
                 {
-                    Selector.X = i /(SectorMap.sectn * MapSector.dimS);
-                    Selector.Y = i % (SectorMap.sectn * MapSector.dimS);
+                    Selector.X = i /(SectorMap.Sectn * MapSector.dimS);
+                    Selector.Y = i % (SectorMap.Sectn * MapSector.dimS);
                     Selector.Z = z_cam;
 
                     tempb = false;
@@ -1513,11 +1514,11 @@ namespace Mork
             if (MMap.GoodVector3(Selector))
             {
                 ingameUIpartLeftlistbox2.Items.Add("hp = " +
-                                                    smap.At(Selector.X, Selector.Y, Selector.Z).health);
+                                                    smap.At(Selector.X, Selector.Y, Selector.Z).Health);
                 ingameUIpartLeftlistbox2.Items.Add("explored = " +
-                                                    smap.At(Selector.X, Selector.Y, Selector.Z).explored);
+                                                    smap.At(Selector.X, Selector.Y, Selector.Z).Explored);
                 ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
-                                                    smap.At(Selector.X,Selector.Y, Selector.Z).subterrain);
+                                                    smap.At(Selector.X,Selector.Y, Selector.Z).Subterrain);
             }
             //if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
 
@@ -1534,7 +1535,7 @@ namespace Mork
             //{
             //        buildingsbuttons[i] = new Button(Manager);
             //        buildingsbuttons[i].Init();
-            //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].I_name;
+            //        buildingsbuttons[i].Text = dbobject.Data[iss.n[i].id].Name;
             //        buildingsbuttons[i].Width = 40;
             //        buildingsbuttons[i].Height = 40;
             //        buildingsbuttons[i].Left = i%5*42;
@@ -1545,7 +1546,7 @@ namespace Mork
             //        buildingsbuttons[i].Parent = buildinsgwindow;
             //        buildingsbuttons[i].Glyph = new Glyph(object_tex, GetTexRectFromN(dbobject.Data[iss.n[i].id].metatex_n));
             //        buildingsbuttons[i].ToolTip = new ToolTip(Manager);
-            //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].I_name + " id " + iss.n[i].id;
+            //        buildingsbuttons[i].ToolTip.Text = dbobject.Data[iss.n[i].id].Name + " id " + iss.n[i].id;
             //        buildingsbuttons[i].Click += new TomShane.Neoforce.Controls.EventHandler(Buildingsbutton_Click);
             //}
             //buildinsgwindow.Refresh();
@@ -1600,7 +1601,7 @@ namespace Mork
                             z_cam += 4;
                             imap.MoveIntersectMap(new Vector3(0, 0, 4));
                         }
-                    smap.RebuildAllMapGeo(z_cam, Camera);
+                    smap.RebuildAllMapGeo();
                 }
             }
             if (ks[Keys.OemPeriod] == KeyState.Down && lks[Keys.OemPeriod] == KeyState.Up)
@@ -1616,7 +1617,7 @@ namespace Mork
                             imap.MoveIntersectMap(new Vector3(0, 0, -4));
                         }
 
-                    smap.RebuildAllMapGeo(z_cam, Camera);
+                    smap.RebuildAllMapGeo();
                 }
             }
 
@@ -1663,7 +1664,7 @@ namespace Mork
                     for (var j = 0; j <= MMap.my - 1; j++)
                         for (var k = 0; k <= MMap.mz - 1; k++)
                         {
-                            smap.At(i, j, k).explored = true;
+                            smap.At(i, j, k).Explored = true;
                         }
             }
 

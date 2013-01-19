@@ -1,0 +1,15 @@
+//~Type mnode_prototype,int id,int metattex //all other variable in any order and not necessary; don't forget ~ at the beginning;
+//max_hp=int;
+//dropafterdeath=int; //droped on death id
+//dropafterdeath_num=byte
+//drop_chanse=float;
+//name="string"
+
+
+
+
+
+
+
+// <- comments
+//That's all folks! 
