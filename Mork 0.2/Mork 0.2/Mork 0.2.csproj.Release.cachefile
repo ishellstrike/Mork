@@ -45,3 +45,6 @@ Content\Textures\BlocktexAtlas.xnb
 Content\Skins\Default.skin
 Content\Skins\Extended.skin
 Content\Skins\Green.skin
+Content\Data\MNode\buildings.txt
+Content\Data\base.txt
+Content\Data\MNode\basicnodes.txt

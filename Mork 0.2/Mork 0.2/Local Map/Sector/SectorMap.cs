@@ -12,53 +12,53 @@ namespace Mork.Local_Map.Sector
 {
     public class IntersectMap
     {
-        public BoundingBox[] n = new BoundingBox[SectorMap.sectn*SectorMap.sectn*MapSector.dimS*MapSector.dimS];
+        public BoundingBox[] N = new BoundingBox[SectorMap.Sectn*SectorMap.Sectn*MapSector.dimS*MapSector.dimS];
 
         public IntersectMap()
         {
-            for (int i = 0; i < n.Length; i++)
+            for (int i = 0; i < N.Length; i++)
             {
-                n[i] = new BoundingBox(new Vector3(i / (SectorMap.sectn * MapSector.dimS), i % (SectorMap.sectn * MapSector.dimS), 0), new Vector3(i / (SectorMap.sectn * MapSector.dimS) + 1, i % (SectorMap.sectn * MapSector.dimS) + 1, -1));
+                N[i] = new BoundingBox(new Vector3(i / (SectorMap.Sectn * MapSector.dimS), i % (SectorMap.Sectn * MapSector.dimS), 0), new Vector3(i / (SectorMap.Sectn * MapSector.dimS) + 1, i % (SectorMap.Sectn * MapSector.dimS) + 1, -1));
             }
         }
 
         public void MoveIntersectMap(Vector3 mover)
         {
-            for (int index = 0; index < n.Length; index++)
+            for (var index = 0; index < N.Length; index++)
             {
-                n[index].Max -= mover;
-                n[index].Min -= mover;
+                N[index].Max -= mover;
+                N[index].Min -= mover;
             }
         }
     }
     [Serializable]
     public class SectorMap
     {
-        public const int sectn = 8;
-        public MapSector[] n = new MapSector[sectn * sectn];
-        GraphicsDevice gd;
-        Effect be;
-        private BasicEffect basice;
-        private BasicEffect basice2;
-        private int passn = 0;
+        public const int Sectn = 8;
+        public MapSector[] N = new MapSector[Sectn * Sectn];
+        private readonly GraphicsDevice _gd;
+        private readonly Effect _be;
+        private BasicEffect _basice;
+        private BasicEffect _basice2;
+        private int _passn = 0;
 
-        public List<Vector3> active = new List<Vector3>();
+        public List<Vector3> Active = new List<Vector3>();
 
-        public SectorMap(GraphicsDevice _gd, Effect mapeffect)
+        public SectorMap(GraphicsDevice gd, Effect mapeffect)
         {
-            for (int i = 0; i <= sectn - 1; i++)
-                for (int j = 0; j <= sectn - 1; j++)
-                        n[i * sectn + j] = new MapSector(i, j);
+            for (int i = 0; i <= Sectn - 1; i++)
+                for (int j = 0; j <= Sectn - 1; j++)
+                        N[i * Sectn + j] = new MapSector(i, j);
 
-            gd = _gd;
-            be = mapeffect;
-            basice = new BasicEffect(_gd);
-            basice2 = new BasicEffect(_gd);
+            _gd = gd;
+            _be = mapeffect;
+            _basice = new BasicEffect(gd);
+            _basice2 = new BasicEffect(gd);
         }
 
-        public void RebuildAllMapGeo(int z_cam, FreeCamera Camera)
+        public void RebuildAllMapGeo()
         {
-            foreach (var a in n)
+            foreach (var a in N)
             {
                 a.builded = false;
             }
@@ -71,107 +71,110 @@ namespace Mork.Local_Map.Sector
         public MNode At(int x, int y, int z)
         {
             return
-                n[x/MapSector.dimS*sectn + y/MapSector.dimS].n[
+                N[x/MapSector.dimS*Sectn + y/MapSector.dimS].N[
                     x%MapSector.dimS*MapSector.dimS*MapSector.dimH + y%MapSector.dimS*MapSector.dimH + z];
         }
 
         public MNode At(float x, float y, float z)
         {
-            return n[(int)x / MapSector.dimS * sectn + (int)y / MapSector.dimS].n[
+            return N[(int)x / MapSector.dimS * Sectn + (int)y / MapSector.dimS].N[
                     (int)x % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)y % MapSector.dimS * MapSector.dimH + (int)z];
         }
 
         public MNode At(Vector3 ve)
         {
-            return n[(int)ve.X / MapSector.dimS * sectn + (int)ve.Y / MapSector.dimS].n[
+            return N[(int)ve.X / MapSector.dimS * Sectn + (int)ve.Y / MapSector.dimS].N[
                     (int)ve.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve.Y % MapSector.dimS * MapSector.dimH + (int)ve.Z];
         }
 
+        List<VertexPositionColor> vl = new List<VertexPositionColor>();
+        VertexPositionColor[] vl1 = new VertexPositionColor[30];
         public void DrawAllMap(GameTime gt, Camera cam)
         {
-            passn++;
-            if (passn > sectn*sectn - 1) passn = 0;
+            _passn++;
+            if (_passn > Sectn*Sectn - 1) _passn = 0;
 
-            be.Parameters["worldMatrix"].SetValue(Matrix.Identity);
-            be.Parameters["viewMatrix"].SetValue(Main.Camera.View);
-            be.Parameters["projectionMatrix"].SetValue(Main.Camera.Projection);
-            be.Parameters["diffuseColor"].SetValue(Color.White.ToVector4());
-            be.Parameters["ambientColor"].SetValue(Color.DarkGray.ToVector4());
+            _be.Parameters["worldMatrix"].SetValue(Matrix.Identity);
+            _be.Parameters["viewMatrix"].SetValue(Main.Camera.View);
+            _be.Parameters["projectionMatrix"].SetValue(Main.Camera.Projection);
+            _be.Parameters["diffuseColor"].SetValue(Color.White.ToVector4());
+            _be.Parameters["ambientColor"].SetValue(Color.DarkGray.ToVector4());
             var ld = new Vector3(0.5f, -1, 0.5f);
             ld.Normalize();
-            be.Parameters["lightDirection"].SetValue(ld);
-            be.Parameters["shaderTexture"].SetValue(Main.texatlas);
+            _be.Parameters["lightDirection"].SetValue(ld);
+            _be.Parameters["shaderTexture"].SetValue(Main.texatlas);
 
-            gd.RasterizerState = RasterizerState.CullCounterClockwise;
-            gd.DepthStencilState = DepthStencilState.Default;
-            gd.BlendState = BlendState.Opaque;
+            _gd.RasterizerState = RasterizerState.CullCounterClockwise;
+            _gd.DepthStencilState = DepthStencilState.Default;
+            _gd.BlendState = BlendState.Opaque;
 
             Main.drawed_sects = 0;
             Main.drawed_verts = 0;
 
-            foreach (var pass in be.CurrentTechnique.Passes)
+            foreach (var pass in _be.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                foreach (var a in n)
+                foreach (var a in N)
                 {
                     if (cam.Frustum.Contains(new BoundingBox(a.bounding.Min, a.bounding.Max)) !=
                         ContainmentType.Disjoint)
                     {
                         if (!a.builded)
                         {
-                            a.RebuildSectorGeo(gd, Main.z_cam);
+                            a.RebuildSectorGeo(_gd, Main.z_cam);
                             Main.sectrebuild++;
                         }
                         if (!a.empty)
                         {
                             Main.drawed_sects++;
                             //gd.SetVertexBuffer(a.VertexBuffer);
-                            gd.DrawUserPrimitives(PrimitiveType.TriangleList, a.VertexArray, 0, a.index / 3);
+                            _gd.DrawUserPrimitives(PrimitiveType.TriangleList, a.VertexArray, 0, a.index / 3);
                             Main.drawed_verts += a.index/3;
                         }
                     }
                 }
             }
 
-            basice2.VertexColorEnabled = true;
-            basice2.Alpha = 0.5f;
-            basice2.Projection = cam.Projection;
-            basice2.View = cam.View;
+            _basice2.VertexColorEnabled = true;
+            _basice2.Alpha = 0.5f;
+            _basice2.Projection = cam.Projection;
+            _basice2.View = cam.View;
 
-            gd.BlendState = BlendState.AlphaBlend;
+            _gd.BlendState = BlendState.AlphaBlend;
 
 
-            Color greencube = At(Main.Selector).blockID == 0 ? Color.Red : Color.GreenYellow;
-            greencube.A = 128;
+            Color greentop = At(Main.Selector).BlockID == 0 ? Color.Red : Color.GreenYellow;
+            greentop.A = 128;
+            Color greencube = greentop * 0.5f;
+            
 
-            foreach (var pass in basice2.CurrentTechnique.Passes)
+            foreach (var pass in _basice2.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                VertexPositionColor[] vl1 = new VertexPositionColor[30];
                 vl1[0] =
                     (new VertexPositionColor(
                         new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
+                        greentop));
                 vl1[1] =
                     (new VertexPositionColor(
                         new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
+                        greentop));
                 vl1[2] =
                     (new VertexPositionColor(
                         new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
+                        greentop));
                 vl1[3] =
                     (new VertexPositionColor(
                         new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
+                        greentop));
                 vl1[4] =
                     (new VertexPositionColor(
                         new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
+                        greentop));
                 vl1[5] =
                     (new VertexPositionColor(
                         new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
+                        greentop));
 
                 vl1[6] =
                     (new VertexPositionColor(
@@ -278,20 +281,20 @@ namespace Mork.Local_Map.Sector
                 //vb1.SetData(vl1,0,18);
 
                 //gd.SetVertexBuffer(vb1);
-                gd.DrawUserPrimitives(PrimitiveType.TriangleList, vl1, 0, vl1.Count()/3);
+                _gd.DrawUserPrimitives(PrimitiveType.TriangleList, vl1, 0, vl1.Count()/3);
             }
 
 
-            basice.VertexColorEnabled = false;
-            basice.Projection = cam.Projection;
-            basice.View = cam.View;
+            _basice.VertexColorEnabled = false;
+            _basice.Projection = cam.Projection;
+            _basice.View = cam.View;
 
+            vl.Clear();
             if(Main.debug)
-            foreach (var pass in basice.CurrentTechnique.Passes)
+            foreach (var pass in _basice.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                List<VertexPositionColor> vl = new List<VertexPositionColor>();
-                foreach (var a in n)
+                foreach (var a in N)
                 {
                     Vector3[] vv = new Vector3[24];
                     vv[0] = a.bounding.Min;
@@ -344,7 +347,7 @@ namespace Mork.Local_Map.Sector
                     //vb.SetData(vl.ToArray());
 
                     //gd.SetVertexBuffer(vb);
-                    gd.DrawUserPrimitives(PrimitiveType.LineList, vl.ToArray(), 0, vl.Count/2);
+                    _gd.DrawUserPrimitives(PrimitiveType.LineList, vl.ToArray(), 0, vl.Count/2);
                 }
             }
         }
@@ -353,26 +356,26 @@ namespace Mork.Local_Map.Sector
         {
             MNode with = At(x, y, z);
 
-            if (Main.dbobject.Data[with.blockID].dropafterdeath != (int)KnownIDs.error)
-                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[At(x, y, z).blockID].dropafterdeath_num, id = Main.dbobject.Data[with.blockID].dropafterdeath, pos = new Vector3(x, y, z) });
+            if (Main.dbobject.Data[with.BlockID].Dropafterdeath != (int)KnownIDs.error)
+                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[At(x, y, z).BlockID].DropafterdeathNum, id = Main.dbobject.Data[with.BlockID].Dropafterdeath, pos = new Vector3(x, y, z) });
             //Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
             //                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
 
 
-            with.blockID = 0;
-            with.health = 10;
+            with.BlockID = 0;
+            with.Health = 10;
 
             for (var i = -1; i <= 1; i++)
                 for (var j = -1; j <= 1; j++)
                 {
                     if (GoodVector3(x + i, y + j, z))
-                        At(x + i, y + j, z).explored = true;
+                        At(x + i, y + j, z).Explored = true;
                 }
 
             if (GoodVector3(x, y, z + 1))
-                At(x, y, z + 1).explored = true;
+                At(x, y, z + 1).Explored = true;
 
-            if (with.blockID == KnownIDs.StorageEntrance)
+            if (with.BlockID == KnownIDs.StorageEntrance)
             {
                 Main.globalstorage.n.Remove(new Vector3(x, y, z));
             }
@@ -386,18 +389,18 @@ namespace Mork.Local_Map.Sector
             var j = where.Y;
             for (var m = 0; m <= MapSector.dimH - 1; m++)
             {
-                At(i, j, m).subterrain = true;
+                At(i, j, m).Subterrain = true;
             }
 
             for (var m = 0; m <= MapSector.dimH - 1; m++)
             {
-                if (At(i, j, m).blockID == 0)
+                if (At(i, j, m).BlockID == 0)
                 {
-                    At(i, j, m).subterrain = false;
+                    At(i, j, m).Subterrain = false;
                 }
                 else
                 {
-                    At(i, j, m).subterrain = false;
+                    At(i, j, m).Subterrain = false;
                     goto here;
                 }
             }
@@ -411,7 +414,7 @@ namespace Mork.Local_Map.Sector
         /// <returns></returns>
         public static bool GoodVector3(Vector3 loc)
         {
-            if (loc != null && loc.X >= 0 && loc.Y >= 0 && loc.X <= sectn * MapSector.dimS - 1 && loc.Y <= sectn * MapSector.dimS - 1 && loc.Z >= 0 && loc.Z <= MapSector.dimH - 1) return true;
+            if (loc != null && loc.X >= 0 && loc.Y >= 0 && loc.X <= Sectn * MapSector.dimS - 1 && loc.Y <= Sectn * MapSector.dimS - 1 && loc.Z >= 0 && loc.Z <= MapSector.dimH - 1) return true;
             return false;
         }
 
@@ -424,7 +427,7 @@ namespace Mork.Local_Map.Sector
         /// <returns></returns>
         public static bool GoodVector3(int X, int Y, int Z)
         {
-            if (X >= 0 && Y >= 0 && X <= sectn * MapSector.dimS - 1 && Y <= sectn * MapSector.dimS - 1 && Z >= 0 && Z <= MapSector.dimH - 1) return true;
+            if (X >= 0 && Y >= 0 && X <= Sectn * MapSector.dimS - 1 && Y <= Sectn * MapSector.dimS - 1 && Z >= 0 && Z <= MapSector.dimH - 1) return true;
             return false;
         }
 
@@ -437,7 +440,7 @@ namespace Mork.Local_Map.Sector
         /// <returns></returns>
         public static bool GoodVector3(float X, float Y, float Z)
         {
-            if (X >= 0 && Y >= 0 && X <= sectn * MapSector.dimS - 1 && Y <= sectn * MapSector.dimS - 1 && Z >= 0 && Z <= MapSector.dimH - 1) return true;
+            if (X >= 0 && Y >= 0 && X <= Sectn * MapSector.dimS - 1 && Y <= Sectn * MapSector.dimS - 1 && Z >= 0 && Z <= MapSector.dimH - 1) return true;
             return false;
         }
 
@@ -458,20 +461,20 @@ namespace Mork.Local_Map.Sector
         /// <param name="id">заполнить базовый слой указанным блоком</param>
         public void Generation_BasicLayer(int id)
         {
-            for (int i = 0; i <= sectn*MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn*MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
                     for (k = 128 - 1; k >= 0; k--)
                     {
-                        if (At(i, j, k).blockID == 12345)
+                        if (At(i, j, k).BlockID == 12345)
                             goto here1;
                     }
                 here1: ;
 
                     for (int m = k; m >= rnd.Next(k - 5, k); m--)
                     {
-                        if (m > 0) if (At(i, j, m).blockID == 12345) At(i, j, m).blockID = id;
+                        if (m > 0) if (At(i, j, m).BlockID == 12345) At(i, j, m).BlockID = id;
                     }
                 }
         }
@@ -483,13 +486,13 @@ namespace Mork.Local_Map.Sector
         /// <param name="count">толщина слоя</param>
         public void Generation_FullLayer(int id, int count)
         {
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
                     for (k = 128 - 1; k >= 0; k--)
                     {
-                        if (At(i, j, k).blockID == 12345)
+                        if (At(i, j, k).BlockID == 12345)
                             goto here1;
                     }
                 here1: ;
@@ -498,7 +501,7 @@ namespace Mork.Local_Map.Sector
 
                     for (int m = k; m >= k - count + 1; m--)
                     {
-                        if (At(i, j, m).blockID == 12345) At(i, j, m).blockID = id;
+                        if (At(i, j, m).BlockID == 12345) At(i, j, m).BlockID = id;
                     }
                 }
         }
@@ -515,13 +518,13 @@ namespace Mork.Local_Map.Sector
         /// <param name="length">протяженность жил</param>
         public void GenerationFullLayerCluster(int id, int count, int[] clust, int c_freq, int[] jila, int j_freq, int length)
         {
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
+                    for (k = MapSector.dimH - 1; k >= 0; k--)
                     {
-                        if (At(i, j, k).blockID == 12345)
+                        if (At(i, j, k).BlockID == 12345)
                             goto here1;
                     }
                 here1: ;
@@ -530,9 +533,9 @@ namespace Mork.Local_Map.Sector
 
                     for (int m = k; m >= k - count + 1; m--)
                     {
-                        if (At(i, j, m).blockID == 12345)
+                        if (At(i, j, m).BlockID == 12345)
                         {
-                            At(i, j, m).blockID = id;
+                            At(i, j, m).BlockID = id;
                             if (rnd.Next(1, 101 - c_freq) == 1 && clust.Length > 0)
                             {
                                 cluster(clust[rnd.Next(0, clust.Length)], i, j, m);
@@ -551,48 +554,48 @@ namespace Mork.Local_Map.Sector
             switch (rnd.Next(0, 7))
             {
                 case 0:
-                    At(i, j, m).blockID = id;
+                    At(i, j, m).BlockID = id;
                     break;
                 case 1:
-                    if (GoodVector3(i - 1, j, m)) At(i, j, m).blockID = id;
-                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).blockID = id;
-                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).blockID = id;
-                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).blockID = id;
-                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).blockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i, j, m).BlockID = id;
+                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).BlockID = id;
+                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).BlockID = id;
+                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).BlockID = id;
                     break;
                 case 2:
-                    if (GoodVector3(i - 1, j, m)) At(i, j, m).blockID = id;
-                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).blockID = id;
-                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).blockID = id;
-                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).blockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i, j, m).BlockID = id;
+                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).BlockID = id;
+                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).BlockID = id;
                     break;
                 case 3:
-                    if (GoodVector3(i - 1, j, m)) At(i, j, m).blockID = id;
-                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).blockID = id;
-                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).blockID = id;
-                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).blockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i, j, m).BlockID = id;
+                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).BlockID = id;
+                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).BlockID = id;
                     break;
                 case 4:
-                    if (GoodVector3(i - 1, j, m)) At(i, j, m).blockID = id;
-                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).blockID = id;
-                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).blockID = id;
-                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).blockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i, j, m).BlockID = id;
+                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).BlockID = id;
+                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).BlockID = id;
+                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).BlockID = id;
                     break;
                 case 5:
-                    if (GoodVector3(i - 1, j, m)) At(i, j, m).blockID = id;
-                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).blockID = id;
-                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).blockID = id;
-                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).blockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i, j, m).BlockID = id;
+                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).BlockID = id;
+                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).BlockID = id;
                     break;
                 case 6:
-                    if (GoodVector3(i - 1, j, m)) At(i, j, m).blockID = id;
-                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).blockID = id;
-                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).blockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i, j, m).BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i - 1, j, m).BlockID = id;
+                    if (GoodVector3(i, j - 1, m)) At(i, j - 1, m).BlockID = id;
                     break;
                 case 7:
-                    if (GoodVector3(i - 1, j, m)) At(i, j, m).blockID = id;
-                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).blockID = id;
-                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).blockID = id;
+                    if (GoodVector3(i - 1, j, m)) At(i, j, m).BlockID = id;
+                    if (GoodVector3(i, j + 1, m)) At(i, j + 1, m).BlockID = id;
+                    if (GoodVector3(i + 1, j, m)) At(i + 1, j, m).BlockID = id;
                     break;
             }
         }
@@ -609,7 +612,7 @@ namespace Mork.Local_Map.Sector
                 i1 += ii; j1 += jj;
                 if (GoodVector3(i1, j1, m))
                 {
-                    At(i1, j1, m).blockID = id;
+                    At(i1, j1, m).BlockID = id;
                 }
 
                 if (rnd.Next(1, 4) == 1)
@@ -620,16 +623,16 @@ namespace Mork.Local_Map.Sector
 
         public void Generation_PlaceOnSurface()
         {
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
-                    for (int m = 0; m <= sectn * MapSector.dimS - 1; m++)
+                    for (int m = 0; m <= MapSector.dimH - 1; m++)
                     {
-                        if (At(i, j, m).blockID != 0)
+                        if (At(i, j, m).BlockID != 0)
                         {
                             if (rnd.Next(1, Convert.ToInt32(101 - GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree_freq)) == 1 && m > 0)
                                 if (GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count > 0)
-                                    At(i, j, m - 1).blockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree[rnd.Next(0, GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count)];
+                                    At(i, j, m - 1).BlockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree[rnd.Next(0, GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count)];
                             goto here2;
                         }
                     }
@@ -643,22 +646,16 @@ namespace Mork.Local_Map.Sector
         /// <param name="count"></param>
         public void Generation_FullLayer_under(int count)
         {
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
-                    {
-                        if (At(i, j, k).blockID == 0)
-                            goto here1;
-                    }
-                here1: ;
-
+                    for (k = MapSector.dimH - 1; k >= 0 && At(i, j, k).BlockID != 0; k--) ;
                     if (k < 0) continue;
 
                     for (int m = k; m >= k - count + 1; m--)
                     {
-                        if (m > 0) At(i, j, m).blockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].under_surf;
+                        if (m > 0) At(i, j, m).BlockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].under_surf;
                     }
                 }
         }
@@ -669,13 +666,13 @@ namespace Mork.Local_Map.Sector
         /// <param name="count"></param>
         public void Generation_FullLayer_under_under(int count)
         {
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
+                    for (k = MapSector.dimH - 1; k >= 0; k--)
                     {
-                        if (At(i, j, k).blockID == 0)
+                        if (At(i, j, k).BlockID == 0)
                             goto here1;
                     }
                 here1: ;
@@ -684,7 +681,7 @@ namespace Mork.Local_Map.Sector
 
                     for (int m = k; m >= k - count + 1; m--)
                     {
-                        if (m > 0) At(i, j, m).blockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].under_under_surf;
+                        if (m > 0) At(i, j, m).BlockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].under_under_surf;
                     }
                 }
         }
@@ -695,13 +692,13 @@ namespace Mork.Local_Map.Sector
         /// <param name="count"></param>
         public void Generation_FullLayerGrass(int count)
         {
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
                     int k = 0;
-                    for (k = sectn * MapSector.dimS - 1; k >= 0; k--)
+                    for (k = MapSector.dimH - 1; k >= 0; k--)
                     {
-                        if (At(i, j, k).blockID == 0)
+                        if (At(i, j, k).BlockID == 0)
                             goto here1;
                     }
                 here1: ;
@@ -715,9 +712,9 @@ namespace Mork.Local_Map.Sector
                         if (id.Count != 0)
                         {
                             int a = rnd.Next(0, id.Count);
-                            if (m > 0) At(i, j, m).blockID = id[a];
+                            if (m > 0) At(i, j, m).BlockID = id[a];
                         }
-                        else if (m > 0) At(i, j, m).blockID = 10;
+                        else if (m > 0) At(i, j, m).BlockID = 10;
                     }
                 }
         }
@@ -732,37 +729,37 @@ namespace Mork.Local_Map.Sector
         /// </summary>
         public void RecalcExploredSubterrain()
         {
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
-                    for (int m = 0; m <= sectn * MapSector.dimS - 1; m++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
+                    for (int m = 0; m <= MapSector.dimH - 1; m++)
                     {
-                        At(i, j, m).subterrain = true;
-                        At(i, j, m).explored = false;
+                        At(i, j, m).Subterrain = true;
+                        At(i, j, m).Explored = false;
                     }
 
-            for (int i = 1; i <= sectn * MapSector.dimS - 2; i++)
-                for (int j = 1; j <= sectn * MapSector.dimS - 2; j++)
+            for (int i = 1; i <= Sectn * MapSector.dimS - 2; i++)
+                for (int j = 1; j <= Sectn * MapSector.dimS - 2; j++)
                 {
-                    for (int m = 0; m <= sectn * MapSector.dimS - 1; m++)
+                    for (int m = 0; m <= MapSector.dimH - 1; m++)
                     {
-                        if (At(i, j, m).blockID == 0)
+                        if (Main.dbobject.Data[At(i, j, m).BlockID].Transparent)
                         {
-                            At(i, j, m).subterrain = false;
-                            At(i, j, m).explored = true;
+                            At(i, j, m).Subterrain = false;
+                            At(i, j, m).Explored = true;
 
-                            At(i + 1, j, m).subterrain = false;
-                            At(i + 1, j, m).explored = true;
-                            At(i, j + 1, m).subterrain = false;
-                            At(i, j + 1, m).explored = true;
-                            At(i - 1, j, m).subterrain = false;
-                            At(i - 1, j, m).explored = true;
-                            At(i, j - 1, m).subterrain = false;
-                            At(i, j - 1, m).explored = true;
+                            At(i + 1, j, m).Subterrain = false;
+                            At(i + 1, j, m).Explored = true;
+                            At(i, j + 1, m).Subterrain = false;
+                            At(i, j + 1, m).Explored = true;
+                            At(i - 1, j, m).Subterrain = false;
+                            At(i - 1, j, m).Explored = true;
+                            At(i, j - 1, m).Subterrain = false;
+                            At(i, j - 1, m).Explored = true;
                         }
                         else
                         {
-                            At(i, j, m).subterrain = false;
-                            At(i, j, m).explored = true;
+                            At(i, j, m).Subterrain = false;
+                            At(i, j, m).Explored = true;
                             goto here2;
                         }
                     }
@@ -770,8 +767,8 @@ namespace Mork.Local_Map.Sector
                 }
         }
 
-        public float[] wshine = new float[sectn * MapSector.dimS * sectn * MapSector.dimS];
-        public short[] whinenapr = new short[sectn * MapSector.dimS * sectn * MapSector.dimS];
+        public float[] wshine = new float[Sectn * MapSector.dimS * Sectn * MapSector.dimS];
+        public short[] whinenapr = new short[Sectn * MapSector.dimS * Sectn * MapSector.dimS];
         /// <summary>
         /// простая генерация локальный карты по данным глобальной карты (базовая версия)
         /// </summary>
@@ -783,27 +780,21 @@ namespace Mork.Local_Map.Sector
                     whinenapr[i0] = rnd.Next(0, 1) == 0 ? (short)-1 : (short)1;
                 }
 
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
-                    for (int k = 0; k <= sectn * MapSector.dimS - 1; k += 8)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
+                    for (int k = 0; k <= MapSector.dimH - 1; k += 2)
                     {
-                        At(i, j, k).blockID = 0;
-                        At(i, j, k + 1).blockID = 0;
-                        At(i, j, k + 2).blockID = 0;
-                        At(i, j, k + 3).blockID = 0;
-                        At(i, j, k + 4).blockID = 0;
-                        At(i, j, k + 5).blockID = 0;
-                        At(i, j, k + 6).blockID = 0;
-                        At(i, j, k + 7).blockID = 0;
+                        At(i, j, k).BlockID = 0;
+                        At(i, j, k + 1).BlockID = 0;
                     }
 
 
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
-                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (sectn * MapSector.dimS - 1) * 0.3 + (sectn * MapSector.dimS - 1) * 0.7 - 5; k++)
+                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (MapSector.dimH - 1) * 0.3 + (MapSector.dimH - 1) * 0.7 - 5; k++)
                     {
-                        if (GoodVector3(i, j, sectn * MapSector.dimS - 1 - k)) At(i, j, sectn * MapSector.dimS - 1 - k).blockID = 12345;
+                        if (GoodVector3(i, j, MapSector.dimH - 1 - k)) At(i, j, MapSector.dimH - 1 - k).BlockID = 12345;
                     }
                 }
 
@@ -849,22 +840,23 @@ namespace Mork.Local_Map.Sector
             Generation_FullLayerGrass(1);
 
 
-            for (int i = 0; i <= sectn * MapSector.dimS - 1; i++)
-                for (int j = 0; j <= sectn * MapSector.dimS - 1; j++)
+            for (int i = 0; i <= Sectn * MapSector.dimS - 1; i++)
+                for (int j = 0; j <= Sectn * MapSector.dimS - 1; j++)
                 {
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
-                    for (int k = 0; k <= ((0.4)) * (sectn * MapSector.dimS - 1) * 0.3 + (sectn * MapSector.dimS - 1) * 0.7 + 1; k++)
+                    for (int k = 0; k <= ((0.4)) * (MapSector.dimH - 1) * 0.3 + (MapSector.dimH - 1) * 0.7 + 1; k++)
                     {
-                        if (GoodVector3(i, j, 128 - 1 - k) && At(i, j, 128 - 1 - k).blockID == 0) At(i, j, sectn * MapSector.dimS - 1 - k).blockID = KnownIDs.water;//вода
+                        if (GoodVector3(i, j, MapSector.dimH - 1 - k) && At(i, j, MapSector.dimH - 1 - k).BlockID == 0) At(i, j, MapSector.dimH - 1 - k).BlockID = KnownIDs.water;//вода
                     }
                 }
-
-            RecalcExploredSubterrain();
 
             Generation_PlaceOnSurface();
 
             Main.PrepairMapDeleteWrongIDs(ref Main.smap);
-            Main.smap.RebuildAllMapGeo(0, Main.Camera);
+
+            RecalcExploredSubterrain();
+
+            Main.smap.RebuildAllMapGeo();
         }
     }
 }

@@ -1,0 +1,2 @@
+~mnode,20000,1
+name="sort station"

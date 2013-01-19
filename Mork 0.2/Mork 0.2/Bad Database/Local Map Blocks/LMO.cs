@@ -1,36 +1,30 @@
+using System;
+using Mork.Local_Map;
+
 namespace Mork
 {
     public class LMO
     {
         public int metatex_n;
 
-        public bool walkable = true;
-        public bool placeble = true;
-        public bool activeblock = false;
+        //public bool placeble = true;
 
-        public int dropafterdeath = 666;
-        public byte dropafterdeath_num = 1;
-        public float chanse = 1;
+        public int Dropafterdeath = 666;
+        public byte DropafterdeathNum = 1;
+        public float DropChanse = 1;
 
-        public string I_name = "";
-        public string R_name = "";
-        public string T_name = "";
-        public string P_name = "";
+        public bool Transparent;
 
-        public int basic_hp = 10;
+        public string Name = "";
 
+        public int MaxHp = 10;
 
+        public Type MnodePrototype = typeof(MNode);
 
         public LMO() { }
-        public LMO(int _metatex, bool _walkable, string _I_name, string _R_name, string _T_name, string _P_name)
+        public LMO(int metatex)
         {
-            metatex_n = _metatex;
-            walkable = _walkable;
-
-            I_name = _I_name;
-            R_name = _R_name;
-            T_name = _T_name;
-            P_name = _P_name;
+            metatex_n = metatex;
         }
     }
 }

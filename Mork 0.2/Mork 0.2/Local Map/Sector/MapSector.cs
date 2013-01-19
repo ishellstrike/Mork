@@ -39,7 +39,7 @@ namespace Mork.Local_Map.Sector
     {
         public const byte dimS = 16, dimH = 128;
 
-        public MNode[] n = new MNode[dimS * dimS * dimH];
+        public MNode[] N = new MNode[dimS * dimS * dimH];
         //bool[] buildedrow = new bool[dimS * dimS];
         public VertexPositionNormalTextureShade[] VertexArray = new VertexPositionNormalTextureShade[dimS * dimS * dimS * 3];
         public BoundingBox bounding;
@@ -62,7 +62,7 @@ namespace Mork.Local_Map.Sector
             sy = y;
             for (int i = 0; i <= dimS*dimS*dimH - 1; i++)
                     {
-                        n[i] = new MNode(){blockID =  0};
+                        N[i] = new MNode(){BlockID =  0};
                     }
             bounding = new BoundingBox(new Vector3(0 + sx * dimS, 0 + sy * dimS, -0), new Vector3(15 + sx * dimS, 15 + sy * dimS, -1));
         }
@@ -93,11 +93,11 @@ namespace Mork.Local_Map.Sector
                 {
                     for (int k = z_cam; k <= dimH - 1; k++)
                     {
-                        var b = n[i * dimS * dimH + j * dimH + k];
+                        var b = N[i * dimS * dimH + j * dimH + k];
 
                         bool invisible = true;
 
-                        if(k==z_cam && k!= 0 && n[i * dimS * dimH + j * dimH + k - 1].blockID != 0)
+                        if (k == z_cam && k != 0 && b.BlockID != 0 && !Main.dbobject.Data[N[i * dimS * dimH + j * dimH + k - 1].BlockID].Transparent) // верхняя черная грань, если сверху непрозрачный блок
                         {
                             float umovx = 0;
                             float umovy = 0;
@@ -130,15 +130,15 @@ namespace Mork.Local_Map.Sector
                             index += 6;
                         }
                         else
-                        if (b.blockID != 0 && b.explored)
+                        if (b.BlockID != 0 && b.Explored)
                         {
-                            float umovx = (Main.dbobject.Data[b.blockID].metatex_n%Commons.TextureAtlasWCount)*tsper*2;
-                            float umovy = (Main.dbobject.Data[b.blockID].metatex_n/Commons.TextureAtlasWCount)*tsperh;
+                            float umovx = (Main.dbobject.Data[b.BlockID].metatex_n%Commons.TextureAtlasWCount)*tsper*2;
+                            float umovy = (Main.dbobject.Data[b.BlockID].metatex_n/Commons.TextureAtlasWCount)*tsperh;
 
                             float smovx = umovx + tsper;
                             float smovy = umovy;
 
-                            if (k == z_cam || n[i*dimS*dimH + j*dimH + k - 1].blockID == 0)
+                            if (k == z_cam || N[i*dimS*dimH + j*dimH + k - 1].BlockID == 0)
                             {
                                 //Up face
                                 VertexArray[index] =
@@ -178,16 +178,16 @@ namespace Mork.Local_Map.Sector
 
                         }
 
-                        if (b.blockID != 0 && b.explored)
+                        if (b.BlockID != 0 && b.Explored)
                         {
 
-                            float umovx = (Main.dbobject.Data[b.blockID].metatex_n % Commons.TextureAtlasWCount) * tsper * 2;
-                            float umovy = (Main.dbobject.Data[b.blockID].metatex_n / Commons.TextureAtlasWCount) * tsperh;
+                            float umovx = (Main.dbobject.Data[b.BlockID].metatex_n % Commons.TextureAtlasWCount) * tsper * 2;
+                            float umovy = (Main.dbobject.Data[b.BlockID].metatex_n / Commons.TextureAtlasWCount) * tsperh;
 
                             float smovx = umovx + tsper;
                             float smovy = umovy;
 
-                         if (i == dimS - 1 || n[(i + 1) * dimS * dimH + j * dimH + k].blockID == 0)
+                         if (i == dimS - 1 || N[(i + 1) * dimS * dimH + j * dimH + k].BlockID == 0)
                             {
                                 //left face
                                 VertexArray[index] =
@@ -214,7 +214,7 @@ namespace Mork.Local_Map.Sector
                                 invisible = false;
                             }
 
-                            if (i == 0 || n[(i - 1) * dimS * dimH + j * dimH + k].blockID == 0)
+                            if (i == 0 || N[(i - 1) * dimS * dimH + j * dimH + k].BlockID == 0)
                             {
                                 //right face
                                 VertexArray[index] =
@@ -243,7 +243,7 @@ namespace Mork.Local_Map.Sector
                                 invisible = false;
                             }
 
-                            if (j == 0 || n[i * dimS * dimH + (j - 1) * dimH + k].blockID == 0)
+                            if (j == 0 || N[i * dimS * dimH + (j - 1) * dimH + k].BlockID == 0)
                             {
                                 //Forward face
                                 VertexArray[index] =
@@ -271,7 +271,7 @@ namespace Mork.Local_Map.Sector
                                 invisible = false;
                             }
 
-                            if (j == dimS - 1 || n[i * dimS * dimH + (j + 1) * dimH + k].blockID == 0)
+                            if (j == dimS - 1 || N[i * dimS * dimH + (j + 1) * dimH + k].BlockID == 0)
                             {
                                 //Backward face
                                 VertexArray[index] =
