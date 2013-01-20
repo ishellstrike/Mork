@@ -109,7 +109,6 @@ namespace Mork
 
         public static Vector3 gmap_region = new Vector3();
 
-        //public static MMap mmap = new MMap();
         public static LocalUnits lunits = new LocalUnits();
         public static LocalHeroes lheroes = new LocalHeroes();
 
@@ -123,7 +122,8 @@ namespace Mork
         public static LClickAction lclickaction = LClickAction.Nothing;
         public static int buildingselect;
 
-        public static MouseState mousestate = new MouseState();
+        public static MouseState mousestate;
+        public static MouseState lastmousestate;
 
         public static KeyboardState ks;
         public static KeyboardState lks;
@@ -141,7 +141,7 @@ namespace Mork
         public static DB_LMO dbobject;
         //public static Stores buildings;
         public static GMap gmap;
-        //public static PlayerOrders playerorders = new PlayerOrders();
+        public static PlayerOrders playerorders = new PlayerOrders();
         public static LocalItems localitems = new LocalItems();
         public static ItemStorageSystem iss = new ItemStorageSystem();
         public static Storages globalstorage = new Storages();
@@ -1442,6 +1442,8 @@ namespace Mork
         {
             Vector3 moving = Vector3.Zero;
 
+            mousestate = Mouse.GetState();
+
             KeyboardUpdate(gt, ref moving);
 
             moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
@@ -1477,27 +1479,39 @@ namespace Mork
                 }
             }
 
-            if (Mouse.GetState().ScrollWheelValue > _wheellast)
+            if (mousestate.ScrollWheelValue > _wheellast)
             {
-                cameradistance -= (float)gt.ElapsedGameTime.TotalSeconds * 250;
+                //cameradistance -= (float)gt.ElapsedGameTime.TotalSeconds * 250;
+                if (z_cam + 1 < MapSector.dimH && Generatear.IsCompleted)
+                {
+                    z_cam++;
+                    imap.MoveIntersectMap(new Vector3(0, 0, 1));
+                    smap.RebuildAllMapGeo();
+                }
             }
 
-            if (Mouse.GetState().ScrollWheelValue < _wheellast)
+            if (mousestate.ScrollWheelValue < _wheellast)
             {
-                cameradistance += (float)gt.ElapsedGameTime.TotalSeconds * 250;
+                //cameradistance += (float)gt.ElapsedGameTime.TotalSeconds * 250;
+                if (z_cam > 0 && Generatear.IsCompleted)
+                {
+                    z_cam--;
+                    imap.MoveIntersectMap(new Vector3(0, 0, -1));
+                    smap.RebuildAllMapGeo();
+                }
             }
 
-            if (Mouse.GetState().RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
+            if (mousestate.RightButton == ButtonState.Pressed && ramka_1.X == -1) ramka_1 = Selector;
 
 
-            if (click_R)
+            if (mousestate.RightButton == ButtonState.Released && lastmousestate.RightButton == ButtonState.Pressed)
             {
                 Ramka(gt);
             }
 
             if (!PAUSE)
             {
-                //playerorders.OrdersUpdate(gt, lheroes);
+                playerorders.OrdersUpdate(gt, lheroes);
                 lheroes.Update(gt);
                 lunits.Update(gt);
 
@@ -1536,6 +1550,8 @@ namespace Mork
                 button.Visible = iss.n[(button.Tag as int[])[1]].count != 0;
                 buildingsbuttonslabel[index].Text = iss.n[(button.Tag as int[])[1]].count.ToString();
             }
+
+            lastmousestate = mousestate;
             //buildingsbuttons = new Button[iss.n.Count];
             //for (int i = 0; i < iss.n.Count; i++)
             //{
@@ -1593,39 +1609,39 @@ namespace Mork
                 if (camerarotation < 0) camerarotation += 360;
             }
 
-            if (notfastcam > 0) notfastcam--;
+            //if (notfastcam > 0) notfastcam--;
 
-            if (ks[Keys.OemComma] == KeyState.Down && lks[Keys.OemComma] == KeyState.Up)
-            {
-                if (z_cam < 127)
-                {
-                    z_cam++;
-                    imap.MoveIntersectMap(new Vector3(0, 0, 1));
-                    if (z_cam < 127 - 5)
-                        if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
-                        {
-                            z_cam += 4;
-                            imap.MoveIntersectMap(new Vector3(0, 0, 4));
-                        }
-                    smap.RebuildAllMapGeo();
-                }
-            }
-            if (ks[Keys.OemPeriod] == KeyState.Down && lks[Keys.OemPeriod] == KeyState.Up)
-            {
-                if (z_cam > 0)
-                {
-                    z_cam--;
-                    imap.MoveIntersectMap(new Vector3(0, 0, -1));
-                    if(z_cam > 5)
-                        if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
-                        {
-                            z_cam -= 4;
-                            imap.MoveIntersectMap(new Vector3(0, 0, -4));
-                        }
+            //if (ks[Keys.OemComma] == KeyState.Down && lks[Keys.OemComma] == KeyState.Up)
+            //{
+            //    if (z_cam < 127)
+            //    {
+            //        z_cam++;
+            //        imap.MoveIntersectMap(new Vector3(0, 0, 1));
+            //        if (z_cam < 127 - 5)
+            //            if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
+            //            {
+            //                z_cam += 4;
+            //                imap.MoveIntersectMap(new Vector3(0, 0, 4));
+            //            }
+            //        smap.RebuildAllMapGeo();
+            //    }
+            //}
+            //if (ks[Keys.OemPeriod] == KeyState.Down && lks[Keys.OemPeriod] == KeyState.Up)
+            //{
+            //    if (z_cam > 0)
+            //    {
+            //        z_cam--;
+            //        imap.MoveIntersectMap(new Vector3(0, 0, -1));
+            //        if(z_cam > 5)
+            //            if (ks.IsKeyDown(Keys.LeftShift) || ks.IsKeyDown(Keys.RightShift))
+            //            {
+            //                z_cam -= 4;
+            //                imap.MoveIntersectMap(new Vector3(0, 0, -4));
+            //            }
 
-                    smap.RebuildAllMapGeo();
-                }
-            }
+            //        smap.RebuildAllMapGeo();
+            //    }
+            //}
 
             if (ks[Keys.LeftShift] == KeyState.Down)
             {
@@ -1694,83 +1710,83 @@ namespace Mork
             ramka_3 = new Vector3(Math.Min(Selector.X, ramka_1.X), Math.Min(Selector.Y, ramka_1.Y),
                                   Math.Min(Selector.Z, ramka_1.Z));
 
-            //switch (lclickaction)
-            //{
-            //    case LClickAction.Dig:
-            //        for (int i = (int) ramka_3.X; i <= ramka_2.X; i++)
-            //            for (int j = (int) ramka_3.Y; j <= ramka_2.Y; j++)
-            //                //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-            //            {
-            //                if (MMap.GoodVector3(i, j, (int) ramka_2.Z))
-            //                    playerorders.n.Add(new DestroyOrder {dest = new Vector3(i, j, ramka_2.Z)});
-            //            }
-            //        break;
+            switch (lclickaction)
+            {
+                case LClickAction.Dig:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z))
+                                playerorders.n.Add(new DestroyOrder { dest = new Vector3(i, j, ramka_2.Z) });
+                        }
+                    break;
 
-            //    case LClickAction.Collect:
-            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-            //            {
-            //                List<LocalItem> t = new List<LocalItem>();
-            //                foreach (var a in localitems.n)
-            //                {
-            //                    if (a.pos.X == i && a.pos.Y == j && a.pos.Z == ramka_2.Z) playerorders.n.Add(new CollectOrder { dest = new Vector3(i, j, ramka_2.Z), tocollect = a});
-            //                }
-            //            }
-            //        break;
+                case LClickAction.Collect:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            List<LocalItem> t = new List<LocalItem>();
+                            foreach (var a in localitems.n)
+                            {
+                                if (a.pos.X == i && a.pos.Y == j && a.pos.Z == ramka_2.Z) playerorders.n.Add(new CollectOrder { dest = new Vector3(i, j, ramka_2.Z), tocollect = a });
+                            }
+                        }
+                    break;
 
-            //        case LClickAction.Build:
-            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-            //            {
-            //                if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z+1].blockID != 0 && iss.n[buildingselect].count >= 1)
-            //                    playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect});
-            //            }
-            //        break;
+                case LClickAction.Build:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && smap.At(i, j, (int)ramka_2.Z + 1).BlockID != 0 && iss.n[buildingselect].count >= 1)
+                                playerorders.n.Add(new BuildOrder { dest = new Vector3(i, j, ramka_2.Z), blockID = buildingselect });
+                        }
+                    break;
 
-            //        case LClickAction.Supply:
-            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-            //            {
-            //                if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && mmap.n[i, j, (int)ramka_2.Z].tags.ContainsKey("convert"))
-            //                    playerorders.n.Add(new SupplyOrder { dest = new Vector3(i, j, ramka_2.Z)});
-            //            }
-            //        break;
+                //case LClickAction.Supply:
+                //    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                //        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                //        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                //        {
+                //            if (MMap.GoodVector3(i, j, (int)ramka_2.Z) && smap.At(i, j, (int)ramka_2.Z).tags.ContainsKey("convert"))
+                //                playerorders.n.Add(new SupplyOrder { dest = new Vector3(i, j, ramka_2.Z) });
+                //        }
+                //    break;
 
-            //        case LClickAction.Info:
-            //        if(MMap.GoodVector3(Selector))
-            //            {
-            //                string s = "";
-            //                var t = mmap.GetNodeTagsInText((int) Selector.X, (int) Selector.Y, (int) Selector.Z);
-            //                foreach (var ss in t)
-            //                {
-            //                    s += ss + Environment.NewLine;
-            //                }
-            //                ShowIngameSummary(s);
-            //            }
-            //        break;
+                //case LClickAction.Info:
+                //    if (MMap.GoodVector3(Selector))
+                //    {
+                //        string s = "";
+                //        var t = mmap.GetNodeTagsInText((int)Selector.X, (int)Selector.Y, (int)Selector.Z);
+                //        foreach (var ss in t)
+                //        {
+                //            s += ss + Environment.NewLine;
+                //        }
+                //        ShowIngameSummary(s);
+                //    }
+                //    break;
 
-            //        case LClickAction.Cancel:
-            //        for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
-            //            for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
-            //            //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
-            //            {
-            //                for (int index = 0; index < playerorders.n.Count; index++)
-            //                {
-            //                    var o = playerorders.n[index];
-            //                    if (o.dest.X == i && o.dest.Y == j && ramka_2.Z == o.dest.Z)
-            //                    {
-            //                        if(o.unit_owner != null)
-            //                        o.unit_owner.current_order = new NothingOrder();
-            //                        playerorders.n.Remove(o);
-            //                    }
-            //                }
-            //            }
-            //        break;
+                case LClickAction.Cancel:
+                    for (int i = (int)ramka_3.X; i <= ramka_2.X; i++)
+                        for (int j = (int)ramka_3.Y; j <= ramka_2.Y; j++)
+                        //for (int m = ramka_1.Z; m <= ramka_2.Z; m++)
+                        {
+                            for (int index = 0; index < playerorders.n.Count; index++)
+                            {
+                                var o = playerorders.n[index];
+                                if (o.dest.X == i && o.dest.Y == j && ramka_2.Z == o.dest.Z)
+                                {
+                                    if (o.unit_owner != null)
+                                        o.unit_owner.current_order = new NothingOrder();
+                                    playerorders.n.Remove(o);
+                                }
+                            }
+                        }
+                    break;
 
-            //}
+            }
 
             ramka_1.X = -1;
         }

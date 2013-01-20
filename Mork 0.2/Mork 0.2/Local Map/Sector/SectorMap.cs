@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mork.Bad_Database;
 using Mork.Graphics.MapEngine;
+using Mork.Local_Map.Dynamic.Actions;
 using Mork.Local_Map.Dynamic.Local_Items;
 
 namespace Mork.Local_Map.Sector
@@ -36,6 +37,7 @@ namespace Mork.Local_Map.Sector
     {
         public const int Sectn = 8;
         public MapSector[] N = new MapSector[Sectn * Sectn];
+
         private readonly GraphicsDevice _gd;
         private readonly Effect _be;
         private BasicEffect _basice;
@@ -58,9 +60,9 @@ namespace Mork.Local_Map.Sector
 
         public void RebuildAllMapGeo()
         {
-            foreach (var a in N)
+            for (int i = 0; i < N.Length; i++)
             {
-                a.builded = false;
+                N[i].builded = false;
             }
         }
 
@@ -381,6 +383,8 @@ namespace Mork.Local_Map.Sector
             }
 
             SubterrainPersonaly(new Vector3(x, y, z));
+
+            N[x / MapSector.dimS * Sectn + y / MapSector.dimS].builded = false;
         }
 
         public void SubterrainPersonaly(Vector3 where)
@@ -857,6 +861,135 @@ namespace Mork.Local_Map.Sector
             RecalcExploredSubterrain();
 
             Main.smap.RebuildAllMapGeo();
+        }
+
+        private int atint(Vector3 ve)
+        {
+            return (int)ve.X * Sectn * MapSector.dimS * MapSector.dimH + (int)ve.Y * MapSector.dimH + (int)ve.Z;
+        }
+
+        public Stack<Vector3> FindPatch(Vector3 loc_ref, Vector3 dest_ref)
+        {
+            Stack<Vector3> final_patch = new Stack<Vector3>();
+
+            int[] lpf = new int[MapSector.dimS * MapSector.dimS * MapSector.dimH * Sectn * Sectn];
+
+            Queue<Vector3> walk1 = new Queue<Vector3>();
+            walk1.Enqueue(loc_ref);
+            lpf[atint(loc_ref)] = 1;
+
+            Vector3 cur;
+            int cur_v = 2;
+            int cur_lpf;
+
+            while (walk1.Count > 0)
+            {
+                cur = walk1.Dequeue();
+                cur_lpf = atint(cur);
+                cur_v = lpf[cur_lpf];
+
+                if (cur == dest_ref) break;
+
+                if ((cur + Vector3.Left).X >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Left))
+                {
+                    lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
+                    walk1.Enqueue(cur + Vector3.Left);
+                }
+
+                if ((cur + Vector3.Right).X < Sectn * MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Right))
+                {
+                    lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
+                    walk1.Enqueue(cur + Vector3.Right);
+                }
+
+                if ((cur + Vector3.Down).Y >= 0 && lpf[cur_lpf - MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Down))
+                {
+                    lpf[cur_lpf - MapSector.dimH] = cur_v + 1;
+                    walk1.Enqueue(cur + Vector3.Down);
+                }
+
+                if ((cur + Vector3.Up).Y < Sectn * MapSector.dimS && lpf[cur_lpf + MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Up))
+                {
+                    lpf[cur_lpf + MapSector.dimH] = cur_v + 1;
+                    walk1.Enqueue(cur + Vector3.Up);
+                }
+
+                if ((cur + Vector3.Forward).Z >= 0 && lpf[cur_lpf - 1] == 0 && IsWalkable(cur + Vector3.Forward))
+                {
+                    lpf[cur_lpf - 1] = cur_v + 1;
+                    walk1.Enqueue(cur + Vector3.Forward);
+                }
+
+                if ((cur + Vector3.Backward).Z < MapSector.dimH && lpf[cur_lpf + 1] == 0 && IsWalkable(cur + Vector3.Backward))
+                {
+                    lpf[cur_lpf + 1] = cur_v + 1;
+                    walk1.Enqueue(cur + Vector3.Backward);
+                }
+            }
+
+            final_patch.Push(dest_ref);
+            cur = dest_ref;
+
+            int max = cur_v;
+
+            for (int i = 0; i <= max; i++)
+            {
+                cur_lpf = atint(cur);
+                cur_v = lpf[cur_lpf];
+
+                if (cur.X - 1 >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] < cur_v && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] != 0)
+                {
+                    cur.X--;
+                    final_patch.Push(cur);
+                }
+                else
+                    if (cur.X + 1 < MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] < cur_v && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] != 0)
+                    {
+                        cur.X++;
+                        final_patch.Push(cur);
+                    }
+                    else
+                        if (cur.Y - 1 >= 0 && lpf[cur_lpf - MapSector.dimH] < cur_v && lpf[cur_lpf - MapSector.dimH]!=0)
+                        {
+                            cur.Y--;
+                            final_patch.Push(cur);
+                        }
+                        else
+                            if (cur.Y + 1 < MapSector.dimS && lpf[cur_lpf + MapSector.dimH] < cur_v && lpf[cur_lpf + MapSector.dimH]!=0)
+                            {
+                                cur.Y++;
+                                final_patch.Push(cur);
+                            }
+                            else
+                                if (cur.Z - 1 >= 0 && lpf[cur_lpf - 1] < cur_v && lpf[cur_lpf - 1]!=0)
+                                {
+                                    cur.Z--;
+                                    final_patch.Push(cur);
+                                }
+                                else
+                                    if (cur.Z + 1 < MapSector.dimH && lpf[cur_lpf + 1] < cur_v && lpf[cur_lpf + 1]!=0)
+                                    {
+                                        cur.Z++;
+                                        final_patch.Push(cur);
+                                    }
+            }
+
+            return final_patch;
+        }
+
+        public bool IsWalkable(int p0, int p1, int p2)
+        {
+            return At(p0, p1, p2).BlockID == 0;
+        }
+
+        public bool IsWalkable(Vector3 ve)
+        {
+            return At(ve).BlockID == 0;
+        }
+
+        public void SetBlock(Vector3 dest, int blockId)
+        {
+            At(dest).BlockID = blockId;
         }
     }
 }

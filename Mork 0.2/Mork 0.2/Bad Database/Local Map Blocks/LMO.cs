@@ -15,6 +15,8 @@ namespace Mork
 
         public bool Transparent;
 
+        public bool NotBlock;
+
         public string Name = "";
 
         public int MaxHp = 10;

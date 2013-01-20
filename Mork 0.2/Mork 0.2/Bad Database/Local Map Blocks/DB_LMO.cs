@@ -38,6 +38,8 @@ namespace Mork
                 Data.Add(lmo.Key, lmo.Value);
             }
 
+            Data[0].NotBlock = true;
+
             int a = dir.Length;
 
             //Data.Add(0, new LMO(1, true, "", "", "", ""));
