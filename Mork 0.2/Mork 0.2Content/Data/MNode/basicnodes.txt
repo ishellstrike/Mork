@@ -5,7 +5,7 @@ name="tree"
 name="birch"
 max_hp=100
 
-~mnode,666,1
+~mnode,666,70
 name="error block"
 
 ~mnode,0,0

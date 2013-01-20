@@ -1514,11 +1514,17 @@ namespace Mork
             if (MMap.GoodVector3(Selector))
             {
                 ingameUIpartLeftlistbox2.Items.Add("hp = " +
-                                                    smap.At(Selector.X, Selector.Y, Selector.Z).Health);
+                                                    smap.At(Selector).Health);
                 ingameUIpartLeftlistbox2.Items.Add("explored = " +
-                                                    smap.At(Selector.X, Selector.Y, Selector.Z).Explored);
+                                                    smap.At(Selector).Explored);
                 ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
-                                                    smap.At(Selector.X,Selector.Y, Selector.Z).Subterrain);
+                                                    smap.At(Selector).Subterrain);
+                ingameUIpartLeftlistbox2.Items.Add("id = " +
+                                                    smap.At(Selector).BlockID);
+                ingameUIpartLeftlistbox2.Items.Add("mtex = " +
+                                                    dbobject.Data[smap.At(Selector).BlockID].metatex_n);
+                ingameUIpartLeftlistbox2.Items.Add("name = " +
+                                                    dbobject.Data[smap.At(Selector).BlockID].Name);
             }
             //if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
 

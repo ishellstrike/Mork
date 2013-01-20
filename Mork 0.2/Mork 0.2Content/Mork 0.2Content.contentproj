@@ -322,13 +322,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\tileStrip.png">
-      <Name>tileStrip</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\BlocktexAtlas.png">
       <Name>BlocktexAtlas</Name>
       <Importer>TextureImporter</Importer>
