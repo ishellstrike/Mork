@@ -45,5 +45,6 @@ Content\Skins\Default.skin
 Content\Skins\Extended.skin
 Content\Skins\Green.skin
 Content\Data\MNode\buildings.txt
-Content\Data\base.txt
 Content\Data\MNode\basicnodes.txt
+Content\Data\base_generation.txt
+Content\Data\base_mnode.txt

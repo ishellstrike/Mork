@@ -335,12 +335,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\base_generation.txt">
+    <None Include="Data\base_generation.txt">
       <Name>base_generation</Name>
-    </Compile>
-    <Compile Include="Data\base_mnode.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\base_mnode.txt">
       <Name>base_mnode</Name>
-    </Compile>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
