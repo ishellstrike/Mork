@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -863,132 +864,153 @@ namespace Mork.Local_Map.Sector
             Main.smap.RebuildAllMapGeo();
         }
 
-        private int atint(Vector3 ve)
+        private int Atint(Vector3 ve)
         {
             return (int)ve.X * Sectn * MapSector.dimS * MapSector.dimH + (int)ve.Y * MapSector.dimH + (int)ve.Z;
         }
 
-        public Stack<Vector3> FindPatch(Vector3 loc_ref, Vector3 dest_ref)
+        private int Atint(int x, int y, int z)
         {
-            Stack<Vector3> final_patch = new Stack<Vector3>();
+            return (int)x * Sectn * MapSector.dimS * MapSector.dimH + y * MapSector.dimH + z;
+        }
 
-            int[] lpf = new int[MapSector.dimS * MapSector.dimS * MapSector.dimH * Sectn * Sectn];
+        const int n = 100;
+        private int k = 1;
 
-            Queue<Vector3> walk1 = new Queue<Vector3>();
-            walk1.Enqueue(loc_ref);
-            lpf[atint(loc_ref)] = 1;
+        private float GetHeuristicCost(PFNode cur, PFNode start, PFNode dest)
+        {
+            //float h = 0;
 
-            Vector3 cur;
-            int cur_v = 2;
-            int cur_lpf;
+            //var ax = Math.Abs(cur.X - dest.X);
+            //var ay = Math.Abs(cur.Y - dest.Y);
+            //var az = Math.Abs(cur.Z - dest.Z);
 
-            int dest_lpf = atint(dest_ref);
+            //if (ax > ay && ax > az) { h = ax * n; }
+            //else if (ay > az) { h = ay * n; }
+            //else { h = az * n; }
 
-            Vector3 ve1, ve2, ve3, ve4, ve5, ve6;
+            //var cross = Math.Abs((cur.X - dest.X) * (cur.Y - start.Y) - (cur.Y - dest.Y) * (cur.X - start.X));
+            //return h + cross * k;
+            return (float)Math.Abs(cur.X - dest.X) + Math.Abs(cur.Z - dest.Z); //+ Math.Abs(cur.Z - dest.Z);
+           // return (float)Math.Sqrt((cur.X - dest.X) * (cur.X - dest.X) + (cur.Y - dest.Y) * (cur.Y - dest.Y) + (cur.Z - dest.Z) * (cur.Z - dest.Z));
+        }
 
-            while (walk1.Count > 0 && lpf[dest_lpf] == 0)
+        private float dist_between(PFNode a, PFNode b)
+        {
+            return (float) Math.Sqrt((a.X - b.X)*(a.X - b.X) + (a.Y - b.Y)*(a.Y - b.Y) + (a.Z - b.Z)*(a.Z - b.Z));
+        }
+
+        public Stack<Vector3> ConstPatch(PFNode loc, PFNode dest)
+        {
+            Stack<Vector3> path_map = new Stack<Vector3>();
+             var current_node = dest; // поиск начинается от финиша
+             while (current_node != null)
+             {
+                 path_map.Push(new Vector3(current_node.X, current_node.Y, current_node.Z)); // Добавить вершину в карту
+                 current_node = current_node.CameFrom;
+             }
+
+            return path_map;
+        }
+
+        public Stack<Vector3> FindPatch(Vector3 loc, Vector3 dest)
+        {
+            var destnode = new PFNode(dest);
+            var locnode = new PFNode(loc);
+
+            bool[] closed = new bool[Sectn*Sectn*MapSector.dimS*MapSector.dimS*MapSector.dimH];
+            var openset = new List<PFNode>();
+
+            locnode.f = GetHeuristicCost(locnode, locnode, destnode);
+            locnode.h = locnode.f;
+
+            openset.Add(locnode);
+            
+
+            var patch_map = new Stack<Vector3>();
+
+            while (openset.Count > 0)
             {
-                cur = walk1.Dequeue();
-                cur_lpf = atint(cur);
-                cur_v = lpf[cur_lpf];
+                openset.Sort();
+                PFNode x = openset[0];
 
-                ve1 = cur + Vector3.Left;
-                if (ve1.X >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[
-                    (int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)ve1.Z].BlockID == 0)
+                if (x.X == destnode.X && x.Y == destnode.Y)// && x.Z == destnode.Z
                 {
-                    lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve1);
+                    Main.AddToLog((openset.Count).ToString());
+                    return ConstPatch(locnode, x);
                 }
 
-                ve2 = cur + Vector3.Right;
-                if (ve2.X < Sectn * MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)ve2.X / MapSector.dimS * Sectn + (int)ve2.Y / MapSector.dimS].N[
-                    (int)ve2.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve2.Y % MapSector.dimS * MapSector.dimH + (int)ve2.Z].BlockID == 0)
+                openset.Remove(x);
+                closed[Atint(x.X, x.Y, x.Z)] = true;
+
+                foreach (PFNode t in neighbor_nodes(x))
                 {
-                    lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve2);
-                }
+                    if (closed[Atint(t.X, t.Y, t.Z)]) continue;
 
-                ve3 = cur + Vector3.Down;
-                if (ve3.Y >= 0 && lpf[cur_lpf - MapSector.dimH] == 0 && N[(int)ve3.X / MapSector.dimS * Sectn + (int)ve3.Y / MapSector.dimS].N[
-                    (int)ve3.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve3.Y % MapSector.dimS * MapSector.dimH + (int)ve3.Z].BlockID == 0)
-                {
-                    lpf[cur_lpf - MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve3);
-                }
+                    var tentative_g_score = x.g + 1;
+                    bool tentative_is_better = false;
 
-                ve4 = cur + Vector3.Up;
-                if (ve4.Y < Sectn * MapSector.dimS && lpf[cur_lpf + MapSector.dimH] == 0 && N[(int)ve4.X / MapSector.dimS * Sectn + (int)ve4.Y / MapSector.dimS].N[
-                    (int)ve4.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve4.Y % MapSector.dimS * MapSector.dimH + (int)ve4.Z].BlockID == 0)
-                {
-                    lpf[cur_lpf + MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve4);
-                }
-
-                ve5 = cur + Vector3.Forward;
-                if (ve5.Z >= 0 && lpf[cur_lpf - 1] == 0 && N[(int)ve5.X / MapSector.dimS * Sectn + (int)ve5.Y / MapSector.dimS].N[
-                    (int)ve5.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve5.Y % MapSector.dimS * MapSector.dimH + (int)ve5.Z].BlockID == 0)
-                {
-                    lpf[cur_lpf - 1] = cur_v + 1;
-                    walk1.Enqueue(ve5);
-                }
-
-                ve6 = cur + Vector3.Backward;
-                if (ve6.Z < MapSector.dimH && lpf[cur_lpf + 1] == 0 && N[(int)ve6.X / MapSector.dimS * Sectn + (int)ve6.Y / MapSector.dimS].N[
-                    (int)ve6.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve6.Y % MapSector.dimS * MapSector.dimH + (int)ve6.Z].BlockID == 0)
-                {
-                    lpf[cur_lpf + 1] = cur_v + 1;
-                    walk1.Enqueue(ve6);
-                }
-            }
-
-            final_patch.Push(dest_ref);
-            cur = dest_ref;
-
-            int max = cur_v;
-
-            for (int i = 0; i <= max; i++)
-            {
-                cur_lpf = atint(cur);
-                cur_v = lpf[cur_lpf];
-
-                if (cur.X - 1 >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] < cur_v && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] != 0)
-                {
-                    cur.X--;
-                    final_patch.Push(cur);
-                }
-                else
-                    if (cur.X + 1 < MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] < cur_v && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] != 0)
+                    if (!openset.Contains(t))
                     {
-                        cur.X++;
-                        final_patch.Push(cur);
+                        tentative_is_better = true;
+                        openset.Add(t);
                     }
                     else
-                        if (cur.Y - 1 >= 0 && lpf[cur_lpf - MapSector.dimH] < cur_v && lpf[cur_lpf - MapSector.dimH]!=0)
-                        {
-                            cur.Y--;
-                            final_patch.Push(cur);
-                        }
-                        else
-                            if (cur.Y + 1 < MapSector.dimS && lpf[cur_lpf + MapSector.dimH] < cur_v && lpf[cur_lpf + MapSector.dimH]!=0)
-                            {
-                                cur.Y++;
-                                final_patch.Push(cur);
-                            }
-                            else
-                                if (cur.Z - 1 >= 0 && lpf[cur_lpf - 1] < cur_v && lpf[cur_lpf - 1]!=0)
-                                {
-                                    cur.Z--;
-                                    final_patch.Push(cur);
-                                }
-                                else
-                                    if (cur.Z + 1 < MapSector.dimH && lpf[cur_lpf + 1] < cur_v && lpf[cur_lpf + 1]!=0)
-                                    {
-                                        cur.Z++;
-                                        final_patch.Push(cur);
-                                    }
+                    {
+                        if (tentative_g_score < t.g) {  tentative_is_better = true; }
+                    }
+
+                    if (tentative_is_better)
+                    {
+                        t.CameFrom = x;
+                        t.g = tentative_g_score;
+                        t.h = GetHeuristicCost(t, locnode, destnode);
+                        t.f = t.g + t.h;
+                    }
+                }
+
             }
 
-            return final_patch;
+            Main.AddToLog((openset.Count).ToString());
+
+            return patch_map;
+        }
+
+        private List<PFNode> neighbor_nodes(PFNode k)
+        {
+            List<PFNode> nei = new List<PFNode>();
+
+            if(k.X > 0)
+            {
+                nei.Add(new PFNode(k.X - 1, k.Y, k.Z));
+            }
+            if (k.Y > 0)
+            {
+                nei.Add(new PFNode(k.X, k.Y - 1, k.Z));
+            }
+            //if (k.Z > 0)
+            //{
+            //    nei.Add(new PFNode(k.X, k.Y, k.Z - 1));
+            //}
+            if (k.X + 1 < Sectn*MapSector.dimS)
+            {
+                nei.Add(new PFNode(k.X + 1, k.Y, k.Z));
+            }
+            if (k.Y + 1 < Sectn * MapSector.dimS)
+            {
+                nei.Add(new PFNode(k.X, k.Y + 1, k.Z));
+            }
+            //if (k.Z + 1 < MapSector.dimH)
+            //{
+            //    nei.Add(new PFNode(k.X, k.Y, k.Z + 1));
+            //}
+
+            return nei;
+        }
+
+        public void SetBlock(Vector3 dest, int blockId)
+        {
+            At(dest).BlockID = blockId;
         }
 
         public bool IsWalkable(int p0, int p1, int p2)
@@ -996,16 +1018,107 @@ namespace Mork.Local_Map.Sector
             return N[p0/MapSector.dimS*Sectn + p1/MapSector.dimS].N[
                 p0%MapSector.dimS*MapSector.dimS*MapSector.dimH + p1%MapSector.dimS*MapSector.dimH + p2].BlockID == 0;
         }
+    }
 
-        public bool IsWalkable(Vector3 ve1)
+    public class NavigateNode : IComparable<NavigateNode>
+    {
+        public enum StateEnum
         {
-            return N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[
-                (int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)ve1.Z].BlockID == 0;
+            Wall,
+            Navigable,
+            Path,
+            Goal,
+            Start
+        };
+
+        public StateEnum State;
+
+        public double DirectCost;
+
+        public double HeuristicCost;
+
+        public double TotalCost;
+
+        public int X { get; private set; }
+
+        public int Y { get; private set; }
+
+        public int Z { get; private set; }
+
+        public NavigateNode Parent;
+        
+
+        public NavigateNode(int x, int y, int z, StateEnum state = StateEnum.Navigable)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            State = state;
+            DirectCost = 0.0;
+            HeuristicCost = 0.0;
+            TotalCost = 0.0;
+            Parent = null;
         }
 
-        public void SetBlock(Vector3 dest, int blockId)
+        public bool IsSameLocation(NavigateNode n)
         {
-            At(dest).BlockID = blockId;
+            return (X == n.X && Y == n.Y && Z == n.Z);
+        }
+
+        public int CompareTo(NavigateNode n)
+        {
+            return TotalCost < n.TotalCost ? -1 : (TotalCost > n.TotalCost ? 1 : 0);
+        }
+    }
+
+    public class PFNodeComparer : IComparer<PFNode>
+    {
+        public int Compare(PFNode x, PFNode y)
+        {
+            if (x.X == y.X && x.Y == y.Y && x.Z == y.Z) return 0;
+            if (x.f > y.f) return -1;
+            return 1;
+        }
+    }
+
+    public class PFNode : IEquatable<PFNode>, IComparable<PFNode>
+    {
+        public int X, Y, Z;
+        public PFNode CameFrom;
+        public float g, h, f;
+        public PFNode(int x, int y, int z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public PFNode(Vector3 ve)
+        {
+            X = (int)ve.X;
+            Y = (int)ve.Y;
+            Z = (int)ve.Z;
+        }
+
+        public PFNode(float ff)
+        {
+            f = ff;
+        }
+
+        public int CompareTo(PFNode obj)
+        {
+            if (obj == null)
+                return 1;
+
+            return f.CompareTo(obj.f);
+        }
+
+        public bool Equals(PFNode other)
+        {
+            if (other == null)
+                return false;
+
+            return X == other.X && Y == other.Y && Z == other.Z;
         }
     }
 }
