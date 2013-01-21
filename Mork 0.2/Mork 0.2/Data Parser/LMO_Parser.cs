@@ -41,7 +41,7 @@ namespace Mork.Data_Parser
                         if (lines[i].StartsWith("name="))
                         {
                             string extractedstring = stringextractor.Match(lines[i]).ToString();
-                            cur.Value.Name = extractedstring.Substring(1, extractedstring.Length - 1);
+                            cur.Value.Name = extractedstring.Substring(1, extractedstring.Length - 2);
                         }
                         if (lines[i].StartsWith("transparent"))
                         {

@@ -1182,6 +1182,7 @@ namespace Mork
             MousePos.Y = Mouse.GetState().Y;
 
             mousestate = Mouse.GetState();
+            ks = Keyboard.GetState();
 
             mousepos.X = MousePos.X;
             mousepos.Y = MousePos.Y;
@@ -1230,6 +1231,9 @@ namespace Mork
 
             if(debug)
             FrameRateCounter.Update(gameTime);
+
+            lks = ks;
+            lastmousestate = mousestate;
         }
 
         private static void GenerationScreen()
@@ -1400,13 +1404,15 @@ namespace Mork
         {
             smap.DrawAllMap(gameTime, Camera);
 
-            sb.Begin();
-
-            for (int i = 0; i <= Textlogmax - 1; i++) // отрисова лога
+            if (debug)
             {
-                spriteBatch.DrawString(Font1, textlog[i], new Vector2(8, resy - 192 + i*15), Color.White);
+                sb.Begin();
+                for (int i = 0; i <= Textlogmax - 1; i++) // отрисова лога
+                {
+                    spriteBatch.DrawString(Font1, textlog[i], new Vector2(8, resy - 192 + i*15), Color.White);
+                }
+                sb.End();
             }
-            sb.End();
         }
 
         #endregion
@@ -1417,11 +1423,13 @@ namespace Mork
         /// <param name="map"></param>
         public static void PrepairMapDeleteWrongIDs(ref SectorMap map)
         {
+            int a;
             for (int i = 0; i < map.N.Length; i++)
             {
                 for (int j = 0; j < map.N[i].N.Length; j++)
                 {
-                    if (!dbobject.Data.ContainsKey(map.N[i].N[j].BlockID)) map.N[i].N[j].BlockID = KnownIDs.error;
+                    a = map.N[i].N[j].BlockID;
+                    if (!dbobject.Data.ContainsKey(a)) map.N[i].N[j] = new MError(a);
                 }
             }
         }
@@ -1441,8 +1449,6 @@ namespace Mork
         private void GameUpdate(GameTime gt)
         {
             Vector3 moving = Vector3.Zero;
-
-            mousestate = Mouse.GetState();
 
             KeyboardUpdate(gt, ref moving);
 
@@ -1527,18 +1533,23 @@ namespace Mork
 
             if (MMap.GoodVector3(Selector))
             {
+                var selected = smap.At(Selector);
+
                 ingameUIpartLeftlistbox2.Items.Add("hp = " +
-                                                    smap.At(Selector).Health);
+                                                    selected.Health);
                 ingameUIpartLeftlistbox2.Items.Add("explored = " +
-                                                    smap.At(Selector).Explored);
+                                                    selected.Explored);
                 ingameUIpartLeftlistbox2.Items.Add("subterrain = " +
-                                                    smap.At(Selector).Subterrain);
+                                                    selected.Subterrain);
                 ingameUIpartLeftlistbox2.Items.Add("id = " +
-                                                    smap.At(Selector).BlockID);
+                                                    selected.BlockID);
                 ingameUIpartLeftlistbox2.Items.Add("mtex = " +
-                                                    dbobject.Data[smap.At(Selector).BlockID].metatex_n);
+                                                    dbobject.Data[selected.BlockID].metatex_n);
                 ingameUIpartLeftlistbox2.Items.Add("name = " +
-                                                    dbobject.Data[smap.At(Selector).BlockID].Name);
+                                                    dbobject.Data[selected.BlockID].Name);
+                if (selected is MError)
+                    ingameUIpartLeftlistbox2.Items.Add("error id = " +
+                                                    ((MError)selected).preBlockID);
             }
             //if (MMap.GoodVector3(Selector)) ingameUIpartLeftlistbox2.Items.AddRange(smap.GetNodeTagsInText(Selector));
 
@@ -1550,8 +1561,6 @@ namespace Mork
                 button.Visible = iss.n[(button.Tag as int[])[1]].count != 0;
                 buildingsbuttonslabel[index].Text = iss.n[(button.Tag as int[])[1]].count.ToString();
             }
-
-            lastmousestate = mousestate;
             //buildingsbuttons = new Button[iss.n.Count];
             //for (int i = 0; i < iss.n.Count; i++)
             //{
@@ -1577,9 +1586,6 @@ namespace Mork
 
         private void KeyboardUpdate(GameTime gt, ref Vector3 moving)
         {
-            lks = ks;
-            ks = Keyboard.GetState();
-
             if (ks[Keys.W] == KeyState.Down)
             {
                 moving += Vector3.Up * (float)gt.ElapsedGameTime.TotalSeconds * 8;

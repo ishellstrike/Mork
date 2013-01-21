@@ -19,8 +19,17 @@ transparent
 ~mnode,12345,0
 name="generation blank"
 
+
+
 ~mnode,10,32
 name="dirt"
+
+~mnode,34,8
+name="Trefoil"
+
+~mnode,37,21
+name="sand"
+
 
 ~mnode,22,20
 name="argilit"
@@ -74,3 +83,6 @@ name="orthoclase"
 
 ~mnode,825,5
 name="microcline"
+
+~mnode,828,5
+name="clay"

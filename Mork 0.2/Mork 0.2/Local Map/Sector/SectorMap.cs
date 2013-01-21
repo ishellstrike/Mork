@@ -882,48 +882,62 @@ namespace Mork.Local_Map.Sector
             int cur_v = 2;
             int cur_lpf;
 
-            while (walk1.Count > 0)
+            int dest_lpf = atint(dest_ref);
+
+            Vector3 ve1, ve2, ve3, ve4, ve5, ve6;
+
+            while (walk1.Count > 0 && lpf[dest_lpf] == 0)
             {
                 cur = walk1.Dequeue();
                 cur_lpf = atint(cur);
                 cur_v = lpf[cur_lpf];
 
-                if (cur == dest_ref) break;
-
-                if ((cur + Vector3.Left).X >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Left))
+                ve1 = cur + Vector3.Left;
+                if (ve1.X >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[
+                    (int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)ve1.Z].BlockID == 0)
                 {
                     lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(cur + Vector3.Left);
+                    walk1.Enqueue(ve1);
                 }
 
-                if ((cur + Vector3.Right).X < Sectn * MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Right))
+                ve2 = cur + Vector3.Right;
+                if (ve2.X < Sectn * MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)ve2.X / MapSector.dimS * Sectn + (int)ve2.Y / MapSector.dimS].N[
+                    (int)ve2.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve2.Y % MapSector.dimS * MapSector.dimH + (int)ve2.Z].BlockID == 0)
                 {
                     lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(cur + Vector3.Right);
+                    walk1.Enqueue(ve2);
                 }
 
-                if ((cur + Vector3.Down).Y >= 0 && lpf[cur_lpf - MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Down))
+                ve3 = cur + Vector3.Down;
+                if (ve3.Y >= 0 && lpf[cur_lpf - MapSector.dimH] == 0 && N[(int)ve3.X / MapSector.dimS * Sectn + (int)ve3.Y / MapSector.dimS].N[
+                    (int)ve3.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve3.Y % MapSector.dimS * MapSector.dimH + (int)ve3.Z].BlockID == 0)
                 {
                     lpf[cur_lpf - MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(cur + Vector3.Down);
+                    walk1.Enqueue(ve3);
                 }
 
-                if ((cur + Vector3.Up).Y < Sectn * MapSector.dimS && lpf[cur_lpf + MapSector.dimH] == 0 && IsWalkable(cur + Vector3.Up))
+                ve4 = cur + Vector3.Up;
+                if (ve4.Y < Sectn * MapSector.dimS && lpf[cur_lpf + MapSector.dimH] == 0 && N[(int)ve4.X / MapSector.dimS * Sectn + (int)ve4.Y / MapSector.dimS].N[
+                    (int)ve4.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve4.Y % MapSector.dimS * MapSector.dimH + (int)ve4.Z].BlockID == 0)
                 {
                     lpf[cur_lpf + MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(cur + Vector3.Up);
+                    walk1.Enqueue(ve4);
                 }
 
-                if ((cur + Vector3.Forward).Z >= 0 && lpf[cur_lpf - 1] == 0 && IsWalkable(cur + Vector3.Forward))
+                ve5 = cur + Vector3.Forward;
+                if (ve5.Z >= 0 && lpf[cur_lpf - 1] == 0 && N[(int)ve5.X / MapSector.dimS * Sectn + (int)ve5.Y / MapSector.dimS].N[
+                    (int)ve5.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve5.Y % MapSector.dimS * MapSector.dimH + (int)ve5.Z].BlockID == 0)
                 {
                     lpf[cur_lpf - 1] = cur_v + 1;
-                    walk1.Enqueue(cur + Vector3.Forward);
+                    walk1.Enqueue(ve5);
                 }
 
-                if ((cur + Vector3.Backward).Z < MapSector.dimH && lpf[cur_lpf + 1] == 0 && IsWalkable(cur + Vector3.Backward))
+                ve6 = cur + Vector3.Backward;
+                if (ve6.Z < MapSector.dimH && lpf[cur_lpf + 1] == 0 && N[(int)ve6.X / MapSector.dimS * Sectn + (int)ve6.Y / MapSector.dimS].N[
+                    (int)ve6.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve6.Y % MapSector.dimS * MapSector.dimH + (int)ve6.Z].BlockID == 0)
                 {
                     lpf[cur_lpf + 1] = cur_v + 1;
-                    walk1.Enqueue(cur + Vector3.Backward);
+                    walk1.Enqueue(ve6);
                 }
             }
 
@@ -979,12 +993,14 @@ namespace Mork.Local_Map.Sector
 
         public bool IsWalkable(int p0, int p1, int p2)
         {
-            return At(p0, p1, p2).BlockID == 0;
+            return N[p0/MapSector.dimS*Sectn + p1/MapSector.dimS].N[
+                p0%MapSector.dimS*MapSector.dimS*MapSector.dimH + p1%MapSector.dimS*MapSector.dimH + p2].BlockID == 0;
         }
 
-        public bool IsWalkable(Vector3 ve)
+        public bool IsWalkable(Vector3 ve1)
         {
-            return At(ve).BlockID == 0;
+            return N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[
+                (int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)ve1.Z].BlockID == 0;
         }
 
         public void SetBlock(Vector3 dest, int blockId)

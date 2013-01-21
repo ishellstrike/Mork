@@ -22,4 +22,15 @@ namespace Mork.Local_Map
     {
         
     }
+
+    public class MError : MNode
+    {
+        public int preBlockID;
+
+        public MError(int id)
+        {
+            preBlockID = id;
+            BlockID = 666;
+        }
+    }
 }
