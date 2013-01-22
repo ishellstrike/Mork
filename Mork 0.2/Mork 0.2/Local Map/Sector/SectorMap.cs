@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Mork.Bad_Database;
 using Mork.Graphics.MapEngine;
 using Mork.Local_Map.Dynamic.Actions;
@@ -90,7 +91,7 @@ namespace Mork.Local_Map.Sector
         }
 
         List<VertexPositionColor> vl = new List<VertexPositionColor>();
-        VertexPositionColor[] vl1 = new VertexPositionColor[30];
+        List<VertexPositionColor> vl1 = new List<VertexPositionColor>();
         public void DrawAllMap(GameTime gt, Camera cam)
         {
             _passn++;
@@ -145,145 +146,39 @@ namespace Mork.Local_Map.Sector
             _gd.BlendState = BlendState.AlphaBlend;
 
 
-            Color greentop = At(Main.Selector).BlockID == 0 ? Color.Red : Color.GreenYellow;
+            Color greentop = At(Main.Selector).BlockID == 0 ? At(Main.Selector.X, Main.Selector.Y, Main.Selector.Z + 1).BlockID != 0 ? Color.Yellow : Color.Red : Color.Green;
             greentop.A = 128;
             Color greencube = greentop * 0.5f;
+
+            Color selecttop = Color.LightGray;
+            selecttop.A = 128;
+            Color selectcube = selecttop*0.5f;
             
+            vl1.Clear();
+
+            var ramka_3 = new Vector3();
+            if (Mouse.GetState().RightButton == ButtonState.Pressed)
+            {
+                Main.ramka_2.X = Math.Max(Main.Selector.X, Main.ramka_1.X);
+                Main.ramka_2.Y = Math.Max(Main.Selector.Y, Main.ramka_1.Y);
+                Main.ramka_2.Z = Math.Max(Main.Selector.Z, Main.ramka_1.Z);
+
+                ramka_3 = new Vector3(Math.Min(Main.Selector.X, Main.ramka_1.X), Math.Min(Main.Selector.Y, Main.ramka_1.Y),
+                                      Math.Min(Main.Selector.Z, Main.ramka_1.Z));
+            }
 
             foreach (var pass in _basice2.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                vl1[0] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greentop));
-                vl1[1] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greentop));
-                vl1[2] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greentop));
-                vl1[3] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greentop));
-                vl1[4] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greentop));
-                vl1[5] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greentop));
-
-                vl1[6] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[7] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[8] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[9] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[10] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[11] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-
-                vl1[12] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[13] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[14] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[15] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[16] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[17] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-
-                vl1[18] =
-                (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[19] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[20] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[21] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[22] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[23] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y - 0.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-
-
-                vl1[24] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[25] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
-                vl1[26] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[27] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X - 0.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[28] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z - 128.01f),
-                        greencube));
-                vl1[29] =
-                    (new VertexPositionColor(
-                        new Vector3(Main.Selector.X + 1.01f, Main.Selector.Y + 1.01f, -Main.Selector.Z + 0.01f),
-                        greencube));
+                AddCubeverts(Main.Selector, new Vector3(Main.Selector.X + 1, Main.Selector.Y + 1, Main.Selector.Z+127), greencube, greentop, 0.02f);
+                if (Mouse.GetState().RightButton == ButtonState.Pressed)
+                AddCubeverts(ramka_3, new Vector3(Main.ramka_2.X+1, Main.ramka_2.Y+1, Main.ramka_2.Z+1), selectcube, selecttop, 0.01f);
 
                 //VertexBuffer vb1 = new VertexBuffer(gd, typeof (VertexPositionColor), 18, BufferUsage.WriteOnly);
                 //vb1.SetData(vl1,0,18);
 
                 //gd.SetVertexBuffer(vb1);
-                _gd.DrawUserPrimitives(PrimitiveType.TriangleList, vl1, 0, vl1.Count()/3);
+                _gd.DrawUserPrimitives(PrimitiveType.TriangleList, vl1.ToArray(), 0, vl1.Count()/3);
             }
 
 
@@ -352,6 +247,135 @@ namespace Mork.Local_Map.Sector
                     _gd.DrawUserPrimitives(PrimitiveType.LineList, vl.ToArray(), 0, vl.Count/2);
                 }
             }
+        }
+
+        private void AddCubeverts(Vector3 min, Vector3 max, Color greencube, Color greentop, float delta)
+        {
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, min.Y - delta, -min.Z + delta),
+                    greentop));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -min.Z + delta),
+                    greentop));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -min.Z + delta),
+                    greentop));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, max.Y + delta, -min.Z + delta),
+                    greentop));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -min.Z + delta),
+                    greentop));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -min.Z + delta),
+                    greentop));
+
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, max.Y + delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, max.Y + delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, max.Y + delta, -min.Z + delta),
+                    greencube));
+
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, min.Y - delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, min.Y - delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, min.Y - delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -min.Z + delta),
+                    greencube));
+
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, min.Y - delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, min.Y - delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, min.Y - delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, min.Y - delta, -min.Z + delta),
+                    greencube));
+
+
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, max.Y + delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -min.Z + delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(min.X - delta, max.Y + delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, max.Y + delta, -max.Z - delta),
+                    greencube));
+            vl1.Add
+                (new VertexPositionColor(
+                    new Vector3(max.X + delta, max.Y + delta, -min.Z + delta),
+                    greencube));
         }
 
         public void KillBlock(int x, int y, int z)
@@ -889,55 +913,55 @@ namespace Mork.Local_Map.Sector
             while (walk1.Count > 0 && lpf[dest_lpf] == 0)
             {
                 cur = walk1.Dequeue();
-                cur_lpf = atint(cur);
+                cur_lpf = (int)cur.X * Sectn * MapSector.dimS * MapSector.dimH + (int)cur.Y * MapSector.dimH + (int)cur.Z;
                 cur_v = lpf[cur_lpf];
 
-                ve1 = cur + Vector3.Left;
-                if (ve1.X >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[
-                    (int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)ve1.Z].BlockID == 0)
+                //ve1 = cur + Vector3.Left;
+                if (cur.X - 1  >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)(cur.X - 1) / MapSector.dimS * Sectn + (int)cur.Y / MapSector.dimS].N[
+                    (int)(cur.X + 1) % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)cur.Y % MapSector.dimS * MapSector.dimH + (int)cur.Z].BlockID == 0)
                 {
                     lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve1);
+                    walk1.Enqueue(new Vector3(cur.X - 1, cur.Y, cur.Z));
                 }
 
-                ve2 = cur + Vector3.Right;
-                if (ve2.X < Sectn * MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)ve2.X / MapSector.dimS * Sectn + (int)ve2.Y / MapSector.dimS].N[
-                    (int)ve2.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve2.Y % MapSector.dimS * MapSector.dimH + (int)ve2.Z].BlockID == 0)
+                //ve2 = cur + Vector3.Right;
+                if (cur.X + 1 < Sectn * MapSector.dimS && lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] == 0 && N[(int)(cur.X + 1) / MapSector.dimS * Sectn + (int)cur.Y / MapSector.dimS].N[
+                    (int)(cur.X + 1) % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)cur.Y % MapSector.dimS * MapSector.dimH + (int)cur.Z].BlockID == 0)
                 {
                     lpf[cur_lpf + Sectn * MapSector.dimS * MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve2);
+                    walk1.Enqueue(new Vector3(cur.X + 1, cur.Y, cur.Z));
                 }
 
-                ve3 = cur + Vector3.Down;
-                if (ve3.Y >= 0 && lpf[cur_lpf - MapSector.dimH] == 0 && N[(int)ve3.X / MapSector.dimS * Sectn + (int)ve3.Y / MapSector.dimS].N[
-                    (int)ve3.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve3.Y % MapSector.dimS * MapSector.dimH + (int)ve3.Z].BlockID == 0)
+                //ve3 = cur + Vector3.Down;
+                if (cur.Y - 1 >= 0 && lpf[cur_lpf - MapSector.dimH] == 0 && N[(int)cur.X / MapSector.dimS * Sectn + (int)(cur.Y - 1) / MapSector.dimS].N[
+                    (int)cur.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)(cur.Y - 1) % MapSector.dimS * MapSector.dimH + (int)cur.Z].BlockID == 0)
                 {
                     lpf[cur_lpf - MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve3);
+                    walk1.Enqueue(new Vector3(cur.X, cur.Y - 1, cur.Z));
                 }
 
-                ve4 = cur + Vector3.Up;
-                if (ve4.Y < Sectn * MapSector.dimS && lpf[cur_lpf + MapSector.dimH] == 0 && N[(int)ve4.X / MapSector.dimS * Sectn + (int)ve4.Y / MapSector.dimS].N[
-                    (int)ve4.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve4.Y % MapSector.dimS * MapSector.dimH + (int)ve4.Z].BlockID == 0)
+                //ve4 = cur + Vector3.Up;
+                if (cur.Y + 1 < Sectn * MapSector.dimS && lpf[cur_lpf + MapSector.dimH] == 0 && N[(int)cur.X / MapSector.dimS * Sectn + (int)(cur.Y + 1) / MapSector.dimS].N[
+                    (int)cur.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)(cur.Y + 1) % MapSector.dimS * MapSector.dimH + (int)cur.Z].BlockID == 0)
                 {
                     lpf[cur_lpf + MapSector.dimH] = cur_v + 1;
-                    walk1.Enqueue(ve4);
+                    walk1.Enqueue(new Vector3(cur.X, cur.Y + 1, cur.Z));
                 }
 
-                ve5 = cur + Vector3.Forward;
-                if (ve5.Z >= 0 && lpf[cur_lpf - 1] == 0 && N[(int)ve5.X / MapSector.dimS * Sectn + (int)ve5.Y / MapSector.dimS].N[
-                    (int)ve5.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve5.Y % MapSector.dimS * MapSector.dimH + (int)ve5.Z].BlockID == 0)
+                //ve5 = cur + Vector3.Forward;
+                if (cur.Z - 1 >= 0 && lpf[cur_lpf - 1] == 0 && N[(int)cur.X / MapSector.dimS * Sectn + (int)cur.Y / MapSector.dimS].N[
+                    (int)cur.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)cur.Y % MapSector.dimS * MapSector.dimH + (int)cur.Z - 1].BlockID == 0)
                 {
                     lpf[cur_lpf - 1] = cur_v + 1;
-                    walk1.Enqueue(ve5);
+                    walk1.Enqueue(new Vector3(cur.X, cur.Y, cur.Z - 1));
                 }
 
-                ve6 = cur + Vector3.Backward;
-                if (ve6.Z < MapSector.dimH && lpf[cur_lpf + 1] == 0 && N[(int)ve6.X / MapSector.dimS * Sectn + (int)ve6.Y / MapSector.dimS].N[
-                    (int)ve6.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve6.Y % MapSector.dimS * MapSector.dimH + (int)ve6.Z].BlockID == 0)
+                //ve6 = cur + Vector3.Backward;
+                if (cur.Z + 1 < MapSector.dimH && lpf[cur_lpf + 1] == 0 && N[(int)cur.X / MapSector.dimS * Sectn + (int)cur.Y / MapSector.dimS].N[
+                    (int)cur.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)cur.Y % MapSector.dimS * MapSector.dimH + (int)cur.Z + 1].BlockID == 0)
                 {
                     lpf[cur_lpf + 1] = cur_v + 1;
-                    walk1.Enqueue(ve6);
+                    walk1.Enqueue(new Vector3(cur.X, cur.Y, cur.Z + 1));
                 }
             }
 
@@ -948,7 +972,7 @@ namespace Mork.Local_Map.Sector
 
             for (int i = 0; i <= max; i++)
             {
-                cur_lpf = atint(cur);
+                cur_lpf = (int)cur.X * Sectn * MapSector.dimS * MapSector.dimH + (int)cur.Y * MapSector.dimH + (int)cur.Z;
                 cur_v = lpf[cur_lpf];
 
                 if (cur.X - 1 >= 0 && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] < cur_v && lpf[cur_lpf - Sectn * MapSector.dimS * MapSector.dimH] != 0)
@@ -993,14 +1017,16 @@ namespace Mork.Local_Map.Sector
 
         public bool IsWalkable(int p0, int p1, int p2)
         {
-            return N[p0/MapSector.dimS*Sectn + p1/MapSector.dimS].N[
-                p0%MapSector.dimS*MapSector.dimS*MapSector.dimH + p1%MapSector.dimS*MapSector.dimH + p2].BlockID == 0;
+            return N[p0 / MapSector.dimS * Sectn + p1 / MapSector.dimS].N[p0 % MapSector.dimS * MapSector.dimS * MapSector.dimH + p1 % MapSector.dimS * MapSector.dimH + p2].BlockID == 0; /*&& 
+                (N[p0/MapSector.dimS*Sectn + p1/MapSector.dimS].N[p0%MapSector.dimS*MapSector.dimS*MapSector.dimH + p1%MapSector.dimS*MapSector.dimH + p2 + 1].BlockID != 0 || 
+                    N[p0/MapSector.dimS*Sectn + p1/MapSector.dimS].N[p0%MapSector.dimS*MapSector.dimS*MapSector.dimH + p1%MapSector.dimS*MapSector.dimH + p2 + 2].BlockID != 0);*/
         }
 
         public bool IsWalkable(Vector3 ve1)
         {
-            return N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[
-                (int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)ve1.Z].BlockID == 0;
+            return N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[(int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)ve1.Z].BlockID == 0;/* && 
+                (N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[(int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)(ve1.Z + 1)].BlockID != 0 || 
+                    N[(int)ve1.X / MapSector.dimS * Sectn + (int)ve1.Y / MapSector.dimS].N[(int)ve1.X % MapSector.dimS * MapSector.dimS * MapSector.dimH + (int)ve1.Y % MapSector.dimS * MapSector.dimH + (int)(ve1.Z + 2)].BlockID != 0);*/
         }
 
         public void SetBlock(Vector3 dest, int blockId)

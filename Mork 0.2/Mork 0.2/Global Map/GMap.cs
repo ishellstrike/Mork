@@ -108,7 +108,7 @@ namespace Mork
             data.Add(GMapObj.SuhieStepi, new GObj(Main.interface_tex[12], new Color(235, 229, 166), "Сухие степи"));
 
             data.Add(GMapObj.Savanna, new GObj(Main.interface_tex[12], new Color(215, 108, 72), "Пустыни"));
-            data.ElementAt(data.Count - 1).Value.grass.Add(34);
+            data.ElementAt(data.Count - 1).Value.grass.Add(37);
             data.ElementAt(data.Count - 1).Value.under_surf = 37;
             data.ElementAt(data.Count - 1).Value.under_under_surf = 37;
 
@@ -120,12 +120,12 @@ namespace Mork
             data.Add(GMapObj.HighPike, new GObj(Main.interface_tex[14], Color.Gray, "высокий горный пик"));
             data.ElementAt(data.Count - 1).Value.under_surf = 20;
             data.ElementAt(data.Count - 1).Value.under_under_surf = 20;
-            data.ElementAt(data.Count - 1).Value.grass.Add(34);
+            data.ElementAt(data.Count - 1).Value.grass.Add(20);
 
             data.Add(GMapObj.Pike, new GObj(Main.interface_tex[12], Color.Gray, "горный пик"));
             data.ElementAt(data.Count - 1).Value.under_surf = 20;
             data.ElementAt(data.Count - 1).Value.under_under_surf = 20;
-            data.ElementAt(data.Count - 1).Value.grass.Add(34);
+            data.ElementAt(data.Count - 1).Value.grass.Add(20);
 
             for (int i = 0; i <= GMap.size - 1; i++)
             {

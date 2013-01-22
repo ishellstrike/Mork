@@ -95,6 +95,8 @@ namespace Mork.Local_Map.Sector
                     {
                         var b = N[i * dimS * dimH + j * dimH + k];
 
+                        float light = !b.Subterrain ? 1 : 0.5f;
+
                         bool invisible = true;
 
                         if (k == z_cam && k != 0 && b.BlockID != 0 && !Main.dbobject.Data[N[i * dimS * dimH + j * dimH + k - 1].BlockID].Transparent) // верхняя черная грань, если сверху непрозрачный блок
@@ -144,27 +146,27 @@ namespace Mork.Local_Map.Sector
                                 VertexArray[index] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + sy * dimS, -k),
                                                                     Vector3.Up,
-                                                                    new Vector2(umovx, umovy),1);
+                                                                    new Vector2(umovx, umovy), light);
                                 VertexArray[index + 1] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k),
                                                                     Vector3.Up,
-                                                                    new Vector2(umovx, umovy + tsperh),1);
+                                                                    new Vector2(umovx, umovy + tsperh), light);
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k),
                                                                     Vector3.Up,
-                                                                    new Vector2(umovx + tsper, umovy),1);
+                                                                    new Vector2(umovx + tsper, umovy), light);
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k),
                                                                     Vector3.Up,
-                                                                    new Vector2(umovx + tsper, umovy + tsperh),1);
+                                                                    new Vector2(umovx + tsper, umovy + tsperh), light);
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k),
                                                                     Vector3.Up,
-                                                                    new Vector2(umovx + tsper, umovy),1);
+                                                                    new Vector2(umovx + tsper, umovy), light);
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k),
                                                                     Vector3.Up,
-                                                                    new Vector2(umovx, umovy + tsperh),1);
+                                                                    new Vector2(umovx, umovy + tsperh), light);
 
                                 index += 6;
                                 invisible = false;
@@ -192,23 +194,23 @@ namespace Mork.Local_Map.Sector
                                 //left face
                                 VertexArray[index] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                    Vector3.Left, new Vector2(smovx + tsper, smovy),0.8f);
+                                                                    Vector3.Left, new Vector2(smovx + tsper, smovy), light * 0.8f);
                                 VertexArray[index + 1] =
                                     new VertexPositionNormalTextureShade(
                                         new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k - 1),
-                                        Vector3.Left, new Vector2(smovx + tsper, smovy + tsperh), 0.8f);
+                                        Vector3.Left, new Vector2(smovx + tsper, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k - 1),
-                                                                    Vector3.Left, new Vector2(smovx, smovy + tsperh), 0.8f);
+                                                                    Vector3.Left, new Vector2(smovx, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k - 1),
-                                                                    Vector3.Left, new Vector2(smovx, smovy + tsperh), 0.8f);
+                                                                    Vector3.Left, new Vector2(smovx, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k),
-                                                                    Vector3.Left, new Vector2(smovx, smovy), 0.8f);
+                                                                    Vector3.Left, new Vector2(smovx, smovy), light * 0.8f);
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                    Vector3.Left, new Vector2(smovx + tsper, smovy), 0.8f);
+                                                                    Vector3.Left, new Vector2(smovx + tsper, smovy), light * 0.8f);
 
                                 index += 6;
                                 invisible = false;
@@ -219,25 +221,25 @@ namespace Mork.Local_Map.Sector
                                 //right face
                                 VertexArray[index] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                    Vector3.Right, new Vector2(smovx, smovy), 0.8f);
+                                                                    Vector3.Right, new Vector2(smovx, smovy), light * 0.8f);
                                 VertexArray[index + 1] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + sy * dimS, -k),
                                                                     Vector3.Right,
-                                                                    new Vector2(smovx + tsper, smovy), 0.8f);
+                                                                    new Vector2(smovx + tsper, smovy), light * 0.8f);
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + sy * dimS, -k - 1),
                                                                     Vector3.Right,
-                                                                    new Vector2(smovx + tsper, smovy + tsperh), 0.8f);
+                                                                    new Vector2(smovx + tsper, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + sy * dimS, -k - 1),
                                                                     Vector3.Right,
-                                                                    new Vector2(smovx + tsper, smovy + tsperh), 0.8f);
+                                                                    new Vector2(smovx + tsper, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k - 1),
-                                                                    Vector3.Right, new Vector2(smovx, smovy + tsperh), 0.8f);
+                                                                    Vector3.Right, new Vector2(smovx, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                    Vector3.Right, new Vector2(smovx, smovy), 0.8f);
+                                                                    Vector3.Right, new Vector2(smovx, smovy), light * 0.8f);
 
                                 index += 6;
                                 invisible = false;
@@ -248,24 +250,24 @@ namespace Mork.Local_Map.Sector
                                 //Forward face
                                 VertexArray[index] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + sy * dimS, -k),
-                                                                    Vector3.Forward, new Vector2(smovx, smovy), 0.8f);
+                                                                    Vector3.Forward, new Vector2(smovx, smovy), light * 0.8f);
                                 VertexArray[index + 1] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k),
-                                                                    Vector3.Forward, new Vector2(smovx + tsper, smovy), 0.8f);
+                                                                    Vector3.Forward, new Vector2(smovx + tsper, smovy), light * 0.8f);
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsperh), 0.8f);
+                                                                    new Vector2(smovx + tsper, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + sy * dimS, -k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsperh), 0.8f);
+                                                                    new Vector2(smovx + tsper, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + sy * dimS, -k - 1),
-                                                                    Vector3.Forward, new Vector2(smovx, smovy + tsperh), 0.8f);
+                                                                    Vector3.Forward, new Vector2(smovx, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + sy * dimS, -k),
-                                                                    Vector3.Forward, new Vector2(smovx, smovy), 0.8f);
+                                                                    Vector3.Forward, new Vector2(smovx, smovy), light * 0.8f);
 
                                 index += 6;
                                 invisible = false;
@@ -276,25 +278,25 @@ namespace Mork.Local_Map.Sector
                                 //Backward face
                                 VertexArray[index] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                    Vector3.Forward, new Vector2(smovx, smovy), 0.8f);
+                                                                    Vector3.Forward, new Vector2(smovx, smovy), light * 0.8f);
                                 VertexArray[index + 1] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                    Vector3.Forward, new Vector2(smovx + tsper, smovy), 0.8f);
+                                                                    Vector3.Forward, new Vector2(smovx + tsper, smovy), light * 0.8f);
                                 VertexArray[index + 2] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsperh), 0.8f);
+                                                                    new Vector2(smovx + tsper, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 3] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + sx * dimS, j + 1 + sy * dimS, -k - 1),
                                                                     Vector3.Forward,
-                                                                    new Vector2(smovx + tsper, smovy + tsperh), 0.8f);
+                                                                    new Vector2(smovx + tsper, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 4] =
                                     new VertexPositionNormalTextureShade(
                                         new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k - 1),
-                                        Vector3.Forward, new Vector2(smovx, smovy + tsperh), 0.8f);
+                                        Vector3.Forward, new Vector2(smovx, smovy + tsperh), light * 0.8f);
                                 VertexArray[index + 5] =
                                     new VertexPositionNormalTextureShade(new Vector3(i + 1 + sx * dimS, j + 1 + sy * dimS, -k),
-                                                                    Vector3.Forward, new Vector2(smovx, smovy), 0.8f);
+                                                                    Vector3.Forward, new Vector2(smovx, smovy), light * 0.8f);
                                 index += 6;
                                 invisible = false;
                             }

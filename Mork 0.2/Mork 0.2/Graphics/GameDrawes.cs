@@ -86,6 +86,13 @@ namespace Mork
         private static void MainMenuDraw(GameTime gt, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
             sb.Begin();
+
+            rotation += (float) (gt.ElapsedGameTime.TotalSeconds);
+            if(rotation > Math.PI*2) rotation -= (float) Math.PI*2;
+
+            spriteBatch.Draw(gears[1], new Vector2(resx / 3, resy / 3 - resy / 12), null, Color.White, rotation, new Vector2(g2r), 0.5f, SpriteEffects.None, 0);
+            spriteBatch.Draw(gears[1], new Vector2(resx / 3 - 20, resy / 3 - resy / 12 + g2r - 20), null, Color.White*0.5f, - rotation + 0.1f, new Vector2(g2r), 0.5f, SpriteEffects.None, 0);
+
             _titleAnimation += (float)(_titlePhase*gt.ElapsedGameTime.TotalSeconds);
             if (_titleAnimation >= 1 || _titleAnimation <= 0) _titlePhase *= -1;
             spriteBatch.Draw(interface_tex[15], new Vector2(470, 20),

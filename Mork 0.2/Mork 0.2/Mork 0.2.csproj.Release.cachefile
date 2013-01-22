@@ -41,6 +41,9 @@ Content\Textures\Interface\supply.xnb
 Content\Effects\SolidBlockEffect.xnb
 Content\Effects\WaterBlockEffect.xnb
 Content\Textures\BlocktexAtlas.xnb
+Content\Textures\Interface\g1.xnb
+Content\Textures\Interface\g2.xnb
+Content\Textures\Interface\g3.xnb
 Content\Skins\Default.skin
 Content\Skins\Extended.skin
 Content\Skins\Green.skin

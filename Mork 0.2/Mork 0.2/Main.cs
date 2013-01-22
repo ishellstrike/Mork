@@ -171,7 +171,7 @@ namespace Mork
 
         public static Vector2 mousepos;
         public static SpriteFont Font1, Font2;   
-        private static Vector3 ramka_2;
+        public static Vector3 ramka_2;
         public Vector2 MousePos;
         private static bool PAUSE;
         public float SavingDeg;
@@ -184,7 +184,7 @@ namespace Mork
         private static float _titleAnimation = 1;
         private static int _titlePhase = -1;
         private static int _wheellast;
-        private static Vector3 ramka_1 = new Vector3(-1, 0, 0);
+        public static Vector3 ramka_1 = new Vector3(-1, 0, 0);
         private Random rnd = new Random();
         public bool space, space_helper;
 

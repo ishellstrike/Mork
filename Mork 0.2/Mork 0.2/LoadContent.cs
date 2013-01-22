@@ -22,6 +22,11 @@ namespace Mork
         }
 
         public static Texture2D texatlas;
+        public static List<Texture2D> gears;
+        private static float g1r;
+        private static float g2r;
+        private static float g3r;
+        static float rotation;
 
         protected override void LoadContent()
         {
@@ -70,6 +75,15 @@ namespace Mork
             LoadTexture2D(interface_tex, @"Textures\Interface\Building_41x28_16fr"); //17
             LoadTexture2D(interface_tex, @"Textures\Interface\build"); //18
             LoadTexture2D(interface_tex, @"Textures\Interface\supply"); //19
+
+            gears = new List<Texture2D>();
+            gears.Add(Content.Load<Texture2D>(@"Textures\Interface\g1"));
+            gears.Add(Content.Load<Texture2D>(@"Textures\Interface\g2"));
+            gears.Add(Content.Load<Texture2D>(@"Textures\Interface\g3"));
+
+            g1r = gears[0].Height / 2;
+            g2r = gears[1].Height / 2;
+            g3r = gears[2].Height / 2;
 
             Font1 = Content.Load<SpriteFont>(@"Textures\SpriteFont1");
             Font2 = Content.Load<SpriteFont>(@"Textures\SpriteFont2");
