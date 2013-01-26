@@ -71,6 +71,9 @@ float4 LightPixelShader(PixelInputType input) : SV_Target
 
     color = color * textureColor * input.shade;
 
+	//color = float4(color,0);
+	color.a = textureColor.a;
+
     return color;
 }
 

@@ -17,12 +17,14 @@ namespace Mork.Local_Map.Sector
         public MNode[] N = new MNode[dimS * dimS * dimH];
         //bool[] buildedrow = new bool[dimS * dimS];
         public VertexPositionNormalTextureShade[] VertexArray = new VertexPositionNormalTextureShade[dimS * dimS * dimS * 6];
+        public VertexPositionNormalTextureShade[] VertexArrayTransparent = new VertexPositionNormalTextureShade[dimS * dimS * dimS];
         public BoundingBox bounding;
 
         private Action<GraphicsDevice, int> GeoCaller;
         private IAsyncResult ar;
 
         public int index = 0;
+        public int indextransparent = 0;
 
         public int sx, sy;
 
@@ -59,6 +61,7 @@ namespace Mork.Local_Map.Sector
             int low = z_cam;
 
             index = 0;
+            indextransparent = 0;
 
             float tsper = 1 / (Commons.TextureAtlas.X / (Commons.TextureAtlasTexSize));
             float tsperh = 1 / (Commons.TextureAtlas.Y / (Commons.TextureAtlasTexSize));
@@ -391,146 +394,146 @@ namespace Mork.Local_Map.Sector
         private void LeftFaceTree(float smovy, float tsper, float tsperh, float light, int j, int i, float smovx, int k)
         {
 //left face
-            VertexArray[index] =
+            VertexArrayTransparent[indextransparent] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 0.499f + sx*dimS, j + 1 + sy*dimS, -k),
+                    new Vector3(i + 0.499f + sx*dimS, j + 1 + sy*dimS, -k + 1),
                     Vector3.Left, new Vector2(smovx + tsper, smovy),
-                    light*0.8f);
-            VertexArray[index + 1] =
+                    light);
+            VertexArrayTransparent[indextransparent + 1] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 0.499f + sx*dimS, j + 1 + sy*dimS, -k - 1),
                     Vector3.Left, new Vector2(smovx + tsper, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 2] =
+                    light);
+            VertexArrayTransparent[indextransparent + 2] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 0.499f + sx*dimS, j + sy*dimS, -k - 1),
                     Vector3.Left, new Vector2(smovx, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 3] =
+                    light);
+            VertexArrayTransparent[indextransparent + 3] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 0.499f + sx*dimS, j + sy*dimS, -k - 1),
                     Vector3.Left, new Vector2(smovx, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 4] =
+                    light);
+            VertexArrayTransparent[indextransparent + 4] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 0.499f + sx*dimS, j + sy*dimS, -k),
+                    new Vector3(i + 0.499f + sx*dimS, j + sy*dimS, -k + 1),
                     Vector3.Left, new Vector2(smovx, smovy),
-                    light*0.8f);
-            VertexArray[index + 5] =
+                    light);
+            VertexArrayTransparent[indextransparent + 5] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 0.499f + sx*dimS, j + 1 + sy*dimS, -k),
+                    new Vector3(i + 0.499f + sx*dimS, j + 1 + sy*dimS, -k + 1),
                     Vector3.Left, new Vector2(smovx + tsper, smovy),
-                    light*0.8f);
+                    light);
 
-            index += 6;
+            indextransparent += 6;
         }
 
         private void DownFaceTree(float light, float smovy, float tsperh, float tsper, int j, int i, float smovx, int k)
         {
 //Backward face
-            VertexArray[index] =
+            VertexArrayTransparent[indextransparent] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 1 + sx*dimS, j + 0.499f + sy*dimS, -k),
-                    Vector3.Down, new Vector2(smovx, smovy), light*0.8f);
-            VertexArray[index + 1] =
+                    new Vector3(i + 1 + sx*dimS, j + 0.499f + sy*dimS, -k + 1),
+                    Vector3.Down, new Vector2(smovx, smovy), light);
+            VertexArrayTransparent[indextransparent + 1] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + sx * dimS, j + 0.499f + sy * dimS, -k),
+                    new Vector3(i + sx * dimS, j + 0.499f + sy * dimS, -k + 1),
                     Vector3.Down,
-                    new Vector2(smovx + tsper, smovy), light*0.8f);
-            VertexArray[index + 2] =
+                    new Vector2(smovx + tsper, smovy), light);
+            VertexArrayTransparent[indextransparent + 2] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + sx * dimS, j + 0.499f + sy * dimS, -k - 1),
                     Vector3.Down,
-                    new Vector2(smovx + tsper, smovy + tsperh), light*0.8f);
-            VertexArray[index + 3] =
+                    new Vector2(smovx + tsper, smovy + tsperh), light);
+            VertexArrayTransparent[indextransparent + 3] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + sx * dimS, j + 0.499f + sy * dimS, -k - 1),
                     Vector3.Down,
-                    new Vector2(smovx + tsper, smovy + tsperh), light*0.8f);
-            VertexArray[index + 4] =
+                    new Vector2(smovx + tsper, smovy + tsperh), light);
+            VertexArrayTransparent[indextransparent + 4] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 1 + sx * dimS, j + 0.499f + sy * dimS, -k - 1),
-                    Vector3.Down, new Vector2(smovx, smovy + tsperh), light*0.8f);
-            VertexArray[index + 5] =
+                    Vector3.Down, new Vector2(smovx, smovy + tsperh), light);
+            VertexArrayTransparent[indextransparent + 5] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 1 + sx * dimS, j + 0.499f + sy * dimS, -k),
-                    Vector3.Down, new Vector2(smovx, smovy), light*0.8f);
-            index += 6;
+                    new Vector3(i + 1 + sx * dimS, j + 0.499f + sy * dimS, -k + 1),
+                    Vector3.Down, new Vector2(smovx, smovy), light);
+            indextransparent += 6;
         }
 
         private void UpFaceTree(float light, float smovy, float tsperh, float tsper, int j, int i, float smovx, int k)
         {
 //Forward face
-            VertexArray[index] =
+            VertexArrayTransparent[indextransparent] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + sx * dimS, j + 0.5f + sy * dimS, -k),
+                    new Vector3(i + sx * dimS, j + 0.5f + sy * dimS, -k + 1),
                     Vector3.Up, new Vector2(smovx, smovy),
-                    light*0.8f);
-            VertexArray[index + 1] =
+                    light);
+            VertexArrayTransparent[indextransparent + 1] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 1 + sx * dimS, j + 0.5f + sy * dimS, -k),
+                    new Vector3(i + 1 + sx * dimS, j + 0.5f + sy * dimS, -k + 1),
                     Vector3.Up, new Vector2(smovx + tsper, smovy),
-                    light*0.8f);
-            VertexArray[index + 2] =
-                new VertexPositionNormalTextureShade(
-                    new Vector3(i + 1 + sx * dimS, j + 0.5f + sy * dimS, -k - 1),
-                    Vector3.Forward, new Vector2(smovx + tsper, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 3] =
+                    light);
+            VertexArrayTransparent[indextransparent + 2] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 1 + sx * dimS, j + 0.5f + sy * dimS, -k - 1),
                     Vector3.Up, new Vector2(smovx + tsper, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 4] =
+                    light);
+            VertexArrayTransparent[indextransparent + 3] =
+                new VertexPositionNormalTextureShade(
+                    new Vector3(i + 1 + sx * dimS, j + 0.5f + sy * dimS, -k - 1),
+                    Vector3.Up, new Vector2(smovx + tsper, smovy + tsperh),
+                    light);
+            VertexArrayTransparent[indextransparent + 4] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + sx * dimS, j + 0.5f + sy * dimS, -k - 1),
-                    Vector3.Forward, new Vector2(smovx, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 5] =
+                    Vector3.Up, new Vector2(smovx, smovy + tsperh),
+                    light);
+            VertexArrayTransparent[indextransparent + 5] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + sx * dimS, j + 0.5f + sy * dimS, -k),
+                    new Vector3(i + sx * dimS, j + 0.5f + sy * dimS, -k + 1),
                     Vector3.Up, new Vector2(smovx, smovy),
-                    light*0.8f);
+                    light);
 
-            index += 6;
+            indextransparent += 6;
         }
 
         private void RightFaceTree(float light, float smovy, float tsperh, float tsper, int j, int i, float smovx, int k)
         {
 //right face
-            VertexArray[index] =
+            VertexArrayTransparent[indextransparent] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 0.5f + sx*dimS, j + 1 + sy*dimS, -k),
+                    new Vector3(i + 0.5f + sx*dimS, j + 1 + sy*dimS, -k + 1),
                     Vector3.Right, new Vector2(smovx, smovy),
-                    light*0.8f);
-            VertexArray[index + 1] =
+                    light);
+            VertexArrayTransparent[indextransparent + 1] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 0.5f + sx*dimS, j + sy*dimS, -k),
+                    new Vector3(i + 0.5f + sx*dimS, j + sy*dimS, -k + 1),
                     Vector3.Right, new Vector2(smovx + tsper, smovy),
-                    light*0.8f);
-            VertexArray[index + 2] =
+                    light);
+            VertexArrayTransparent[indextransparent + 2] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 0.5f + sx*dimS, j + sy*dimS, -k - 1),
                     Vector3.Right,
                     new Vector2(smovx + tsper, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 3] =
+                    light);
+            VertexArrayTransparent[indextransparent + 3] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 0.5f + sx*dimS, j + sy*dimS, -k - 1),
                     Vector3.Right,
                     new Vector2(smovx + tsper, smovy + tsperh),
-                    light*0.8f);
-            VertexArray[index + 4] =
+                    light);
+            VertexArrayTransparent[indextransparent + 4] =
                 new VertexPositionNormalTextureShade(
                     new Vector3(i + 0.5f + sx*dimS, j + 1 + sy*dimS, -k - 1),
-                    Vector3.Right, new Vector2(smovx, smovy + tsperh), light*0.8f);
-            VertexArray[index + 5] =
+                    Vector3.Right, new Vector2(smovx, smovy + tsperh), light);
+            VertexArrayTransparent[indextransparent + 5] =
                 new VertexPositionNormalTextureShade(
-                    new Vector3(i + 0.5f + sx*dimS, j + 1 + sy*dimS, -k),
+                    new Vector3(i + 0.5f + sx*dimS, j + 1 + sy*dimS, -k + 1),
                     Vector3.Right, new Vector2(smovx, smovy),
-                    light*0.8f);
+                    light);
 
-            index += 6;
+            indextransparent += 6;
         }
     }
 }

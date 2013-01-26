@@ -111,7 +111,7 @@ namespace Mork.Local_Map.Sector
 
             _gd.RasterizerState = RasterizerState.CullCounterClockwise;
             _gd.DepthStencilState = DepthStencilState.Default;
-            _gd.BlendState = BlendState.Opaque;
+            _gd.BlendState = BlendState.AlphaBlend;
 
             drawed_sects = 0;
             drawed_verts = 0;
@@ -132,10 +132,19 @@ namespace Mork.Local_Map.Sector
                         if (!a.empty)
                         {
                             drawed_sects++;
-                            //gd.SetVertexBuffer(a.VertexBuffer);
                             _gd.DrawUserPrimitives(PrimitiveType.TriangleList, a.VertexArray, 0, a.index / 3);
                             drawed_verts += a.index/3;
                         }
+                    }
+                }
+
+                foreach (var a in N)
+                {
+                    if (a.indextransparent > 0)
+                    {
+                        _gd.DrawUserPrimitives(PrimitiveType.TriangleList, a.VertexArrayTransparent, 0,
+                                               a.indextransparent/3);
+                        drawed_verts += a.indextransparent/3;
                     }
                 }
             }
@@ -145,7 +154,7 @@ namespace Mork.Local_Map.Sector
             _basice2.Projection = cam.Projection;
             _basice2.View = cam.View;
 
-            _gd.BlendState = BlendState.AlphaBlend;
+            //_gd.BlendState = BlendState.AlphaBlend;
 
 
             Color greentop = At(Main.Selector).BlockID == 0 ? At(Main.Selector.X, Main.Selector.Y, Main.Selector.Z + 1).BlockID != 0 ? Color.Yellow : Color.Red : Color.Green;
