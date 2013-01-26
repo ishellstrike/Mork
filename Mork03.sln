@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mork 0.2", "Mork 0.2\Mork 0.2\Mork 0.2.csproj", "{A2679D02-909E-413C-B4A1-064EEF6306F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mork03", "Mork03\Mork03\Mork03.csproj", "{A2679D02-909E-413C-B4A1-064EEF6306F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mork 0.2Content", "Mork 0.2\Mork 0.2Content\Mork 0.2Content.contentproj", "{4A29435B-DAC3-4411-99E8-1C55218B5A83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mork03Content", "Mork03\Mork03Content\Mork03Content.contentproj", "{4A29435B-DAC3-4411-99E8-1C55218B5A83}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CB56B1AC-0193-4462-9521-7B7436588C13}"
 	ProjectSection(SolutionItems) = preProject

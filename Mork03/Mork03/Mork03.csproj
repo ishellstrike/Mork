@@ -142,49 +142,49 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bad Database\Commons.cs" />
-    <Compile Include="Bad Database\Material\DBMaterial.cs" />
-    <Compile Include="Bad Database\Local Map Blocks\DB_LMO.cs" />
-    <Compile Include="Data Parser\LMO_Parser.cs" />
+    <Compile Include="BadDatabase\Commons.cs" />
+    <Compile Include="BadDatabase\Material\DBMaterial.cs" />
+    <Compile Include="BadDatabase\Local Map Blocks\DB_LMO.cs" />
+    <Compile Include="DataParser\LMO_Parser.cs" />
     <Compile Include="FPSCounter.cs" />
     <Compile Include="Generators\Civilizations.cs" />
-    <Compile Include="Global Map\GObj.cs" />
-    <Compile Include="Global Map\GMap.cs" />
+    <Compile Include="GlobalMap\GObj.cs" />
+    <Compile Include="GlobalMap\GMap.cs" />
     <Compile Include="Graphics\GameDrawes.cs" />
     <Compile Include="Graphics\LineBatch.cs" />
     <Compile Include="Graphics\MapEngine\Camera.cs" />
     <Compile Include="LoadContent.cs" />
-    <Compile Include="Local Map\Dynamic\Local Items\ItemStorageSystem.cs" />
-    <Compile Include="Local Map\Dynamic\Local Items\Local Item.cs" />
-    <Compile Include="Local Map\Dynamic\Local Items\Local Items.cs" />
-    <Compile Include="Local Map\Dynamic\Local Items\Storages.cs" />
-    <Compile Include="Local Map\Dynamic\PlayerOrders\PlayerOrders.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\BuildOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\DestroyOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\MoveOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\NothingOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\Order.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\SupplyOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\CollectOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\ToStoreOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Actions\FromStoreOrder.cs" />
-    <Compile Include="Local Map\Dynamic\Units\LocalHeroes.cs" />
-    <Compile Include="Local Map\Dynamic\Units\LocalUnits.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Monsters\DBUnitInfo.cs" />
-    <Compile Include="Local Map\Dynamic\Units\LocalHero.cs" />
-    <Compile Include="Local Map\Dynamic\Units\LocalUnit.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Monsters\UnitInfo.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Skills\DBSkills.cs" />
-    <Compile Include="Local Map\Dynamic\Units\Skills\Skill.cs" />
-    <Compile Include="Local Map\MMap.cs" />
+    <Compile Include="LocalMap\Dynamic\Local Items\ItemStorageSystem.cs" />
+    <Compile Include="LocalMap\Dynamic\Local Items\Local Item.cs" />
+    <Compile Include="LocalMap\Dynamic\Local Items\Local Items.cs" />
+    <Compile Include="LocalMap\Dynamic\Local Items\Storages.cs" />
+    <Compile Include="LocalMap\Dynamic\PlayerOrders\PlayerOrders.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\BuildOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\DestroyOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\MoveOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\NothingOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\Order.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\SupplyOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\CollectOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\ToStoreOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Actions\FromStoreOrder.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\LocalHeroes.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\LocalUnits.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Monsters\DBUnitInfo.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\LocalHero.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\LocalUnit.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Monsters\UnitInfo.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Skills\DBSkills.cs" />
+    <Compile Include="LocalMap\Dynamic\Units\Skills\Skill.cs" />
+    <Compile Include="LocalMap\MMap.cs" />
     <Compile Include="Generators\NamesGenerator.cs" />
-    <Compile Include="Local Map\MNode.cs" />
-    <Compile Include="Bad Database\Material\Material.cs" />
-    <Compile Include="Bad Database\Material\MaterialTypeID.cs" />
-    <Compile Include="Bad Database\Material\MaterialID.cs" />
-    <Compile Include="Bad Database\Local Map Blocks\LMO.cs" />
-    <Compile Include="Local Map\Sector\MapSector.cs" />
-    <Compile Include="Local Map\Sector\SectorMap.cs" />
+    <Compile Include="LocalMap\MNode.cs" />
+    <Compile Include="BadDatabase\Material\Material.cs" />
+    <Compile Include="BadDatabase\Material\MaterialTypeID.cs" />
+    <Compile Include="BadDatabase\Material\MaterialID.cs" />
+    <Compile Include="BadDatabase\Local Map Blocks\LMO.cs" />
+    <Compile Include="LocalMap\Sector\MapSector.cs" />
+    <Compile Include="LocalMap\Sector\SectorMap.cs" />
     <Compile Include="usersettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -200,8 +200,8 @@
     <Content Include="MORK.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mork 0.2Content\Mork 0.2Content.contentproj">
-      <Name>Mork 0.2Content %28Content%29</Name>
+    <ProjectReference Include="..\Mork03Content\Mork03Content.contentproj">
+      <Name>Mork03Content %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
       <Project>{4A29435B-DAC3-4411-99E8-1C55218B5A83}</Project>
     </ProjectReference>
