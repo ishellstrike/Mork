@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mork.Bad_Database;
+using Mork.Local_Map.Dynamic.Units;
 using Mork.Local_Map.Sector;
 
 namespace Mork
@@ -100,6 +101,8 @@ namespace Mork
 
             smap = new SectorMap(GraphicsDevice, blockeffect);
             imap = new IntersectMap();
+
+            lheroes = new LocalHeroes(GraphicsDevice, unit_tex[1]);
 
             MeTexoncurA = 1;
             MeTexoncurB = 5;

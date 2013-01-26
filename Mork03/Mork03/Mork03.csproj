@@ -153,6 +153,7 @@
     <Compile Include="Graphics\GameDrawes.cs" />
     <Compile Include="Graphics\LineBatch.cs" />
     <Compile Include="Graphics\MapEngine\Camera.cs" />
+    <Compile Include="Graphics\VPNTS.cs" />
     <Compile Include="LoadContent.cs" />
     <Compile Include="LocalMap\Dynamic\Local Items\ItemStorageSystem.cs" />
     <Compile Include="LocalMap\Dynamic\Local Items\Local Item.cs" />

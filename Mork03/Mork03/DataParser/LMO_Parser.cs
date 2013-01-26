@@ -47,6 +47,10 @@ namespace Mork.Data_Parser
                         {
                             cur.Value.Transparent = true;
                         }
+                        if (lines[i].StartsWith("notblock"))
+                        {
+                            cur.Value.NotBlock = true;
+                        }
                         if (lines[i].StartsWith("max_hp="))
                         {
                             string extracterint = intextractor.Match(lines[i]).ToString(); 

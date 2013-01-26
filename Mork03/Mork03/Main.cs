@@ -110,7 +110,7 @@ namespace Mork
         public static Vector3 gmap_region = new Vector3();
 
         public static LocalUnits lunits = new LocalUnits();
-        public static LocalHeroes lheroes = new LocalHeroes();
+        public static LocalHeroes lheroes;
 
         public static SectorMap smap;
         public static IntersectMap imap;
@@ -895,11 +895,13 @@ namespace Mork
         Action<string> sp = LoadGMapFromDisc;
         void maploadmenulistbox_DoubleClick(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
-            
-            if(Savear != null && !Savear.IsCompleted) sp.EndInvoke(Savear);
-            Main.Savear = sp.BeginInvoke(string.Format(@"{0}", files[maploadmenulistbox.ItemIndex]), null, null);
-            SetPhase(Main.Gstate.GenerationScreen);
-            generationgenerateB.Hide();
+            if (maploadmenulistbox.ItemIndex != -1)
+            {
+                if (Savear != null && !Savear.IsCompleted) sp.EndInvoke(Savear);
+                Main.Savear = sp.BeginInvoke(string.Format(@"{0}", files[maploadmenulistbox.ItemIndex]), null, null);
+                SetPhase(Main.Gstate.GenerationScreen);
+                generationgenerateB.Hide();
+            }
         }
 
         void maploadmenuLoadNext_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
@@ -1304,9 +1306,9 @@ namespace Mork
                 outp += string.Format("act = {0}", smap.Active.Count) + Environment.NewLine;
                 outp += string.Format("time = {0}", gameTime.TotalGameTime) + Environment.NewLine;
                 outp += string.Format("srg = {0}", globalstorage.n.Count) + Environment.NewLine;
-                outp += string.Format("cam = {0}\nrot = {1}", Camera.Target, camerarotation) + Environment.NewLine;
-                outp += string.Format("verts = {0}, sect = {1}", drawed_verts, drawed_sects) + Environment.NewLine;
-                outp += string.Format("total rebuild = {0}", sectrebuild) + Environment.NewLine;
+                outp += string.Format("cam = {0}\nrot = {1}", Camera.Position, Camera.RotationF) + Environment.NewLine;
+                outp += string.Format("verts = {0}, sect = {1}", smap.drawed_verts, smap.drawed_sects) + Environment.NewLine;
+                outp += string.Format("total rebuild = {0}", smap.sectrebuild) + Environment.NewLine;
 
                 spriteBatch.DrawString(Font2, outp, new Vector2(800, 5), Color.White);
             }
@@ -1403,6 +1405,8 @@ namespace Mork
         private void GameDraw(GameTime gameTime, SpriteBatch sb, GraphicsDevice GraphicsDevice)
         {
             smap.DrawAllMap(gameTime, Camera);
+            lheroes.Draw(Camera, GraphicsDevice, z_cam);
+
 
             if (debug)
             {
@@ -1436,13 +1440,8 @@ namespace Mork
 
         #region Updates
 
-        private float camerarotation = 0.7f;
-        public static int drawed_verts;
-        public static int drawed_sects;
-        private float cameradistance = 30;
         public static int z_cam;
         private int notfastcam = 0;
-        public static int sectrebuild = 0;
 
         private Ray MouseRay;
 
@@ -1452,11 +1451,9 @@ namespace Mork
 
             KeyboardUpdate(gt, ref moving);
 
-            moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(camerarotation)));
+            moving = Vector3.Transform(moving, Matrix.CreateRotationZ(MathHelper.ToRadians(Camera.RotationF)));
 
-            Camera.Target += moving;
-            Camera.View = FreeCamera.BuildViewMatrix(Camera.Target, (float)Math.PI/5, 0, MathHelper.ToRadians(camerarotation), cameradistance);
-            Camera.generateFrustum();
+            Camera.Update(moving);
 
             Vector3 near = new Vector3(MousePos.X, MousePos.Y, 0);
             Vector3 far = new Vector3(MousePos.X, MousePos.Y, 1);
@@ -1606,13 +1603,13 @@ namespace Mork
             float roll = 0;
             if (ks[Keys.Q] == KeyState.Down)
             {
-                camerarotation += 1 * (float)gt.ElapsedGameTime.TotalSeconds * 80;
-                if (camerarotation > 360) camerarotation -= 360;
+                Camera.RotationF += 1 * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                if (Camera.RotationF > 360) Camera.RotationF -= 360;
             }
             if (ks[Keys.E] == KeyState.Down)
             {
-                camerarotation -= 1 * (float)gt.ElapsedGameTime.TotalSeconds * 80;
-                if (camerarotation < 0) camerarotation += 360;
+                Camera.RotationF -= 1 * (float)gt.ElapsedGameTime.TotalSeconds * 80;
+                if (Camera.RotationF < 0) Camera.RotationF += 360;
             }
 
             //if (notfastcam > 0) notfastcam--;

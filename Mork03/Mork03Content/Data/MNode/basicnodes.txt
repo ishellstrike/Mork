@@ -14,12 +14,14 @@ transparent
 
 ~mnode,888,34
 name="water"
-transparent
 
 ~mnode,12345,0
 name="generation blank"
 
-
+~mnode,3,40
+name="tree"
+transparent
+notblock
 
 ~mnode,10,32
 name="dirt"

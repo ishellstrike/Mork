@@ -62,6 +62,7 @@ namespace Mork.Graphics.MapEngine
 
         public virtual void Update()
         {
+
         }
 
         public void generateFrustum()
@@ -87,8 +88,11 @@ namespace Mork.Graphics.MapEngine
         public float Pitch { get; set; }
         public float Roll { get; set; }
 
-        public Vector3 Position { get; set; }
-        public Vector3 Target { get; set; }
+        public float RotationF;
+        public float cameradistance = 30;
+
+        public Vector3 Position;
+        public Vector3 Target;
 
         public Vector3 Up { get; private set; }
         public Vector3 Right { get; private set; }
@@ -119,28 +123,35 @@ namespace Mork.Graphics.MapEngine
             this.translation += Translation;
         }
 
-        public override void Update()
+        public void Update(Vector3 moving)
         {
-            // Calculate the rotation matrix
-            Matrix rotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+            //// Calculate the rotation matrix
+            //Matrix rotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
 
-            // Offset the position and reset the translation
-            translation = Vector3.Transform(translation, rotation);
-            Position += translation;
-            translation = Vector3.Zero;
+            //// Offset the position and reset the translation
+            //translation = Vector3.Transform(translation, rotation);
+            //Position += translation;
+            //translation = Vector3.Zero;
 
-            // Calculate the new target
-            Vector3 forward = Vector3.Transform(Vector3.Forward, rotation);
-            Target = Position + forward;
+            //// Calculate the new target
+            //Vector3 forward = Vector3.Transform(Vector3.Forward, rotation);
+            //Target = Position + forward;
 
-            // Calculate the up vector
-            Vector3 up = Vector3.Transform(Vector3.Up, rotation);
+            //// Calculate the up vector
+            //Vector3 up = Vector3.Transform(Vector3.Up, rotation);
 
-            // Calculate the view matrix
-            View = Matrix.CreateLookAt(Position, Target, up);
+            //// Calculate the view matrix
+            //View = Matrix.CreateLookAt(Position, Target, up);
 
-            this.Up = up;
-            this.Right = Vector3.Cross(forward, up);
+            //this.Up = up;
+            //this.Right = Vector3.Cross(forward, up);
+            Target += moving;
+            View = BuildViewMatrix(Target, (float)Math.PI / 5, 0, MathHelper.ToRadians(RotationF), cameradistance);
+            generateFrustum();
+            Matrix invv = Matrix.Invert(View);
+            Position.X = invv.M41;
+            Position.Y = invv.M42;
+            Position.Z = invv.M43;
         }
 
         /// <summary>

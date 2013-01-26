@@ -45,6 +45,8 @@ namespace Mork.Local_Map.Sector
         private BasicEffect _basice2;
         private int _passn = 0;
 
+        public int sectrebuild, drawed_sects, drawed_verts;
+
         public List<Vector3> Active = new List<Vector3>();
 
         public SectorMap(GraphicsDevice gd, Effect mapeffect)
@@ -102,7 +104,7 @@ namespace Mork.Local_Map.Sector
             _be.Parameters["projectionMatrix"].SetValue(Main.Camera.Projection);
             _be.Parameters["diffuseColor"].SetValue(Color.White.ToVector4());
             _be.Parameters["ambientColor"].SetValue(Color.DarkGray.ToVector4());
-            var ld = new Vector3(0.5f, -1, 0.5f);
+            var ld = new Vector3(0.5f, -1, -1.2f);
             ld.Normalize();
             _be.Parameters["lightDirection"].SetValue(ld);
             _be.Parameters["shaderTexture"].SetValue(Main.texatlas);
@@ -111,8 +113,8 @@ namespace Mork.Local_Map.Sector
             _gd.DepthStencilState = DepthStencilState.Default;
             _gd.BlendState = BlendState.Opaque;
 
-            Main.drawed_sects = 0;
-            Main.drawed_verts = 0;
+            drawed_sects = 0;
+            drawed_verts = 0;
 
             foreach (var pass in _be.CurrentTechnique.Passes)
             {
@@ -125,14 +127,14 @@ namespace Mork.Local_Map.Sector
                         if (!a.builded)
                         {
                             a.RebuildSectorGeo(_gd, Main.z_cam);
-                            Main.sectrebuild++;
+                            sectrebuild++;
                         }
                         if (!a.empty)
                         {
-                            Main.drawed_sects++;
+                            drawed_sects++;
                             //gd.SetVertexBuffer(a.VertexBuffer);
                             _gd.DrawUserPrimitives(PrimitiveType.TriangleList, a.VertexArray, 0, a.index / 3);
-                            Main.drawed_verts += a.index/3;
+                            drawed_verts += a.index/3;
                         }
                     }
                 }
