@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Mork.Local_Map.Dynamic.Local_Items
-{
-    public class LocalItem
-    {
-        public Vector3 pos;
-        public int id;
+namespace Mork.Local_Map.Dynamic.Local_Items {
+    public class LocalItem {
         public int count;
+        public int id;
+        public Vector3 pos;
     }
 }

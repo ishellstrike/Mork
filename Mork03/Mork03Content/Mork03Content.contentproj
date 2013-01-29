@@ -42,12 +42,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\MNode\buildings.txt">
-      <Name>buildings</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\SpriteFont1.spritefont">
       <Name>SpriteFont1</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -329,12 +323,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\MNode\basicnodes.txt">
-      <Name>basicnodes</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Data\base_generation.txt">
       <Name>base_generation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -360,6 +348,22 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\LMO\basicnodes.txt">
+      <Name>basicnodes</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\LMO\buildings.txt">
+      <Name>buildings</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\LMC\basiccreatures.txt">
+      <Name>basiccreatures</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

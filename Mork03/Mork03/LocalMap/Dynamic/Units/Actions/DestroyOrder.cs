@@ -1,7 +1,3 @@
-namespace Mork.Local_Map.Dynamic.Actions
-{
-    public class DestroyOrder : Order
-    {
-        
-    }
+namespace Mork.Local_Map.Dynamic.Actions {
+    public class DestroyOrder : Order {}
 }

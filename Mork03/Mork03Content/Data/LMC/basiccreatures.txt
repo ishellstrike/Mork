@@ -1,0 +1,11 @@
+~localunit,0,0
+max_hp=10
+name="nothing"
+
+~localunit,1,81
+max_hp=20
+name="person"
+description="just a person"
+
+~localunit,666,70
+name="error"

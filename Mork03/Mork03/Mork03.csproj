@@ -143,11 +143,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BadDatabase\Commons.cs" />
-    <Compile Include="BadDatabase\Material\DBMaterial.cs" />
+    <Compile Include="BadDatabase\Local Map Creatures\DB_LMC.cs" />
+    <Compile Include="BadDatabase\Local Map Creatures\LMC.cs" />
     <Compile Include="BadDatabase\Local Map Blocks\DB_LMO.cs" />
-    <Compile Include="DataParser\LMO_Parser.cs" />
+    <Compile Include="BadDatabase\Local Map Blocks\LMO_Parser.cs" />
+    <Compile Include="DataParser\GameDataParserBacis.cs" />
+    <Compile Include="BadDatabase\Local Map Creatures\LMC_Parser.cs" />
     <Compile Include="FPSCounter.cs" />
-    <Compile Include="Generators\Civilizations.cs" />
     <Compile Include="GlobalMap\GObj.cs" />
     <Compile Include="GlobalMap\GMap.cs" />
     <Compile Include="Graphics\GameDrawes.cs" />
@@ -159,6 +161,7 @@
     <Compile Include="LocalMap\Dynamic\Local Items\Local Item.cs" />
     <Compile Include="LocalMap\Dynamic\Local Items\Local Items.cs" />
     <Compile Include="LocalMap\Dynamic\Local Items\Storages.cs" />
+    <Compile Include="LocalMap\Dynamic\Player.cs" />
     <Compile Include="LocalMap\Dynamic\PlayerOrders\PlayerOrders.cs" />
     <Compile Include="LocalMap\Dynamic\Units\Actions\BuildOrder.cs" />
     <Compile Include="LocalMap\Dynamic\Units\Actions\DestroyOrder.cs" />
@@ -169,10 +172,8 @@
     <Compile Include="LocalMap\Dynamic\Units\Actions\CollectOrder.cs" />
     <Compile Include="LocalMap\Dynamic\Units\Actions\ToStoreOrder.cs" />
     <Compile Include="LocalMap\Dynamic\Units\Actions\FromStoreOrder.cs" />
-    <Compile Include="LocalMap\Dynamic\Units\LocalHeroes.cs" />
     <Compile Include="LocalMap\Dynamic\Units\LocalUnits.cs" />
     <Compile Include="LocalMap\Dynamic\Units\Monsters\DBUnitInfo.cs" />
-    <Compile Include="LocalMap\Dynamic\Units\LocalHero.cs" />
     <Compile Include="LocalMap\Dynamic\Units\LocalUnit.cs" />
     <Compile Include="LocalMap\Dynamic\Units\Monsters\UnitInfo.cs" />
     <Compile Include="LocalMap\Dynamic\Units\Skills\DBSkills.cs" />
@@ -180,9 +181,6 @@
     <Compile Include="LocalMap\MMap.cs" />
     <Compile Include="Generators\NamesGenerator.cs" />
     <Compile Include="LocalMap\MNode.cs" />
-    <Compile Include="BadDatabase\Material\Material.cs" />
-    <Compile Include="BadDatabase\Material\MaterialTypeID.cs" />
-    <Compile Include="BadDatabase\Material\MaterialID.cs" />
     <Compile Include="BadDatabase\Local Map Blocks\LMO.cs" />
     <Compile Include="LocalMap\Sector\MapSector.cs" />
     <Compile Include="LocalMap\Sector\SectorMap.cs" />

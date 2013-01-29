@@ -1,24 +1,19 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Mork.Local_Map.Dynamic.Local_Items;
 using Mork.Bad_Database;
+using Mork.Local_Map.Dynamic.Local_Items;
 
-namespace Mork.Local_Map
-{
-    [Serializable]////////////////////////////////////////////////////////////////////////
-    public class MMap
-    {
-        Random rnd = new Random();
-
+namespace Mork.Local_Map {
+    [Serializable] ////////////////////////////////////////////////////////////////////////
+    public class MMap {
         public const int mx = Commons.mx, my = Commons.my, mz = Commons.mz;
-        public MNode[, ,] n = new MNode[Commons.mx, Commons.my, Commons.mz];
-        public float[,] wshine = new float[Commons.mx, Commons.my];
-        public short[,] whinenapr = new short[Commons.mx, Commons.my];
-
-        public List<Vector3> active = new List<Vector3>(); //active blocks update inner logic every cycle
-
+        private readonly Random rnd = new Random();
         public string Name = "test map 1";
+        public List<Vector3> active = new List<Vector3>(); //active blocks update inner logic every cycle
+        public MNode[,,] n = new MNode[Commons.mx,Commons.my,Commons.mz];
+        public short[,] whinenapr = new short[Commons.mx,Commons.my];
+        public float[,] wshine = new float[Commons.mx,Commons.my];
 
         //public void CalcWision()
         //{
@@ -132,8 +127,7 @@ namespace Mork.Local_Map
         /// Получить границы карты в виде вектора3
         /// </summary>
         /// <returns></returns>
-        public Vector3 Bounds()
-        {
+        public Vector3 Bounds() {
             return new Vector3(mx - 1, my - 1, mz - 1);
         }
 
@@ -141,24 +135,27 @@ namespace Mork.Local_Map
         /// генерация базового слоя с нечеткой границей
         /// </summary>
         /// <param name="id">заполнить базовый слой указанным блоком</param>
-        public void Generation_BasicLayer(int id)
-        {
-            for(int i=0;i<=mx-1;i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
-                    int k=0;
-                    for (k = mz - 1; k >= 0; k--)
-                    {
-                        if (n[i, j, k].BlockID == 12345)
+        public void Generation_BasicLayer(int id) {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
+                    int k = 0;
+                    for (k = mz - 1; k >= 0; k--) {
+                        if (n[i, j, k].BlockID == 12345) {
                             goto here1;
+                        }
                     }
-                    here1: ;
-                
-                    for (int m = k; m >= rnd.Next(k-5, k); m--)
-                    {
-                        if(m>0) if (n[i, j, m].BlockID == 12345) n[i, j, m].BlockID = id;
+                    here1:
+                    ;
+
+                    for (int m = k; m >= rnd.Next(k - 5, k); m--) {
+                        if (m > 0) {
+                            if (n[i, j, m].BlockID == 12345) {
+                                n[i, j, m].BlockID = id;
+                            }
+                        }
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -166,26 +163,29 @@ namespace Mork.Local_Map
         /// </summary>
         /// <param name="id">идентификатор</param>
         /// <param name="count">толщина слоя</param>
-        public void Generation_FullLayer(int id, int count)
-        {
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
+        public void Generation_FullLayer(int id, int count) {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
                     int k = 0;
-                    for (k = mz - 1; k >= 0; k--)
-                    {
-                        if (n[i, j, k].BlockID == 12345)
+                    for (k = mz - 1; k >= 0; k--) {
+                        if (n[i, j, k].BlockID == 12345) {
                             goto here1;
+                        }
                     }
-                    here1: ;
+                    here1:
+                    ;
 
-                    if (k <= 0) continue;
+                    if (k <= 0) {
+                        continue;
+                    }
 
-                    for (int m = k; m >= k-count+1; m--)
-                    {
-                        if (n[i, j, m].BlockID == 12345) n[i, j, m].BlockID = id;
+                    for (int m = k; m >= k - count + 1; m--) {
+                        if (n[i, j, m].BlockID == 12345) {
+                            n[i, j, m].BlockID = id;
+                        }
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -198,272 +198,351 @@ namespace Mork.Local_Map
         /// <param name="jila">идентификаторы жил</param>
         /// <param name="j_freq">частота встречания жил</param>
         /// <param name="length">протяженность жил</param>
-        public void GenerationFullLayerCluster(int id, int count, int[] clust, int c_freq, int[] jila, int j_freq, int length)
-        {
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
+        public void GenerationFullLayerCluster(int id, int count, int[] clust, int c_freq, int[] jila, int j_freq,
+                                               int length) {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
                     int k = 0;
-                    for (k = mz - 1; k >= 0; k--)
-                    {
-                        if (n[i, j, k].BlockID == 12345)
+                    for (k = mz - 1; k >= 0; k--) {
+                        if (n[i, j, k].BlockID == 12345) {
                             goto here1;
+                        }
                     }
-                    here1: ;
+                    here1:
+                    ;
 
-                    if (k <= 0) continue;
+                    if (k <= 0) {
+                        continue;
+                    }
 
-                    for (int m = k; m >= k - count + 1; m--)
-                    {
-                        if (n[i, j, m].BlockID == 12345)
-                        {
+                    for (int m = k; m >= k - count + 1; m--) {
+                        if (n[i, j, m].BlockID == 12345) {
                             n[i, j, m].BlockID = id;
-                            if (rnd.Next(1, 101 - c_freq) == 1 && clust.Length > 0)
-                            {
+                            if (rnd.Next(1, 101 - c_freq) == 1 && clust.Length > 0) {
                                 cluster(clust[rnd.Next(0, clust.Length)], i, j, m);
                             }
-                            if (rnd.Next(1, 101 - j_freq) == 1 && jila.Length > 0)
-                            {
+                            if (rnd.Next(1, 101 - j_freq) == 1 && jila.Length > 0) {
                                 cjila(jila[rnd.Next(0, jila.Length)], i, j, m, length);
                             }
                         }
                     }
                 }
+            }
         }
 
-        private void cluster(int id, int i, int j, int m)
-        {
-            switch (rnd.Next(0, 7))
-            {
+        private void cluster(int id, int i, int j, int m) {
+            switch (rnd.Next(0, 7)) {
                 case 0:
                     n[i, j, m].BlockID = id;
                     break;
                 case 1:
-                    if (GoodVector3(i - 1, j, m)) n[i, j, m].BlockID = id;
-                    if (GoodVector3(i, j + 1, m)) n[i, j + 1, m].BlockID = id;
-                    if (GoodVector3(i + 1, j, m)) n[i + 1, j, m].BlockID = id;
-                    if (GoodVector3(i - 1, j, m)) n[i-1, j, m].BlockID = id;
-                    if (GoodVector3(i, j - 1, m)) n[i, j - 1, m].BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j + 1, m)) {
+                        n[i, j + 1, m].BlockID = id;
+                    }
+                    if (GoodVector3(i + 1, j, m)) {
+                        n[i + 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i - 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j - 1, m)) {
+                        n[i, j - 1, m].BlockID = id;
+                    }
                     break;
                 case 2:
-                    if (GoodVector3(i - 1, j, m)) n[i, j, m].BlockID = id;
-                    if (GoodVector3(i + 1, j, m)) n[i + 1, j, m].BlockID = id;
-                    if (GoodVector3(i - 1, j, m)) n[i-1, j, m].BlockID = id;
-                    if (GoodVector3(i, j - 1, m)) n[i, j - 1, m].BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i + 1, j, m)) {
+                        n[i + 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i - 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j - 1, m)) {
+                        n[i, j - 1, m].BlockID = id;
+                    }
                     break;
                 case 3:
-                    if (GoodVector3(i - 1, j, m)) n[i, j, m].BlockID = id;
-                    if (GoodVector3(i, j + 1, m)) n[i, j + 1, m].BlockID = id;
-                    if (GoodVector3(i - 1, j, m)) n[i-1, j, m].BlockID = id;
-                    if (GoodVector3(i, j - 1, m)) n[i, j - 1, m].BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j + 1, m)) {
+                        n[i, j + 1, m].BlockID = id;
+                    }
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i - 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j - 1, m)) {
+                        n[i, j - 1, m].BlockID = id;
+                    }
                     break;
                 case 4:
-                    if (GoodVector3(i - 1, j, m)) n[i, j, m].BlockID = id;
-                    if (GoodVector3(i, j + 1, m)) n[i, j + 1, m].BlockID = id;
-                    if (GoodVector3(i + 1, j, m)) n[i + 1, j, m].BlockID = id;
-                    if (GoodVector3(i, j - 1, m)) n[i, j - 1, m].BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j + 1, m)) {
+                        n[i, j + 1, m].BlockID = id;
+                    }
+                    if (GoodVector3(i + 1, j, m)) {
+                        n[i + 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j - 1, m)) {
+                        n[i, j - 1, m].BlockID = id;
+                    }
                     break;
                 case 5:
-                    if (GoodVector3(i - 1, j, m)) n[i, j, m].BlockID = id;
-                    if (GoodVector3(i, j + 1, m)) n[i, j + 1, m].BlockID = id;
-                    if (GoodVector3(i + 1, j, m)) n[i + 1, j, m].BlockID = id;
-                    if (GoodVector3(i - 1, j, m)) n[i-1, j, m].BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j + 1, m)) {
+                        n[i, j + 1, m].BlockID = id;
+                    }
+                    if (GoodVector3(i + 1, j, m)) {
+                        n[i + 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i - 1, j, m].BlockID = id;
+                    }
                     break;
                 case 6:
-                    if (GoodVector3(i - 1, j, m)) n[i, j, m].BlockID = id;
-                    if (GoodVector3(i - 1, j, m)) n[i-1, j, m].BlockID = id;
-                    if (GoodVector3(i, j - 1, m)) n[i, j - 1, m].BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i - 1, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j - 1, m)) {
+                        n[i, j - 1, m].BlockID = id;
+                    }
                     break;
                 case 7:
-                    if (GoodVector3(i - 1, j, m)) n[i, j, m].BlockID = id;
-                    if (GoodVector3(i, j + 1, m)) n[i, j + 1, m].BlockID = id;
-                    if (GoodVector3(i + 1, j, m)) n[i + 1, j, m].BlockID = id;
+                    if (GoodVector3(i - 1, j, m)) {
+                        n[i, j, m].BlockID = id;
+                    }
+                    if (GoodVector3(i, j + 1, m)) {
+                        n[i, j + 1, m].BlockID = id;
+                    }
+                    if (GoodVector3(i + 1, j, m)) {
+                        n[i + 1, j, m].BlockID = id;
+                    }
                     break;
             }
         }
 
-        private void cjila(int id, int i, int j, int m, int lenght)
-        {
+        private void cjila(int id, int i, int j, int m, int lenght) {
             int ii = rnd.Next(-1, 1);
             int jj = rnd.Next(-1, 1);
 
-            int i1 = i; int j1 = j;
+            int i1 = i;
+            int j1 = j;
 
-            for (int k = 0; k <= lenght - 1; k++)
-            {
-                i1 += ii; j1 += jj;
-                if(GoodVector3(i1, j1, m))
-                {
+            for (int k = 0; k <= lenght - 1; k++) {
+                i1 += ii;
+                j1 += jj;
+                if (GoodVector3(i1, j1, m)) {
                     n[i1, j1, m].BlockID = id;
                 }
 
-                if(rnd.Next(1,4) == 1)
+                if (rnd.Next(1, 4) == 1) {
                     ii = rnd.Next(-1, 1);
+                }
                 jj = rnd.Next(-1, 1);
             }
         }
 
-        public void Generation_PlaceOnSurface()
-        {
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
-                    for (int m = 0; m <= mz - 1; m++)
-                    {
-                        if (n[i, j, m].BlockID != 0)
-                        {
-                            if (rnd.Next(1, Convert.ToInt32(101 - GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree_freq)) == 1 && m > 0)
-                                if (GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count > 0)
-                                    n[i, j, m - 1].BlockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree[rnd.Next(0, GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].tree.Count)];
+        public void Generation_PlaceOnSurface() {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
+                    for (int m = 0; m <= mz - 1; m++) {
+                        if (n[i, j, m].BlockID != 0) {
+                            if (
+                                rnd.Next(1,
+                                         Convert.ToInt32(101 -
+                                                         GMap.data[
+                                                             Main.gmap.obj[
+                                                                 i + (int) Main.gmap_region.X,
+                                                                 j + (int) Main.gmap_region.Y]].tree_freq)) == 1 &&
+                                m > 0) {
+                                if (
+                                    GMap.data[Main.gmap.obj[i + (int) Main.gmap_region.X, j + (int) Main.gmap_region.Y]]
+                                        .tree.Count > 0) {
+                                    n[i, j, m - 1].BlockID =
+                                        GMap.data[
+                                            Main.gmap.obj[i + (int) Main.gmap_region.X, j + (int) Main.gmap_region.Y]].
+                                            tree[
+                                                rnd.Next(0,
+                                                         GMap.data[
+                                                             Main.gmap.obj[
+                                                                 i + (int) Main.gmap_region.X,
+                                                                 j + (int) Main.gmap_region.Y]].tree.Count)];
+                                }
+                            }
                             goto here2;
                         }
                     }
-                here2: ;
+                    here2:
+                    ;
                 }
+            }
         }
 
         /// <summary>
         /// генерация слоя под поверхностью
         /// </summary>
         /// <param name="count"></param>
-        public void Generation_FullLayer_under(int count)
-        {
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
+        public void Generation_FullLayer_under(int count) {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
                     int k = 0;
-                    for (k = mz - 1; k >= 0; k--)
-                    {
-                        if (n[i, j, k].BlockID == 0)
+                    for (k = mz - 1; k >= 0; k--) {
+                        if (n[i, j, k].BlockID == 0) {
                             goto here1;
+                        }
                     }
-                    here1: ;
+                    here1:
+                    ;
 
-                    if (k < 0) continue;
+                    if (k < 0) {
+                        continue;
+                    }
 
-                    for (int m = k; m >= k - count + 1; m--)
-                    {
-                        if (m > 0) n[i, j, m].BlockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].under_surf;
+                    for (int m = k; m >= k - count + 1; m--) {
+                        if (m > 0) {
+                            n[i, j, m].BlockID =
+                                GMap.data[Main.gmap.obj[i + (int) Main.gmap_region.X, j + (int) Main.gmap_region.Y]].
+                                    under_surf;
+                        }
                     }
                 }
+            }
         }
 
         /// <summary>
         /// генерация слоя под слоем под поверхностью
         /// </summary>
         /// <param name="count"></param>
-        public void Generation_FullLayer_under_under(int count)
-        {
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
+        public void Generation_FullLayer_under_under(int count) {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
                     int k = 0;
-                    for (k = mz - 1; k >= 0; k--)
-                    {
-                        if (n[i, j, k].BlockID == 0)
+                    for (k = mz - 1; k >= 0; k--) {
+                        if (n[i, j, k].BlockID == 0) {
                             goto here1;
+                        }
                     }
-                    here1: ;
+                    here1:
+                    ;
 
-                    if (k < 0) continue;
+                    if (k < 0) {
+                        continue;
+                    }
 
-                    for (int m = k; m >= k - count + 1; m--)
-                    {
-                        if (m > 0) n[i, j, m].BlockID = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].under_under_surf;
+                    for (int m = k; m >= k - count + 1; m--) {
+                        if (m > 0) {
+                            n[i, j, m].BlockID =
+                                GMap.data[Main.gmap.obj[i + (int) Main.gmap_region.X, j + (int) Main.gmap_region.Y]].
+                                    under_under_surf;
+                        }
                     }
                 }
+            }
         }
 
         /// <summary>
         /// генерация верхнего слоя (чаще всего травы)
         /// </summary>
         /// <param name="count"></param>
-        public void Generation_FullLayerGrass(int count)
-        {
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
+        public void Generation_FullLayerGrass(int count) {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
                     int k = 0;
-                    for (k = mz - 1; k >= 0; k--)
-                    {
-                        if (n[i, j, k].BlockID == 0)
+                    for (k = mz - 1; k >= 0; k--) {
+                        if (n[i, j, k].BlockID == 0) {
                             goto here1;
-                    }
-                    here1: ;
-
-                    if (k < 0) continue;
-
-                    List<int> id = GMap.data[Main.gmap.obj[i + (int)Main.gmap_region.X, j + (int)Main.gmap_region.Y]].grass;
-
-                    for (int m = k; m >= k - count + 1; m--)
-                    {
-                        if (id.Count != 0)
-                        {
-                            int a = rnd.Next(0, id.Count);
-                            if (m > 0) n[i, j, m].BlockID = id[a];
                         }
-                        else if (m > 0) n[i, j, m].BlockID = 10;
+                    }
+                    here1:
+                    ;
+
+                    if (k < 0) {
+                        continue;
+                    }
+
+                    List<int> id =
+                        GMap.data[Main.gmap.obj[i + (int) Main.gmap_region.X, j + (int) Main.gmap_region.Y]].grass;
+
+                    for (int m = k; m >= k - count + 1; m--) {
+                        if (id.Count != 0) {
+                            int a = rnd.Next(0, id.Count);
+                            if (m > 0) {
+                                n[i, j, m].BlockID = id[a];
+                            }
+                        }
+                        else if (m > 0) {
+                            n[i, j, m].BlockID = 10;
+                        }
                     }
                 }
+            }
         }
 
-        public void Generation_SmoothTop()
-        {
-
-        }
+        public void Generation_SmoothTop() {}
 
         /// <summary>
         /// полный пересчет значений нодов subterrain
         /// </summary>
-        public void RecalcExploredSubterrain()
-        {
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                    for (int m = 0; m <= mz - 1; m++)
-                    {
+        public void RecalcExploredSubterrain() {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
+                    for (int m = 0; m <= mz - 1; m++) {
                         n[i, j, m].Subterrain = true;
                         n[i, j, m].Explored = false;
                     }
+                }
+            }
 
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
-                    for (int m = 0; m <= mz - 1; m++)
-                    {
-                        if (n[i, j, m].BlockID == 0)
-                        {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
+                    for (int m = 0; m <= mz - 1; m++) {
+                        if (n[i, j, m].BlockID == 0) {
                             n[i, j, m].Subterrain = false;
                             n[i, j, m].Explored = true;
                         }
-                        else
-                        {
+                        else {
                             n[i, j, m].Subterrain = false;
                             n[i, j, m].Explored = true;
                             goto here2;
                         }
                     }
-                    here2: ;
+                    here2:
+                    ;
                 }
+            }
         }
 
         /// <summary>
         /// простая генерация локальный карты по данным глобальной карты (базовая версия)
         /// </summary>
-        public void SimpleGeneration_bygmap()
-        {
-            for (int i0 = 0; i0 < wshine.GetUpperBound(0); i0++)
-                for (int i1 = 0; i1 < wshine.GetUpperBound(1); i1++)
-                {
-                    wshine[i0, i1] = (float)rnd.NextDouble();
-                    if(rnd.Next(0,1) == 0)
-                    whinenapr[i0, i1] = -1;
-                    else whinenapr[i0, i1] = 1;
+        public void SimpleGeneration_bygmap() {
+            for (int i0 = 0; i0 < wshine.GetUpperBound(0); i0++) {
+                for (int i1 = 0; i1 < wshine.GetUpperBound(1); i1++) {
+                    wshine[i0, i1] = (float) rnd.NextDouble();
+                    if (rnd.Next(0, 1) == 0) {
+                        whinenapr[i0, i1] = -1;
+                    }
+                    else {
+                        whinenapr[i0, i1] = 1;
+                    }
                 }
+            }
 
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                    for (int k = 0; k <= mz - 1; k += 8)
-                    {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
+                    for (int k = 0; k <= mz - 1; k += 8) {
                         n[i, j, k].BlockID = 0;
                         n[i, j, k + 1].BlockID = 0;
                         n[i, j, k + 2].BlockID = 0;
@@ -473,19 +552,26 @@ namespace Mork.Local_Map
                         n[i, j, k + 6].BlockID = 0;
                         n[i, j, k + 7].BlockID = 0;
                     }
+                }
+            }
 
 
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
-                    for (int k = 0; k <= ((Main.gmap.n[(int)Main.gmap_region.X + i, (int)Main.gmap_region.Y + j])) * (mz - 1) * 0.3 + (mz - 1) * 0.7 - 5; k++)
-                    {
-                        if (GoodVector3(i, j, mz - 1 - k)) n[i, j, mz - 1 - k].BlockID = 12345;
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
+                    for (int k = 0;
+                         k <=
+                         ((Main.gmap.n[(int) Main.gmap_region.X + i, (int) Main.gmap_region.Y + j]))*(mz - 1)*0.3 +
+                         (mz - 1)*0.7 - 5;
+                         k++) {
+                        if (GoodVector3(i, j, mz - 1 - k)) {
+                            n[i, j, mz - 1 - k].BlockID = 12345;
+                        }
                     }
                 }
+            }
 
-            int[] metamorf_clust = { 800,801,802,803,804,805,806};
-            int[] matamorf_jila = { 810,811,812 };
+            int[] metamorf_clust = {800, 801, 802, 803, 804, 805, 806};
+            int[] matamorf_jila = {810, 811, 812};
 
             Generation_FullLayer(18, 5);
             Generation_FullLayer(17, 2);
@@ -493,13 +579,13 @@ namespace Mork.Local_Map
             Generation_FullLayer(15, 2);
             Generation_FullLayer(14, 18);
 
-            Generation_BasicLayer((int)KnownIDs.Gabro);
-            Generation_FullLayer((int)KnownIDs.Gabro, 7);
-            Generation_FullLayer((int)KnownIDs.GabroToGranete, 1);
-            Generation_FullLayer((int)KnownIDs.GrenFranite, 6);
+            Generation_BasicLayer(KnownIDs.Gabro);
+            Generation_FullLayer(KnownIDs.Gabro, 7);
+            Generation_FullLayer(KnownIDs.GabroToGranete, 1);
+            Generation_FullLayer(KnownIDs.GrenFranite, 6);
 
             int[] granite_clust = metamorf_clust;
-            int[] granite_jila = { 55, 55 };
+            int[] granite_jila = {55, 55};
             GenerationFullLayerCluster(11, 12, granite_clust, 10, granite_jila, 5, 20);
 
             Generation_FullLayer(33, 10);
@@ -512,8 +598,7 @@ namespace Mork.Local_Map
 
             GenerationFullLayerCluster(22, 4, metamorf_clust, 6, matamorf_jila, 2, 25);
 
-            for (int i = 0; i <= 20; i++ )
-            {
+            for (int i = 0; i <= 20; i++) {
                 Generation_FullLayer(824, 2);
                 Generation_FullLayer(828, 2);
             }
@@ -526,15 +611,16 @@ namespace Mork.Local_Map
             Generation_FullLayerGrass(1);
 
 
-            for (int i = 0; i <= mx - 1; i++)
-                for (int j = 0; j <= my - 1; j++)
-                {
+            for (int i = 0; i <= mx - 1; i++) {
+                for (int j = 0; j <= my - 1; j++) {
                     //if(Main.gmap.n[Main.gmap_region.X + i, Main.gmap_region.Y + j] <= 0.4)
-                    for (int k = 0; k <= ((0.4)) * (mz - 1) * 0.3 + (mz - 1) * 0.7 + 1; k++)
-                    {
-                        if (GoodVector3(i, j, mz - 1 - k) && n[i, j, mz - 1 - k].BlockID == 0) n[i, j, mz - 1 - k].BlockID = KnownIDs.water;//вода
+                    for (int k = 0; k <= ((0.4))*(mz - 1)*0.3 + (mz - 1)*0.7 + 1; k++) {
+                        if (GoodVector3(i, j, mz - 1 - k) && n[i, j, mz - 1 - k].BlockID == 0) {
+                            n[i, j, mz - 1 - k].BlockID = KnownIDs.water; //вода
+                        }
                     }
                 }
+            }
 
             RecalcExploredSubterrain();
 
@@ -548,9 +634,11 @@ namespace Mork.Local_Map
         /// </summary>
         /// <param name="loc"></param>
         /// <returns></returns>
-        public static bool GoodVector3(Vector3 loc)
-        {
-            if (loc != null && loc.X >= 0 && loc.Y >= 0 && loc.X <= mx - 1 && loc.Y <= my - 1 && loc.Z >= 0 && loc.Z <= mz - 1) return true;
+        public static bool GoodVector3(Vector3 loc) {
+            if (loc != null && loc.X >= 0 && loc.Y >= 0 && loc.X <= mx - 1 && loc.Y <= my - 1 && loc.Z >= 0 &&
+                loc.Z <= mz - 1) {
+                return true;
+            }
             return false;
         }
 
@@ -561,9 +649,10 @@ namespace Mork.Local_Map
         /// <param name="Y"></param>
         /// <param name="Z"></param>
         /// <returns></returns>
-        public static bool GoodVector3(int X, int Y, int Z)
-        {
-            if (X >= 0 && Y >= 0 && X <= mx - 1 && Y <= my - 1 && Z >= 0 && Z <= mz - 1) return true;
+        public static bool GoodVector3(int X, int Y, int Z) {
+            if (X >= 0 && Y >= 0 && X <= mx - 1 && Y <= my - 1 && Z >= 0 && Z <= mz - 1) {
+                return true;
+            }
             return false;
         }
 
@@ -574,9 +663,10 @@ namespace Mork.Local_Map
         /// <param name="Y"></param>
         /// <param name="Z"></param>
         /// <returns></returns>
-        public static bool GoodVector3(float X, float Y, float Z)
-        {
-            if (X >= 0 && Y >= 0 && X <= mx - 1 && Y <= my - 1 && Z >= 0 && Z <= mz - 1) return true;
+        public static bool GoodVector3(float X, float Y, float Z) {
+            if (X >= 0 && Y >= 0 && X <= mx - 1 && Y <= my - 1 && Z >= 0 && Z <= mz - 1) {
+                return true;
+            }
             return false;
         }
 
@@ -589,24 +679,25 @@ namespace Mork.Local_Map
         //{
         //    return Main.dbobject.Data[n[(int)loc.X, (int)loc.Y, (int)loc.Z].blockID].walkable;
         //}
-
         //public static bool IsWalkable(int X, int Y, int Z)
         //{
         //    if (GoodVector3(X, Y, Z))
         //        return Main.dbobject.Data[n[X, Y, Z].blockID].walkable;
         //    else return false;
         //}
-
-        public static bool InScreen(Vector3 loc)
-        {
-            if ((loc.X >= Main.camera.X) && (loc.Y >= Main.camera.Y) && (loc.X <= Main.camera.X + Main.ssizex) && (loc.Y <= Main.camera.Y + Main.ssizey))
+        public static bool InScreen(Vector3 loc) {
+            if ((loc.X >= Main.camera.X) && (loc.Y >= Main.camera.Y) && (loc.X <= Main.camera.X + Main.ssizex) &&
+                (loc.Y <= Main.camera.Y + Main.ssizey)) {
                 return true;
+            }
             return false;
         }
-        public static bool InScreen(int X, int Y)
-        {
-            if ((X >= Main.camera.X) && (Y >= Main.camera.Y) && (X <= Main.camera.X + Main.ssizex) && (Y <= Main.camera.Y + Main.ssizey))
+
+        public static bool InScreen(int X, int Y) {
+            if ((X >= Main.camera.X) && (Y >= Main.camera.Y) && (X <= Main.camera.X + Main.ssizex) &&
+                (Y <= Main.camera.Y + Main.ssizey)) {
                 return true;
+            }
             return false;
         }
 
@@ -664,7 +755,7 @@ namespace Mork.Local_Map
         //                patch_step[(int)temp.X, (int)temp.Y - 1, (int)temp.Z] = counter;
         //                temp_q.Enqueue(new Vector3(temp.X, temp.Y - 1, temp.Z));
         //            }
-                    
+
         //            // via z+1
 
         //            if (temp.Z < mz - 1)
@@ -738,7 +829,6 @@ namespace Mork.Local_Map
         //    patch_step[(int)loc.X, (int)loc.Y, (int)loc.Z] = Int16.MaxValue;
 
 
-
         //    Stack<Vector3> revers_q = new Stack<Vector3>();
         //    revers_q.Push(dest);
         //    temp = dest;
@@ -770,7 +860,7 @@ namespace Mork.Local_Map
         //                            revers_q.Push(new Vector3(temp.X, temp.Y - 1, temp.Z));
         //                            temp = new Vector3(temp.X, temp.Y - 1, temp.Z);
         //                        }
-                                
+
         //            // via z+1
         //            if (temp.Z < mz - 1)
         //            {
@@ -804,7 +894,7 @@ namespace Mork.Local_Map
         //                                    temp = new Vector3(temp.X, temp.Y, temp.Z + 1);
         //                                }
         //            }
-                    
+
         //            // via z-1
         //            if (temp.Z > 0)
         //            {
@@ -847,34 +937,38 @@ namespace Mork.Local_Map
         //    return revers_q;
         //}
 
-        public void KillBlock(Vector3 p)
-        {
+        public void KillBlock(Vector3 p) {
             KillBlock((int) p.X, (int) p.Y, (int) p.Z);
         }
 
-        public void KillBlock(int x, int y, int z)
-        {
-            if (Main.dbobject.Data[n[x, y, z].BlockID].Dropafterdeath != (int)KnownIDs.error)
-                Main.localitems.n.Add(new LocalItem() { count = Main.dbobject.Data[n[x, y, z].BlockID].DropafterdeathNum, id = Main.dbobject.Data[n[x, y, z].BlockID].Dropafterdeath, pos = new Vector3(x, y, z) });
-                //Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
-                //                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
-                
+        public void KillBlock(int x, int y, int z) {
+            if (Main.dbobject.Data[n[x, y, z].BlockID].Dropafterdeath != KnownIDs.error) {
+                Main.localitems.n.Add(new LocalItem {
+                                                        count = Main.dbobject.Data[n[x, y, z].BlockID].DropafterdeathNum,
+                                                        id = Main.dbobject.Data[n[x, y, z].BlockID].Dropafterdeath,
+                                                        pos = new Vector3(x, y, z)
+                                                    });
+            }
+            //Main.iss.AddItem(Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath,
+            //                 Main.dbobject.Data[n[x, y, z].blockID].dropafterdeath_num);
+
 
             n[x, y, z].BlockID = 0;
             n[x, y, z].Health = 10;
 
-            for (var i = -1; i <= 1; i++)
-                for (var j = -1; j <= 1; j++)
-                {
-                    if (GoodVector3(x + i, y + j, z))
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    if (GoodVector3(x + i, y + j, z)) {
                         n[x + i, y + j, z].Explored = true;
+                    }
                 }
+            }
 
-            if (GoodVector3(x, y, z + 1))
+            if (GoodVector3(x, y, z + 1)) {
                 n[x, y, z + 1].Explored = true;
+            }
 
-            if (n[x, y, z].BlockID == KnownIDs.StorageEntrance)
-            {
+            if (n[x, y, z].BlockID == KnownIDs.StorageEntrance) {
                 Main.globalstorage.n.Remove(new Vector3(x, y, z));
             }
 
@@ -886,9 +980,8 @@ namespace Mork.Local_Map
         /// </summary>
         /// <param name="p"></param>
         /// <param name="id"></param>
-        public void SetBlock(Vector3 p, int id)
-        {
-            SetBlock((int)p.X, (int)p.Y, (int)p.Z, id);
+        public void SetBlock(Vector3 p, int id) {
+            SetBlock((int) p.X, (int) p.Y, (int) p.Z, id);
         }
 
         /// <summary>
@@ -898,10 +991,9 @@ namespace Mork.Local_Map
         /// <param name="y"></param>
         /// <param name="z"></param>
         /// <param name="id"></param>
-        public void SetBlock(int x, int y, int z, int id)
-        {
+        public void SetBlock(int x, int y, int z, int id) {
             n[x, y, z].BlockID = id;
-            n[x, y, z].Health = Main.dbobject.Data[id].MaxHp;
+            n[x, y, z].Health = Main.dbobject.Data[id].MaxHP;
 
             //if(Main.dbobject.Data[id].activeblock)
             //    active.Add(new Vector3(x,y,z));
@@ -921,17 +1013,15 @@ namespace Mork.Local_Map
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        public void ActivateBlock(int x, int y, int z)
-        {
-            active.Add(new Vector3(x,y,z));
+        public void ActivateBlock(int x, int y, int z) {
+            active.Add(new Vector3(x, y, z));
         }
 
         /// <summary>
         /// добавить блок в список обновляемых в каждом цикле
         /// </summary>
         /// <param name="pos"></param>
-        public void ActivateBlock(Vector3 pos)
-        {
+        public void ActivateBlock(Vector3 pos) {
             active.Add(pos);
         }
 
@@ -939,10 +1029,10 @@ namespace Mork.Local_Map
         /// удалить блок из списка обновляемых в каждом цикле
         /// </summary>
         /// <param name="pos"></param>
-        public void DeactivateBlock(Vector3 pos)
-        {
-            if (active.Contains(pos))
-                active.Remove(pos); 
+        public void DeactivateBlock(Vector3 pos) {
+            if (active.Contains(pos)) {
+                active.Remove(pos);
+            }
         }
 
         /// <summary>
@@ -951,23 +1041,19 @@ namespace Mork.Local_Map
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        public void DeactivateBlock(int x, int y, int z)
-        {
-            Vector3 a = new Vector3(x,y,z);
-            if (active.Contains(a))
+        public void DeactivateBlock(int x, int y, int z) {
+            var a = new Vector3(x, y, z);
+            if (active.Contains(a)) {
                 active.Remove(a);
+            }
         }
 
         /// <summary>
         /// обновить блочную логику для всех активных блоков
         /// </summary>
         /// <param name="gt"></param>
-        public void UpdateActiveblocks(GameTime gt)
-        {
-            foreach (var act in active)
-            {
-                
-            }
+        public void UpdateActiveblocks(GameTime gt) {
+            foreach (Vector3 act in active) {}
         }
 
         /// <summary>
@@ -975,28 +1061,24 @@ namespace Mork.Local_Map
         /// </summary>
         /// <param name="where"></param>
         /// <param name="mmap"></param>
-        public static void SubterrainPersonaly(Vector3 where, ref MMap mmap)
-        {
-            var i = @where.X;
-            var j = @where.Y;
-            for (var m = 0; m <= mz - 1; m++)
-            {
-                mmap.n[(int)i, (int)j, m].Subterrain = true;
+        public static void SubterrainPersonaly(Vector3 where, ref MMap mmap) {
+            float i = @where.X;
+            float j = @where.Y;
+            for (int m = 0; m <= mz - 1; m++) {
+                mmap.n[(int) i, (int) j, m].Subterrain = true;
             }
 
-            for (var m = 0; m <= mz - 1; m++)
-            {
-                if (mmap.n[(int)i, (int)j, m].BlockID == 0)
-                {
-                    mmap.n[(int)i, (int)j, m].Subterrain = false;
+            for (int m = 0; m <= mz - 1; m++) {
+                if (mmap.n[(int) i, (int) j, m].BlockID == 0) {
+                    mmap.n[(int) i, (int) j, m].Subterrain = false;
                 }
-                else
-                {
-                    mmap.n[(int)i, (int)j, m].Subterrain = false;
+                else {
+                    mmap.n[(int) i, (int) j, m].Subterrain = false;
                     goto here;
                 }
             }
-            here: ;
+            here:
+            ;
         }
     }
 }

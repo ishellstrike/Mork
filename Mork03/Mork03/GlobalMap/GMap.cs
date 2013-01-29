@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 
-namespace Mork
-{
+namespace Mork {
     //public static class YearSeason
     //{
     //    public const int Summer = 0;
@@ -20,8 +19,7 @@ namespace Mork
     //        return Winter;
     //    }
     //}
-    public enum GMapObj : byte
-    {
+    public enum GMapObj : byte {
         Nothing,
         Water,
         WaterDip,
@@ -49,45 +47,53 @@ namespace Mork
 
     public class GMap //класс глобальной карты
     {
-        public static Dictionary<GMapObj, GObj> data = new Dictionary<GMapObj, GObj>();
+        #region Delegates
+
+        public delegate void GenerateProc(double rou);
+
+        #endregion
 
         public const int size = 1024;
+        public static Dictionary<GMapObj, GObj> data = new Dictionary<GMapObj, GObj>();
+        private readonly byte[] tempa;
+        public byte[,] dre;
         public float[,] n;
         public GMapObj[,] obj;
-        public byte[,] t;
-        public byte[,] wet;
-        public byte[,] dre;
-        public byte[,] sal;
-
-        byte[] tempa;
 
         public Random rnd = new Random();
+        public byte[,] sal;
+        public byte[,] t;
 
         public int water_factor = 1;
+        public byte[,] wet;
 
-        public GMap()
-        {
-            obj = new GMapObj[size, size];
-            t = new byte[size, size];
-            n = new float[size, size];
-            tempa = new byte[GMap.size];
-            
-            data.Add(GMapObj.Water, new GObj(Main.interface_tex[12], new Color(78,187,246), "вода"));
+        public GMap() {
+            obj = new GMapObj[size,size];
+            t = new byte[size,size];
+            n = new float[size,size];
+            tempa = new byte[size];
+
+            data.Add(GMapObj.Water, new GObj(Main.interface_tex[12], new Color(78, 187, 246), "вода"));
             data.Add(GMapObj.WaterDip, new GObj(Main.interface_tex[12], new Color(26, 169, 248), "вода"));
-            data.Add(GMapObj.WaterDipest, new GObj(Main.interface_tex[12], new Color(45,112,219), "вода"));
-            data.Add(GMapObj.Mell, new GObj(Main.interface_tex[12], new Color(212,235,247), "вода"));
+            data.Add(GMapObj.WaterDipest, new GObj(Main.interface_tex[12], new Color(45, 112, 219), "вода"));
+            data.Add(GMapObj.Mell, new GObj(Main.interface_tex[12], new Color(212, 235, 247), "вода"));
             data.Add(GMapObj.Nothing, new GObj(Main.interface_tex[12], Color.Black, "ничего"));
 
             data.Add(GMapObj.Lednik, new GObj(Main.interface_tex[12], new Color(255, 255, 255), "Ледники"));
 
-            data.Add(GMapObj.ArcticTundra, new GObj(Main.interface_tex[12], new Color(209,210,196), "Арктическая тундра"));
-            
+            data.Add(GMapObj.ArcticTundra,
+                     new GObj(Main.interface_tex[12], new Color(209, 210, 196), "Арктическая тундра"));
 
-            data.Add(GMapObj.ArcticTundraMountain, new GObj(Main.interface_tex[13], new Color(209, 210, 196), "Высотная арктическая тундра"));
-            data.Add(GMapObj.MoxLishTundra, new GObj(Main.interface_tex[12], new Color(127, 177, 177), "Мохово-лишайниковая тундра"));
-            data.Add(GMapObj.KustTundra, new GObj(Main.interface_tex[12], new Color(127, 200, 177), "Кустарниковая тундра"));
+
+            data.Add(GMapObj.ArcticTundraMountain,
+                     new GObj(Main.interface_tex[13], new Color(209, 210, 196), "Высотная арктическая тундра"));
+            data.Add(GMapObj.MoxLishTundra,
+                     new GObj(Main.interface_tex[12], new Color(127, 177, 177), "Мохово-лишайниковая тундра"));
+            data.Add(GMapObj.KustTundra,
+                     new GObj(Main.interface_tex[12], new Color(127, 200, 177), "Кустарниковая тундра"));
             data.ElementAt(data.Count - 1).Value.grass.Add(34);
-            data.Add(GMapObj.TemnihvRedkolese, new GObj(Main.interface_tex[12], new Color(160, 145, 145), "Темнохвойное редколесье"));
+            data.Add(GMapObj.TemnihvRedkolese,
+                     new GObj(Main.interface_tex[12], new Color(160, 145, 145), "Темнохвойное редколесье"));
             data.ElementAt(data.Count - 1).Value.grass.Add(34);
 
             data.Add(GMapObj.Taiga, new GObj(Main.interface_tex[12], new Color(110, 135, 101), "Тайга"));
@@ -112,7 +118,8 @@ namespace Mork
             data.ElementAt(data.Count - 1).Value.under_surf = 37;
             data.ElementAt(data.Count - 1).Value.under_under_surf = 37;
 
-            data.Add(GMapObj.Visokotrav, new GObj(Main.interface_tex[12], new Color(207, 70, 95), "Высокотравные саванны"));
+            data.Add(GMapObj.Visokotrav,
+                     new GObj(Main.interface_tex[12], new Color(207, 70, 95), "Высокотравные саванны"));
             data.Add(GMapObj.Listopadnie, new GObj(Main.interface_tex[12], new Color(125, 27, 66), "Листопадные леса"));
             data.Add(GMapObj.Suhgilei, new GObj(Main.interface_tex[12], new Color(148, 95, 147), "Сезонные гилеи"));
             data.Add(GMapObj.Gilei, new GObj(Main.interface_tex[12], new Color(106, 93, 144), "Гилеи"));
@@ -127,32 +134,25 @@ namespace Mork
             data.ElementAt(data.Count - 1).Value.under_under_surf = 20;
             data.ElementAt(data.Count - 1).Value.grass.Add(20);
 
-            for (int i = 0; i <= GMap.size - 1; i++)
-            {
-                tempa[i] = Convert.ToByte(155 - Math.Pow((i / (double)(size - 1)) * 23.0651 - 11.5325, 2));
+            for (int i = 0; i <= size - 1; i++) {
+                tempa[i] = Convert.ToByte(155 - Math.Pow((i/(double) (size - 1))*23.0651 - 11.5325, 2));
             }
         }
 
-        public delegate void GenerateProc(double rou);
-
-        public void GenerateGWorld(double rou)
-        {
+        public void GenerateGWorld(double rou) {
             generategworld(rou);
         }
 
-        public void GenerateGWorld()
-        {
+        public void GenerateGWorld() {
             generategworld(20);
         }
 
-        private void generategworld(double rou)
-        {
+        private void generategworld(double rou) {
             Main.gmapreshim = Main.Gmapreshim.Height;
-            Main.gmap.n = Main.gmap.DsGenerate(GMap.size, GMap.size, rou);
+            Main.gmap.n = Main.gmap.DsGenerate(size, size, rou);
 
-            for (int i = 0; i <= GMap.size - 1; i++)
-                for (int j = 0; j <= GMap.size - 1; j+=8)
-                {
+            for (int i = 0; i <= size - 1; i++) {
+                for (int j = 0; j <= size - 1; j += 8) {
                     Main.gmap.obj[i, j] = 0;
                     Main.gmap.obj[i, j + 1] = 0;
                     Main.gmap.obj[i, j + 2] = 0;
@@ -162,12 +162,12 @@ namespace Mork
                     Main.gmap.obj[i, j + 6] = 0;
                     Main.gmap.obj[i, j + 7] = 0;
                 }
+            }
 
             Main.gmapreshim = Main.Gmapreshim.Tempirature;
 
-            for (int i = 0; i <= GMap.size - 1; i++)
-                for (int j = 0; j <= GMap.size - 1; j+=8)
-                {
+            for (int i = 0; i <= size - 1; i++) {
+                for (int j = 0; j <= size - 1; j += 8) {
                     t[i, j] = Convert.ToByte(tempa[j] + 50);
                     t[i, j + 1] = Convert.ToByte(tempa[j + 1] + 50);
                     t[i, j + 2] = Convert.ToByte(tempa[j + 2] + 50);
@@ -177,10 +177,10 @@ namespace Mork
                     t[i, j + 6] = Convert.ToByte(tempa[j + 6] + 50);
                     t[i, j + 7] = Convert.ToByte(tempa[j + 7] + 50);
                 }
+            }
 
-            for(int i = 5; i<= GMap.size - 6; i++)
-                for (int j = 5; j <= GMap.size - 6; j ++)
-                {              
+            for (int i = 5; i <= size - 6; i++) {
+                for (int j = 5; j <= size - 6; j ++) {
                     //if (n[i, j] > 0.99) obj[i, j] = GMapObj.pike;
                     //if (n[i, j] > 0.995) obj[i, j] = GMapObj.High_pike;
 
@@ -221,69 +221,97 @@ namespace Mork
                     temp += n[i - 5, j];
                     temp += n[i, j - 5];
 
-                    t[i, j] = Convert.ToByte(temp / 21 * 100);
+                    t[i, j] = Convert.ToByte(temp/21*100);
 
                     t[i, j] += tempa[j];
-  
                 }
+            }
 
             Main.gmapreshim = Main.Gmapreshim.Height;
-            Main.gmap.n = Main.gmap.DsGenerate(GMap.size, GMap.size, rou);
+            Main.gmap.n = Main.gmap.DsGenerate(size, size, rou);
 
             Main.gmapreshim = Main.Gmapreshim.Normal;
 
-            for (var i = 0; i <= GMap.size - 1; i++)
-                for (var j = 0; j <= GMap.size - 1; j++)
-                {
-                    if (n[i, j] <= 0.45 && n[i, j] > 0.4) { obj[i, j] = GMapObj.Mell; }
+            for (int i = 0; i <= size - 1; i++) {
+                for (int j = 0; j <= size - 1; j++) {
+                    if (n[i, j] <= 0.45 && n[i, j] > 0.4) {
+                        obj[i, j] = GMapObj.Mell;
+                    }
 
-                    if (n[i, j] <= 0.4) { obj[i, j] = GMapObj.Water; }
+                    if (n[i, j] <= 0.4) {
+                        obj[i, j] = GMapObj.Water;
+                    }
 
-                    if (n[i, j] <= 0.3) { obj[i, j] = GMapObj.WaterDip; }
+                    if (n[i, j] <= 0.3) {
+                        obj[i, j] = GMapObj.WaterDip;
+                    }
 
-                    if (n[i, j] <= 0.09) { obj[i, j] = GMapObj.WaterDipest; }
-                }
-
-            for(var i = 0; i<= size - 1; i++)
-                for (var j = 0; j <= size - 1; j++)
-                {
-                    if (t[i, j] <= 70) obj[i, j] = GMapObj.Lednik;
-
-                    if (n[i, j] > 0.90) obj[i, j] = GMapObj.Pike;
-
-                    if (n[i, j] > 0.99) obj[i, j] = GMapObj.HighPike;
-
-                    if (obj[i, j] == GMapObj.Nothing)
-                    {
-                        if (t[i, j] > 70 && t[i, j] <= 80) obj[i, j] = GMapObj.ArcticTundra;
-                        else
-                            if (t[i, j] > 80 && t[i, j] <= 90) obj[i, j] = GMapObj.MoxLishTundra;
-                            else
-                                if (t[i, j] > 90 && t[i, j] <= 100) obj[i, j] = GMapObj.KustTundra;
-                                else
-                                    if (t[i, j] > 100 && t[i, j] <= 110) obj[i, j] = GMapObj.TemnihvRedkolese;
-                                    else
-                                        if (t[i, j] > 110 && t[i, j] <= 120) obj[i, j] = GMapObj.Taiga;
-                                        else
-                                            if (t[i, j] > 120 && t[i, j] <= 150) obj[i, j] = GMapObj.HvoinieLesa;
-                                            else
-                                                if (t[i, j] > 150 && t[i, j] <= 160) obj[i, j] = GMapObj.Lesostep;
-                                                else
-                                                    if (t[i, j] > 160 && t[i, j] <= 180) obj[i, j] = GMapObj.Step;
-                                                    else
-                                                        if (t[i, j] > 180 && t[i, j] <= 190) obj[i, j] = GMapObj.SuhieStepi;
-                                                        else
-                                                            if (t[i, j] > 190 && t[i, j] <= 210) obj[i, j] = GMapObj.Savanna;
-                                                            else
-                                                                if (t[i, j] > 210 && t[i, j] <= 220) obj[i, j] = GMapObj.Visokotrav;
-                                                                else
-                                                                    if (t[i, j] > 220 && t[i, j] <= 230) obj[i, j] = GMapObj.Listopadnie;
-                                                                    else
-                                                                        if (t[i, j] > 230 && t[i, j] <= 245) obj[i, j] = GMapObj.Suhgilei;
-                                                                        else
-                                                                            if (t[i, j] > 245 && t[i, j] <= 255) obj[i, j] = GMapObj.Gilei;
+                    if (n[i, j] <= 0.09) {
+                        obj[i, j] = GMapObj.WaterDipest;
                     }
                 }
+            }
+
+            for (int i = 0; i <= size - 1; i++) {
+                for (int j = 0; j <= size - 1; j++) {
+                    if (t[i, j] <= 70) {
+                        obj[i, j] = GMapObj.Lednik;
+                    }
+
+                    if (n[i, j] > 0.90) {
+                        obj[i, j] = GMapObj.Pike;
+                    }
+
+                    if (n[i, j] > 0.99) {
+                        obj[i, j] = GMapObj.HighPike;
+                    }
+
+                    if (obj[i, j] == GMapObj.Nothing) {
+                        if (t[i, j] > 70 && t[i, j] <= 80) {
+                            obj[i, j] = GMapObj.ArcticTundra;
+                        }
+                        else if (t[i, j] > 80 && t[i, j] <= 90) {
+                            obj[i, j] = GMapObj.MoxLishTundra;
+                        }
+                        else if (t[i, j] > 90 && t[i, j] <= 100) {
+                            obj[i, j] = GMapObj.KustTundra;
+                        }
+                        else if (t[i, j] > 100 && t[i, j] <= 110) {
+                            obj[i, j] = GMapObj.TemnihvRedkolese;
+                        }
+                        else if (t[i, j] > 110 && t[i, j] <= 120) {
+                            obj[i, j] = GMapObj.Taiga;
+                        }
+                        else if (t[i, j] > 120 && t[i, j] <= 150) {
+                            obj[i, j] = GMapObj.HvoinieLesa;
+                        }
+                        else if (t[i, j] > 150 && t[i, j] <= 160) {
+                            obj[i, j] = GMapObj.Lesostep;
+                        }
+                        else if (t[i, j] > 160 && t[i, j] <= 180) {
+                            obj[i, j] = GMapObj.Step;
+                        }
+                        else if (t[i, j] > 180 && t[i, j] <= 190) {
+                            obj[i, j] = GMapObj.SuhieStepi;
+                        }
+                        else if (t[i, j] > 190 && t[i, j] <= 210) {
+                            obj[i, j] = GMapObj.Savanna;
+                        }
+                        else if (t[i, j] > 210 && t[i, j] <= 220) {
+                            obj[i, j] = GMapObj.Visokotrav;
+                        }
+                        else if (t[i, j] > 220 && t[i, j] <= 230) {
+                            obj[i, j] = GMapObj.Listopadnie;
+                        }
+                        else if (t[i, j] > 230 && t[i, j] <= 245) {
+                            obj[i, j] = GMapObj.Suhgilei;
+                        }
+                        else if (t[i, j] > 245 && t[i, j] <= 255) {
+                            obj[i, j] = GMapObj.Gilei;
+                        }
+                    }
+                }
+            }
 
             int a, b, amax, bmax, xof, yof;
             double max;
@@ -383,45 +411,48 @@ namespace Mork
             //        temp++;
             //    }
             //}
-            for(int i = 0; i<= size - 1; i++)
-                for (int j = 0; j <= size - 1; j++)
-                {
-                    if (Main.gmap.obj[i, j] == GMapObj.Water || Main.gmap.obj[i, j] == GMapObj.WaterDip || Main.gmap.obj[i, j] == GMapObj.WaterDipest || Main.gmap.obj[i, j] == GMapObj.Mell) Main.gmap.n[i, j] -= 0.1f;
-                    if (Main.gmap.n[i, j] <= 0) Main.gmap.n[i, j] = 0;
+            for (int i = 0; i <= size - 1; i++) {
+                for (int j = 0; j <= size - 1; j++) {
+                    if (Main.gmap.obj[i, j] == GMapObj.Water || Main.gmap.obj[i, j] == GMapObj.WaterDip ||
+                        Main.gmap.obj[i, j] == GMapObj.WaterDipest || Main.gmap.obj[i, j] == GMapObj.Mell) {
+                        Main.gmap.n[i, j] -= 0.1f;
+                    }
+                    if (Main.gmap.n[i, j] <= 0) {
+                        Main.gmap.n[i, j] = 0;
+                    }
                 }
+            }
         }
 
         #region Diamond-square
 
-        private double _dRoughness;
         private double _dBigSize;
+        private double _dRoughness;
 
-        private float[,] DsGenerate(int iWidth, int iHeight, double iRoughness)
-        {
-            var points = new float[iWidth + 1, iHeight + 1];
+        private float[,] DsGenerate(int iWidth, int iHeight, double iRoughness) {
+            var points = new float[iWidth + 1,iHeight + 1];
 
-            var c1 = rnd.NextDouble();
-            var c2 = rnd.NextDouble();
-            var c3 = rnd.NextDouble();
-            var c4 = rnd.NextDouble();
+            double c1 = rnd.NextDouble();
+            double c2 = rnd.NextDouble();
+            double c3 = rnd.NextDouble();
+            double c4 = rnd.NextDouble();
             _dRoughness = iRoughness;
             _dBigSize = iWidth + iHeight;
             DsDivide(ref points, 0, 0, iWidth, iHeight, c1, c2, c3, c4);
             return points;
         }
 
-        private void DsDivide(ref float[,] points, double x, double y, double width, double height, double c1, double c2, double c3, double c4)
-        {
-            double newWidth = Math.Floor(width / 2);
-            double newHeight = Math.Floor(height / 2);
+        private void DsDivide(ref float[,] points, double x, double y, double width, double height, double c1, double c2,
+                              double c3, double c4) {
+            double newWidth = Math.Floor(width/2);
+            double newHeight = Math.Floor(height/2);
 
-            if (width > 1 || height > 1)
-            {
-                var middle = ((c1 + c2 + c3 + c4) / 4) + PMove(newWidth + newHeight);
-                var edge1 = ((c1 + c2) / 2);
-                var edge2 = ((c2 + c3) / 2);
-                var edge3 = ((c3 + c4) / 2);
-                var edge4 = ((c4 + c1) / 2);
+            if (width > 1 || height > 1) {
+                double middle = ((c1 + c2 + c3 + c4)/4) + PMove(newWidth + newHeight);
+                double edge1 = ((c1 + c2)/2);
+                double edge2 = ((c2 + c3)/2);
+                double edge3 = ((c3 + c4)/2);
+                double edge4 = ((c4 + c1)/2);
                 middle = Normalize(middle);
                 edge1 = Normalize(edge1);
                 edge2 = Normalize(edge2);
@@ -429,45 +460,40 @@ namespace Mork
                 edge4 = Normalize(edge4);
                 DsDivide(ref points, x, y, newWidth, newHeight, c1, edge1, middle, edge4);
                 DsDivide(ref points, x + newWidth, y, width - newWidth, newHeight, edge1, c2, edge2, middle);
-                DsDivide(ref points, x + newWidth, y + newHeight, width - newWidth, height - newHeight, middle, edge2, c3, edge3);
+                DsDivide(ref points, x + newWidth, y + newHeight, width - newWidth, height - newHeight, middle, edge2,
+                         c3, edge3);
                 DsDivide(ref points, x, y + newHeight, newWidth, height - newHeight, edge4, middle, edge3, c4);
             }
-            else
-            {
-                float c = (float)(c1 + c2 + c3 + c4) / 4f;
+            else {
+                float c = (float) (c1 + c2 + c3 + c4)/4f;
 
-                points[(int)(x), (int)(y)] = c;
-                if (width == 2)
-                {
-                    points[(int)(x + 1), (int)(y)] = c;
+                points[(int) (x), (int) (y)] = c;
+                if (width == 2) {
+                    points[(int) (x + 1), (int) (y)] = c;
                 }
-                if (height == 2)
-                {
-                    points[(int)(x), (int)(y + 1)] = c;
+                if (height == 2) {
+                    points[(int) (x), (int) (y + 1)] = c;
                 }
-                if ((width == 2) && (height == 2))
-                {
-                    points[(int)(x + 1), (int)(y + 1)] = c;
+                if ((width == 2) && (height == 2)) {
+                    points[(int) (x + 1), (int) (y + 1)] = c;
                 }
             }
         }
-        private static double Normalize(double iNum)
-        {
-            if (iNum < 0)
-            {
+
+        private static double Normalize(double iNum) {
+            if (iNum < 0) {
                 iNum = 0;
             }
-            else if (iNum > 1.0)
-            {
+            else if (iNum > 1.0) {
                 iNum = 1.0;
             }
             return iNum;
         }
 
-        private double PMove(double smallSize)
-        {
-            return (rnd.NextDouble() - 0.5) * smallSize / _dBigSize * _dRoughness;
+        private double PMove(double smallSize) {
+            return (rnd.NextDouble() - 0.5)*smallSize/_dBigSize*_dRoughness;
         }
+
         #endregion
     }
 }

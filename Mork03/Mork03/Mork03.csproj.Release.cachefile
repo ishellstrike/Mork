@@ -47,7 +47,8 @@ Content\Effects\WaterBlockEffect.xnb
 Content\Skins\Default.skin
 Content\Skins\Extended.skin
 Content\Skins\Green.skin
-Content\Data\MNode\buildings.txt
-Content\Data\MNode\basicnodes.txt
 Content\Data\base_generation.txt
 Content\Data\base_mnode.txt
+Content\Data\LMO\basicnodes.txt
+Content\Data\LMO\buildings.txt
+Content\Data\LMC\basiccreatures.txt

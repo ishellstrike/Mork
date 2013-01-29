@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Mork.Local_Map.Dynamic.Units
-{
-    public class UnitInfo
-    {
-        public int meta_tex;
-
+﻿namespace Mork.Local_Map.Dynamic.Units {
+    public class UnitInfo {
         public int basic_mass;
+        public int meta_tex;
     }
 }

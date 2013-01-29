@@ -1,13 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Mork.Data_Parser;
+using Mork.DataParser;
 
-namespace Mork
-{
-    public static class KnownIDs
-    {
-        public static int BrickMaker = 5010;
+namespace Mork {
+    public static class KnownIDs {
         public const int error = 666;
 
         public const int stoneboulder = 5000;
@@ -15,32 +11,26 @@ namespace Mork
         public const int stonebrickwall = 5002;
 
         public const int Gabro = 11;
-               
+
         public const int GabroToGranete = 12;
         public const int GrenFranite = 13;
 
         public const int StorageEntrance = 20000;
 
         public const int water = 888;
+        public static int BrickMaker = 5010;
     }
 
-    public class DB_LMO
-    {
+    public class DB_LMO {
         public readonly Dictionary<int, LMO> Data = new Dictionary<int, LMO>();
 
-        public DB_LMO()
-        {
-            string dir = Directory.GetCurrentDirectory() + "\\Content\\Data\\MNode";
-            List<KeyValuePair<int, LMO>> list = LMO_Parser.ParseDirectory(dir);
+        public DB_LMO() {
+            string dir = Directory.GetCurrentDirectory() + "\\Content\\Data\\LMO";
+            List<KeyValuePair<int, object>> list = GameDataParserBacis.ParseDirectory(dir, LMO_Parser.LMOParser);
 
-            foreach (var lmo in list)
-            {
-                Data.Add(lmo.Key, lmo.Value);
+            foreach (var lmo in list) {
+                Data.Add(lmo.Key, (LMO) lmo.Value);
             }
-
-            Data[0].NotBlock = true;
-
-            int a = dir.Length;
 
             //Data.Add(0, new LMO(1, true, "", "", "", ""));
             //Data.Add(1,

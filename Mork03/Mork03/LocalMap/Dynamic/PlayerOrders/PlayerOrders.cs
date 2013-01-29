@@ -1,81 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Mork.Local_Map.Dynamic.Actions;
-using Mork.Local_Map.Dynamic.Local_Items;
 using Mork.Local_Map.Dynamic.Units;
 using Mork.Local_Map.Dynamic.Units.Actions;
 using Mork.Local_Map.Sector;
 
-namespace Mork.Local_Map.Dynamic.PlayerOrders
-{
-    public class PlayerOrders
-    {
-        Random rnd = new Random();
-
-        public List<Order> n = new List<Order>();
+namespace Mork.Local_Map.Dynamic.PlayerOrders {
+    public class PlayerOrders {
+        public List<Order> N = new List<Order>();
+        private Random _rnd = new Random();
 
         public TimeSpan s10;
 
-        public void OrdersUpdate(GameTime gt, LocalHeroes lh)
-        {
+        public void OrdersUpdate(GameTime gt, LocalUnits lh, SectorMap smap) {
             ClearingOrders(lh);
             GivingOrders(lh);
-            MakingOrders(gt, lh);
+            MakingOrders(gt, lh, smap);
 
             s10 += gt.ElapsedGameTime;
-            if (s10.TotalSeconds >= 1)
-            {
+            if (s10.TotalSeconds >= 1) {
                 s10 -= TimeSpan.FromSeconds(1);
-                foreach (var order in n)
-                {
+                foreach (Order order in N) {
                     order.sleep = false;
                 }
             }
         }
 
-        void MakingOrders(GameTime gt, LocalHeroes lh)
-        {
-            for (int o = 0; o < lh.n.Count; o++)
-            {
-                var h = lh.n[o];
-                if (h.current_order is DestroyOrder && IsNear(h.pos, h.current_order.dest))
-                {
-                    Main.smap.At(h.current_order.dest.X, h.current_order.dest.Y, h.current_order.dest.Z).Health -= (float)(10 * gt.TotalGameTime.TotalSeconds);
+        private void MakingOrders(GameTime gt, LocalUnits lh, SectorMap smap) {
+            for (int o = 0; o < lh.N.Count; o++) {
+                LocalUnit h = lh.N[o];
+                if (h.CurrentOrder is DestroyOrder && IsNear(h.Pos, h.CurrentOrder.dest)) {
+                    smap.At(h.CurrentOrder.dest.X, h.CurrentOrder.dest.Y, h.CurrentOrder.dest.Z).Health -=
+                        (float) (10*gt.TotalGameTime.TotalSeconds);
                     if (
-                        Main.smap.At(h.current_order.dest.X, h.current_order.dest.Y, h.current_order.dest.Z).Health <= 0)
-                    {
-                        Main.smap.KillBlock((int)h.current_order.dest.X, (int)h.current_order.dest.Y, (int)h.current_order.dest.Z);
-                        h.current_order.complete = true;
-                        h.current_order = new NothingOrder();
+                        smap.At(h.CurrentOrder.dest.X, h.CurrentOrder.dest.Y, h.CurrentOrder.dest.Z).Health <= 0) {
+                        Main.smap.KillBlock((int) h.CurrentOrder.dest.X, (int) h.CurrentOrder.dest.Y,
+                                            (int) h.CurrentOrder.dest.Z);
+                        h.CurrentOrder.complete = true;
+                        h.CurrentOrder = new NothingOrder();
                     }
                 }
 
-                if (h.current_order is CollectOrder && IsNear(h.pos, h.current_order.dest))
-                {
+                if (h.CurrentOrder is CollectOrder && IsNear(h.Pos, h.CurrentOrder.dest)) {
                     //var temp = Main.localitems.GetNearItem(h.pos);
-                    if ((h.current_order as CollectOrder).tocollect.id != 0 && h.carry.id == 0)
-                    {
+                    if ((h.CurrentOrder as CollectOrder).tocollect.id != 0 && h.Carry.id == 0) {
                         //if (Main.localitems.n.Contains((h.current_order as CollectOrder).tocollect))
                         //{
-                        h.carry.id = (h.current_order as CollectOrder).tocollect.id;
-                        h.carry.count = (h.current_order as CollectOrder).tocollect.count;
+                        h.Carry.id = (h.CurrentOrder as CollectOrder).tocollect.id;
+                        h.Carry.count = (h.CurrentOrder as CollectOrder).tocollect.count;
 
-                        Main.localitems.n.Remove((h.current_order as CollectOrder).tocollect);
+                        Main.localitems.n.Remove((h.CurrentOrder as CollectOrder).tocollect);
 
-                        h.current_order.complete = true;
+                        h.CurrentOrder.complete = true;
 
-                        if (Main.globalstorage.n.Count > 0)
-                        {
+                        if (Main.globalstorage.n.Count > 0) {
                             Vector3 st = Main.globalstorage.GetFreeStorage();
-                            if (st != new Vector3(-1))
-                            {
-                                h.current_order = new ToStoreOrder() { dest = st };
-                                Main.AddToLog("ToStoreOrder patch find for " + h.pos + " " + h.patch.Count);
-                                h.patch = Main.smap.FindPatch(h.pos, st);
-                                (h.current_order as ToStoreOrder).storagepos = st;
+                            if (st != new Vector3(-1)) {
+                                h.CurrentOrder = new ToStoreOrder {dest = st};
+                                Main.AddToLog("ToStoreOrder patch find for " + h.Pos + " " + h.Patch.Count);
+                                h.Patch = Main.smap.FindPatch(h.Pos, st);
+                                (h.CurrentOrder as ToStoreOrder).storagepos = st;
                             }
                         }
                         //}
@@ -103,120 +88,125 @@ namespace Mork.Local_Map.Dynamic.PlayerOrders
                 //    }
                 //}
 
-                if (h.current_order is BuildOrder && IsNear(h.pos, h.current_order.dest))
-                {
-                    var allow = true;
-                    foreach (var he in lh.n)
-                    {
-                        if ((int)he.pos.X == (int)h.current_order.dest.X && (int)he.pos.Z == (int)h.current_order.dest.Z && (int)he.pos.Z == (int)h.current_order.dest.Z)
+                if (h.CurrentOrder is BuildOrder && IsNear(h.Pos, h.CurrentOrder.dest)) {
+                    bool allow = true;
+                    foreach (LocalUnit he in lh.N) {
+                        if ((int) he.Pos.X == (int) h.CurrentOrder.dest.X &&
+                            (int) he.Pos.Z == (int) h.CurrentOrder.dest.Z &&
+                            (int) he.Pos.Z == (int) h.CurrentOrder.dest.Z) {
                             allow = false;
+                        }
                     }
-                    if (Main.smap.At(h.current_order.dest).BlockID == 0 && allow && Main.iss.n[(h.current_order as BuildOrder).blockID].count >= 1)
-                    {        
-                        Main.smap.SetBlock(h.current_order.dest, (h.current_order as BuildOrder).blockID);
-                        Main.iss.n[(h.current_order as BuildOrder).blockID].count--;
-                        h.current_order.complete = true;
-                        h.current_order = new NothingOrder();
+                    if (Main.smap.At(h.CurrentOrder.dest).BlockID == 0 && allow &&
+                        Main.iss.n[(h.CurrentOrder as BuildOrder).blockID].count >= 1) {
+                        Main.smap.SetBlock(h.CurrentOrder.dest, (h.CurrentOrder as BuildOrder).blockID);
+                        Main.iss.n[(h.CurrentOrder as BuildOrder).blockID].count--;
+                        h.CurrentOrder.complete = true;
+                        h.CurrentOrder = new NothingOrder();
                     }
                 }
 
-                if (h.iddle_time >= TimeSpan.FromSeconds(10))
-                {
-                    h.current_order.taken = false;
-                    h.current_order.sleep = true;
-                    h.current_order = new NothingOrder();
+                if (h.IddleTime >= TimeSpan.FromSeconds(10)) {
+                    h.CurrentOrder.taken = false;
+                    h.CurrentOrder.sleep = true;
+                    h.CurrentOrder = new NothingOrder();
                 }
             }
         }
 
-        void ClearingOrders(LocalHeroes lh)
-        {
-            for (int index = 0; index < n.Count; index++)
-            {
-                for (int o = 0; o < lh.n.Count; o++)
-                {
-                    var h = lh.n[o];
-                    if (h.current_order is BuildOrder && Main.iss.n[(h.current_order as BuildOrder).blockID].count < 1)
-                    {
-                        h.current_order.complete = true;
-                        h.current_order = new NothingOrder();
+        private void ClearingOrders(LocalUnits lh) {
+            for (int index = 0; index < N.Count; index++) {
+                for (int o = 0; o < lh.N.Count; o++) {
+                    LocalUnit h = lh.N[o];
+                    if (h.CurrentOrder is BuildOrder && Main.iss.n[(h.CurrentOrder as BuildOrder).blockID].count < 1) {
+                        h.CurrentOrder.complete = true;
+                        h.CurrentOrder = new NothingOrder();
                     }
 
-                    if (h.current_order is MoveOrder && IsNear(h.current_order.dest, h.pos))
-                    {
-                        h.current_order.complete = true;
-                        h.current_order = new NothingOrder();
+                    if (h.CurrentOrder is MoveOrder && IsNear(h.CurrentOrder.dest, h.Pos)) {
+                        h.CurrentOrder.complete = true;
+                        h.CurrentOrder = new NothingOrder();
                     }
                 }
 
-                if (n[index].complete) n.RemoveAt(index);
+                if (N[index].complete) {
+                    N.RemoveAt(index);
+                }
             }
         }
 
-        void GivingOrders(LocalHeroes lh)
-        {
-            foreach (var order in n)
-            {
-                if (order is BuildOrder && Main.smap.At(order.dest).BlockID != 0)
-                {
+        private void GivingOrders(LocalUnits lh) {
+            foreach (Order order in N) {
+                if (order is BuildOrder && Main.smap.At(order.dest).BlockID != 0) {
                     order.complete = true;
                     goto ordertaken;
                 }
 
-                if (order is DestroyOrder && Main.smap.At(order.dest).BlockID == 0)
-                {
+                if (order is DestroyOrder && Main.smap.At(order.dest).BlockID == 0) {
                     order.complete = true;
                     goto ordertaken;
                 }
 
-                if (!order.taken && !order.sleep && IsReachable(order.dest))
-                {
-                    foreach (var h in lh.n)
-                    {
-                        if (h.current_order is NothingOrder)
-                        {
-                            h.current_order = order;
+                if (!order.taken && !order.sleep && IsReachable(order.dest)) {
+                    foreach (LocalUnit h in lh.N) {
+                        if (h.CurrentOrder is NothingOrder) {
+                            h.CurrentOrder = order;
 
                             order.unit_owner = h;
-                            h.patch = Main.smap.FindPatch(h.pos, GetNear(order.dest));
-                            Main.AddToLog(order + " patch find for " + h.pos + " " + h.patch.Count);
+                            h.Patch = Main.smap.FindPatch(h.Pos, GetNear(order.dest));
+                            Main.AddToLog(order + " patch find for " + h.Pos + " " + h.Patch.Count);
 
-                            if (h.patch.Count > 0) { order.taken = true; }
-                            else order.sleep = true;
+                            if (h.Patch.Count > 0) {
+                                order.taken = true;
+                            }
+                            else {
+                                order.sleep = true;
+                            }
                             goto ordertaken;
                         }
                     }
                 }
-            ordertaken:
+                ordertaken:
                 ;
             }
         }
 
-        private static bool IsReachable(Vector3 loc)
-        {
-            if (!MMap.GoodVector3(loc)) return false;
-            return (Main.smap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z) ||
-                    Main.smap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z) ||
-                    Main.smap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z) ||
-                    Main.smap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z) ||
-                    Main.smap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z + 1) ||
-                    Main.smap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z - 1));
+        private static bool IsReachable(Vector3 loc) {
+            if (!MMap.GoodVector3(loc)) {
+                return false;
+            }
+            return (Main.smap.IsWalkable((int) loc.X + 1, (int) loc.Y, (int) loc.Z) ||
+                    Main.smap.IsWalkable((int) loc.X - 1, (int) loc.Y, (int) loc.Z) ||
+                    Main.smap.IsWalkable((int) loc.X, (int) loc.Y + 1, (int) loc.Z) ||
+                    Main.smap.IsWalkable((int) loc.X, (int) loc.Y - 1, (int) loc.Z) ||
+                    Main.smap.IsWalkable((int) loc.X, (int) loc.Y, (int) loc.Z + 1) ||
+                    Main.smap.IsWalkable((int) loc.X, (int) loc.Y, (int) loc.Z - 1));
         }
 
-        private static bool IsNear(Vector3 loc, Vector3 loc2)
-        {
+        private static bool IsNear(Vector3 loc, Vector3 loc2) {
             return (Math.Abs(loc.X - loc2.X) <= 2 && Math.Abs(loc.Y - loc2.Y) <= 2 && Math.Abs(loc.Z - loc2.Z) <= 1);
         }
 
-        private static Vector3 GetNear(Vector3 loc)
-        {
-            if (Main.smap.IsWalkable((int)loc.X + 1, (int)loc.Y, (int)loc.Z)) return new Vector3(loc.X + 1, loc.Y, loc.Z);
-            if (Main.smap.IsWalkable((int)loc.X - 1, (int)loc.Y, (int)loc.Z)) return new Vector3(loc.X - 1, loc.Y, loc.Z);
-            if (Main.smap.IsWalkable((int)loc.X, (int)loc.Y + 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y + 1, loc.Z);
-            if (Main.smap.IsWalkable((int)loc.X, (int)loc.Y - 1, (int)loc.Z)) return new Vector3(loc.X, loc.Y - 1, loc.Z);
+        private static Vector3 GetNear(Vector3 loc) {
+            if (Main.smap.IsWalkable((int) loc.X + 1, (int) loc.Y, (int) loc.Z)) {
+                return new Vector3(loc.X + 1, loc.Y, loc.Z);
+            }
+            if (Main.smap.IsWalkable((int) loc.X - 1, (int) loc.Y, (int) loc.Z)) {
+                return new Vector3(loc.X - 1, loc.Y, loc.Z);
+            }
+            if (Main.smap.IsWalkable((int) loc.X, (int) loc.Y + 1, (int) loc.Z)) {
+                return new Vector3(loc.X, loc.Y + 1, loc.Z);
+            }
+            if (Main.smap.IsWalkable((int) loc.X, (int) loc.Y - 1, (int) loc.Z)) {
+                return new Vector3(loc.X, loc.Y - 1, loc.Z);
+            }
 
-            if (Main.smap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z + 1)) return new Vector3(loc.X, loc.Y, loc.Z + 1);
-            if (Main.smap.IsWalkable((int)loc.X, (int)loc.Y, (int)loc.Z - 1)) return new Vector3(loc.X, loc.Y, loc.Z - 1);
+            if (Main.smap.IsWalkable((int) loc.X, (int) loc.Y, (int) loc.Z + 1)) {
+                return new Vector3(loc.X, loc.Y, loc.Z + 1);
+            }
+            if (Main.smap.IsWalkable((int) loc.X, (int) loc.Y, (int) loc.Z - 1)) {
+                return new Vector3(loc.X, loc.Y, loc.Z - 1);
+            }
 
             return new Vector3();
         }

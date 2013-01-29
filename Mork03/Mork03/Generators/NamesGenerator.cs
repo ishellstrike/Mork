@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace Mork.Generators
-{
-    public enum Races
-    {
+namespace Mork.Generators {
+    public enum Races {
         Human,
 /*
         Goblin,
@@ -20,21 +18,23 @@ namespace Mork.Generators
  */
     }
 
-    public static class NamesGenerator
-    {
-        private static readonly string[] HumanNameRot1 = { "Каз", "Оз", "Маз", "Вез", "Кои", "Мер", "Бао" };
-        private static readonly string[] HumanNameRot2 = { "дин", "рел", "мал", "вест", "тор", "вил", "дун" };
-        private static readonly string[] HumanNameIn = { "о", "а" };
-        private static readonly string[] HumanSecondnames = {"Стоун","Блад","Дарк","Фои","Вилоу","Ив","Спайн","Дроуэн","Сивил","Мауен","Ашен","Оукен","Грас","Филд","Боулд","Рокс","Тион","Тиос","Киос","Риол","Брим"};
+    public static class NamesGenerator {
+        private static readonly string[] HumanNameRot1 = {"Каз", "Оз", "Маз", "Вез", "Кои", "Мер", "Бао"};
+        private static readonly string[] HumanNameRot2 = {"дин", "рел", "мал", "вест", "тор", "вил", "дун"};
+        private static readonly string[] HumanNameIn = {"о", "а"};
+
+        private static readonly string[] HumanSecondnames = {
+                                                                "Стоун", "Блад", "Дарк", "Фои", "Вилоу", "Ив", "Спайн",
+                                                                "Дроуэн", "Сивил", "Мауен", "Ашен", "Оукен", "Грас", "Филд"
+                                                                , "Боулд", "Рокс", "Тион", "Тиос", "Киос", "Риол", "Брим"
+                                                            };
 
 
+        private static readonly Random rnd = new Random();
 
-        static readonly Random rnd = new Random();
-        public static string GetAgeName()
-        {
-            var s = "";
-            switch (rnd.Next(0, 12))
-            {
+        public static string GetAgeName() {
+            string s = "";
+            switch (rnd.Next(0, 12)) {
                 case 0:
                     s = "завоеваний";
                     break;
@@ -72,30 +72,30 @@ namespace Mork.Generators
             return s;
         }
 
-        public static string GetRandomName(Races sRaces)
-        {
-            var s = "";
-
-            if (sRaces == Races.Human)
-                s = string.Format("{0}{1}{2}", HumanNameRot1[rnd.Next(0, HumanNameRot1.Length)], HumanNameIn[rnd.Next(0, HumanNameIn.Length)], HumanNameRot2[rnd.Next(0, HumanNameRot2.Length)]);
-
-            return s;
-        }
-
-        public static string GetRandomSecondName(Races sRaces)
-        {
+        public static string GetRandomName(Races sRaces) {
             string s = "";
 
-            if (sRaces == Races.Human)
-                s += string.Format(" {0}", HumanSecondnames[rnd.Next(0, HumanSecondnames.Length)]);
+            if (sRaces == Races.Human) {
+                s = string.Format("{0}{1}{2}", HumanNameRot1[rnd.Next(0, HumanNameRot1.Length)],
+                                  HumanNameIn[rnd.Next(0, HumanNameIn.Length)],
+                                  HumanNameRot2[rnd.Next(0, HumanNameRot2.Length)]);
+            }
 
             return s;
         }
 
-        public static string MonthNameI(int n)
-        {
-            switch (n)
-            {
+        public static string GetRandomSecondName(Races sRaces) {
+            string s = "";
+
+            if (sRaces == Races.Human) {
+                s += string.Format(" {0}", HumanSecondnames[rnd.Next(0, HumanSecondnames.Length)]);
+            }
+
+            return s;
+        }
+
+        public static string MonthNameI(int n) {
+            switch (n) {
                 case 1:
                     return "январь";
                 case 2:
@@ -123,10 +123,9 @@ namespace Mork.Generators
             }
             return "мартябрь";
         }
-        public static string MonthNameR(int n)
-        {
-            switch (n)
-            {
+
+        public static string MonthNameR(int n) {
+            switch (n) {
                 case 1:
                     return "января";
                 case 2:

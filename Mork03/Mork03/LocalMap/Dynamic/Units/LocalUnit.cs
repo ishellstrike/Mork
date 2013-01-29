@@ -1,55 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Mork.Graphics;
 using Mork.Local_Map.Dynamic.Actions;
 using Mork.Local_Map.Dynamic.Local_Items;
 using Mork.Local_Map.Dynamic.Units.Actions;
 
-namespace Mork.Local_Map.Dynamic
-{
-    public abstract class LocalUnit
-    {
-        public Vector3 pos;
-        public int unit_id;
-        public Order current_order = new NothingOrder();
-        public Order previous_order = new NothingOrder();
+namespace Mork.Local_Map.Dynamic {
+    public class LocalUnit {
+        //More technical variables
 
-        public LocalItem carry = new LocalItem();
+        public TimeSpan Age;
+        public LocalItem Carry = new LocalItem();
+        public Order CurrentOrder = new NothingOrder();
+        public int ErrorID;
+        public int ID;
 
-        public Vector3 pre_pos;
-        public TimeSpan iddle_time;
+        public TimeSpan IddleTime;
 
-        public Stack<Vector3> patch = new Stack<Vector3>();
+        // More gameplay variables
 
-        public void MoveUnit(GameTime gt)
-        {
-            if (patch.Count > 0)
-            {
-                Vector3 temp = new Vector3();
-                temp = patch.Peek();/////////
+        public TimeSpan MaxLifeTime;
+        public Stack<Vector3> Patch = new Stack<Vector3>();
+        public Vector3 Pos;
+        public Vector3 PrePos;
+        public Order PreviousOrder = new NothingOrder();
 
-                if (pos.X > temp.X) pos.X -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (pos.Y > temp.Y) pos.Y -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (pos.Z > temp.Z) pos.Z -= 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-
-                if (pos.X < temp.X) pos.X += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (pos.Y < temp.Y) pos.Y += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-                if (pos.Z < temp.Z) pos.Z += 10 * (float)gt.ElapsedGameTime.TotalSeconds;
-
-                //затаптывание травы
-                if ((int)pos.X == (int)temp.X && (int)pos.Y == (int)temp.Y && (int)pos.Z == (int)temp.Z)
-                {
-                    //if (Main.mmap.n[pos.X, pos.Y, pos.Z+1].Obj == ObjectID.DirtWall_Grass3 && rnd.Next(0,20) == 0) Main.mmap.n[pos.X, pos.Y, pos.Z+1].Obj = ObjectID.DirtWall_Grass2;
-                    //else
-                    //    if (Main.mmap.n[pos.X, pos.Y, pos.Z + 1].Obj == ObjectID.DirtWall_Grass2 && rnd.Next(0, 20) == 0) Main.mmap.n[pos.X, pos.Y, pos.Z + 1].Obj = ObjectID.DirtWall_Grass1;
-                    //else
-                    //        if (Main.mmap.n[pos.X, pos.Y, pos.Z + 1].Obj == ObjectID.DirtWall_Grass1 && rnd.Next(0, 20) == 0) Main.mmap.n[pos.X, pos.Y, pos.Z + 1].Obj = ObjectID.DirtWall;
-                    patch.Pop();
-                }
+        public LocalUnit(int id) {
+            if (Main.dbcreatures.Data.ContainsKey(id)) {
+                ID = id;
             }
+            else {
+                ID = 666;
+                ErrorID = id;
+            }
+        }
+
+        public void MoveUnit(GameTime gt) {
+            if (Patch.Count <= 0) {
+                return;
+            }
+
+            Vector3 temp = Patch.Peek();
+
+            if (Pos.X > temp.X) {
+                Pos.X -= 10*(float) gt.ElapsedGameTime.TotalSeconds;
+            }
+            if (Pos.Y > temp.Y) {
+                Pos.Y -= 10*(float) gt.ElapsedGameTime.TotalSeconds;
+            }
+            if (Pos.Z > temp.Z) {
+                Pos.Z -= 10*(float) gt.ElapsedGameTime.TotalSeconds;
+            }
+
+            if (Pos.X < temp.X) {
+                Pos.X += 10*(float) gt.ElapsedGameTime.TotalSeconds;
+            }
+            if (Pos.Y < temp.Y) {
+                Pos.Y += 10*(float) gt.ElapsedGameTime.TotalSeconds;
+            }
+            if (Pos.Z < temp.Z) {
+                Pos.Z += 10*(float) gt.ElapsedGameTime.TotalSeconds;
+            }
+
+            if ((int) Pos.X != (int) temp.X || (int) Pos.Y != (int) temp.Y || (int) Pos.Z != (int) temp.Z) {
+                return;
+            }
+
+            Patch.Pop();
         }
     }
 }
